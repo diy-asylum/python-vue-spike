@@ -1,3 +1,16 @@
+<i18n>
+	{
+	"en": {
+	"home-link": "Home",
+	"about-link": "About"
+	},
+	"es": {
+	"home-link": "Hogar",
+	"about-link": "Acerca De"
+	}
+	}
+</i18n>
+
 <template>
 	<div id="app">
 		<b-navbar toggleable="lg" type="dark" variant="dark">
@@ -10,12 +23,12 @@
 
 					<b-nav-item>
 						<router-link class="text-light" to="/">
-							Home
+							{{$t('home-link')}}
 						</router-link>
 					</b-nav-item>
 					<b-nav-item>
 						<router-link class="text-light" to="/about">
-							About
+							{{$t('about-link')}}
 						</router-link>
 					</b-nav-item>
 
@@ -31,9 +44,9 @@
 				<!-- Right aligned nav items -->
 				<b-navbar-nav class="ml-auto">
 
-					<b-nav-item-dropdown text="Lang" right>
-						<b-dropdown-item href="#">English</b-dropdown-item>
-						<b-dropdown-item href="#">Español</b-dropdown-item>
+					<b-nav-item-dropdown v-bind:text="'Lang: ' + locale" right>
+						<b-dropdown-item @click="langSelect(0)">English</b-dropdown-item>
+						<b-dropdown-item @click="langSelect(1)">Español</b-dropdown-item>
 					</b-nav-item-dropdown>
 
 					<!-- <b-nav-item-dropdown right>
@@ -52,6 +65,43 @@
 		</footer>
 	</div>
 </template>
+
+<script lang="ts">
+	import {
+		Vue,
+		Component,
+		//Prop,
+		//Watch
+	} from 'vue-property-decorator'
+
+	// Define the component in class-style
+	@Component
+	export default class App extends Vue {
+
+		locale = "en";
+
+		// Class properties will be component data
+		langSelect(selectedLang: number) {
+			switch (selectedLang) {
+				case 0:
+					this.locale = "en";
+					break;
+
+				case 1:
+					this.locale = "es";
+					break;
+
+			}
+
+			console.log(this.$i18n);
+
+			this.$i18n.locale = this.locale;
+		}
+
+
+	}
+</script>
+
 
 <style lang="scss">
 	#app {

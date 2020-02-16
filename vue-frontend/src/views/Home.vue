@@ -1,9 +1,20 @@
+<i18n>
+	{
+	"en": {
+	"hello": "hello world!"
+	},
+	"es": {
+	"hello": "¡Hola Mundo!"
+	}
+	}
+</i18n>
+
 <template>
 	<div class="home">
 		<!-- Main jumbotron for a primary marketing message or call to action -->
 		<div class="jumbotron">
 			<div class="container">
-				<h1 class="display-3">Hello, world!</h1>
+				<h1 class="display-3">{{ $t('hello') }}</h1>
 				<p>This is a template for a simple marketing or informational website. It includes a large callout
 					called a
 					jumbotron and three supporting pieces of content. Use it as a starting point to create something
@@ -49,14 +60,20 @@
 	</div>
 </template>
 
-<script>
-	// @ is an alias to /src
-	//import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+	import {
+		Vue,
+		Component,
+		//Prop,
+		//Watch
+	} from 'vue-property-decorator'
 
-	export default {
-		name: 'Home',
-		components: {
-			//HelloWorld
-		}
+	// Define the component in class-style
+	@Component
+	export default class Home extends Vue {
+
+
+
+
 	}
 </script>
