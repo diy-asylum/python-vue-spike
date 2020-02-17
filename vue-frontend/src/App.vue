@@ -2,11 +2,13 @@
 	{
 	"en": {
 	"home-link": "Home",
-	"about-link": "About"
+	"about-link": "About",
+	"i589-link": "Form I-589"
 	},
 	"es": {
 	"home-link": "Hogar",
-	"about-link": "Acerca De"
+	"about-link": "Sobre",
+	"i589-link": "Formulario i-589"
 	}
 	}
 </i18n>
@@ -34,7 +36,7 @@
 
 					<b-nav-item>
 						<router-link class="text-light" to="/i589">
-							I-589 Form
+							{{$t('i589-link')}}
 						</router-link>
 					</b-nav-item>
 
@@ -90,12 +92,11 @@
 				case 1:
 					this.locale = "es";
 					break;
-
 			}
 
-			console.log(this.$i18n);
+			//console.log(this.$i18n);
 
-			this.$i18n.locale = this.locale;
+			this.$root.$i18n.locale = this.locale;
 		}
 
 
