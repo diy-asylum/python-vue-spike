@@ -35,8 +35,10 @@ class Page_1(Page):
             res_city: str,
             res_state: str,
             res_zipcode: str,
+            res_area_code: str,
             res_phone_number: str,
             in_care_of: str,
+            mail_area_code: str,
             mail_phone_number: str,
             mail_st_number_and_name: str,
             mail_apt_number: str,
@@ -105,14 +107,14 @@ class Page_1(Page):
         fields.append(Field(res_state, (220, 487), 10, False, "A.I.", "8"))
         fields.append(Field(res_zipcode, (352, 487), 10, False, "A.I.", "8"))
         fields.append(
-            Field(res_phone_number[:3], (455, 487), 10, False, "A.I.", "8"))
+            Field(res_area_code, (455, 487), 10, False, "A.I.", "8"))
         fields.append(Field(
-            res_phone_number[3:6] + "-" + res_phone_number[6:10], (490, 487), 10, False, "A.I.", "8"))
+            res_phone_number, (490, 487), 10, False, "A.I.", "8"))
         fields.append(Field(in_care_of, (40, 439), 10, False, "A.I.", "9"))
         fields.append(
-            Field(mail_phone_number[:3], (412, 439), 10, False, "A.I.", "9"))
+            Field(mail_phone_number, (412, 439), 10, False, "A.I.", "9"))
         fields.append(Field(
-            mail_phone_number[3:6] + "-" + mail_phone_number[6:10], (447, 439), 10, False, "A.I.", "9"))
+            mail_phone_number, (447, 439), 10, False, "A.I.", "9"))
         fields.append(
             Field(
                 mail_st_number_and_name,

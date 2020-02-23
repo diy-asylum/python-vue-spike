@@ -19,10 +19,10 @@ class Gender(Enum):
 
 
 class MaritalStatus(Enum):
-    SINGLE = "SINGLE"
-    MARRIED = "MARRIED"
-    DIVORCED = "DIVORCED"
-    WIDOWED = "WIDOWED"
+    SINGLE = "Single"
+    MARRIED = "Married"
+    DIVORCED = "Divorced"
+    WIDOWED = "Widowed"
 
 
 class ImmigrationCourtStatus(Enum):
@@ -61,8 +61,8 @@ class SchoolFields():
                  name: str,
                  school_type: str,
                  location: str,
-                 start_date: date,
-                 end_date: date):
+                 start_date: str,
+                 end_date: str):
         self.name = name
         self.school_type = school_type
         self.location = location
@@ -98,14 +98,14 @@ class SchoolFields():
                     "A.III.",
                     "3"))
         fields.append(Field(
-                    self.start_date.strftime('%m/%Y'),
+                    self.start_date,
                     start_date_position,
                     10,
                     False,
                     "A.III.",
                     "3"))
         fields.append(Field(
-                    self.end_date.strftime('%m/%Y'),
+                    self.end_date,
                     end_date_position,
                     10,
                     False,
@@ -116,8 +116,8 @@ class EmployerFields():
     def __init__(self,
                  name_and_address: str,
                  occupation: str,
-                 start_date: date,
-                 end_date: date):
+                 start_date: str,
+                 end_date: str):
         self.name_and_address = name_and_address
         self.occupation = occupation
         self.start_date = start_date
@@ -144,14 +144,14 @@ class EmployerFields():
                     "A.III.",
                     "4"))
         fields.append(Field(
-                    self.start_date.strftime('%m/%Y'),
+                    self.start_date,
                     start_date_position,
                     10,
                     False,
                     "A.III.",
                     "4"))
         fields.append(Field(
-                    self.end_date.strftime('%m/%Y'),
+                    self.end_date,
                     end_date_position,
                     10,
                     False,

@@ -59,7 +59,7 @@ class Page_4(Page):
                     "A.III.",
                     "1"))
         fields.append(Field(
-                    last_address.start_date.strftime('%m/%Y'),
+                    last_address.start_date,
                     (475,
                      648),
                     10,
@@ -67,7 +67,7 @@ class Page_4(Page):
                     "A.III.",
                     "1"))
         fields.append(Field(
-                    last_address.end_date.strftime('%m/%Y'),
+                    last_address.end_date,
                     (530,
                      648),
                     10,
@@ -108,7 +108,7 @@ class Page_4(Page):
                     "A.III.",
                     "1"))
             fields.append(Field(
-                    fear_address.start_date.strftime('%m/%Y'),
+                    fear_address.start_date,
                     (475,
                      630),
                     10,
@@ -116,7 +116,7 @@ class Page_4(Page):
                     "A.III.",
                     "1"))
             fields.append(Field(
-                    fear_address.end_date.strftime('%m/%Y'),
+                    fear_address.end_date,
                     (530,
                      630),
                     10,
@@ -157,7 +157,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_1.start_date.strftime('%m/%Y'),
+                    prev_address_1.start_date,
                     (475,
                      552),
                     10,
@@ -165,7 +165,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_1.end_date.strftime('%m/%Y'),
+                    prev_address_1.end_date,
                     (530,
                      552),
                     10,
@@ -206,7 +206,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_2.start_date.strftime('%m/%Y'),
+                    prev_address_2.start_date,
                     (475,
                      534),
                     10,
@@ -214,7 +214,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_2.end_date.strftime('%m/%Y'),
+                    prev_address_2.end_date,
                     (530,
                      534),
                     10,
@@ -255,7 +255,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_3.start_date.strftime('%m/%Y'),
+                    prev_address_3.start_date,
                     (475,
                      516),
                     10,
@@ -263,7 +263,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_3.end_date.strftime('%m/%Y'),
+                    prev_address_3.end_date,
                     (530,
                      516),
                     10,
@@ -304,7 +304,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_4.start_date.strftime('%m/%Y'),
+                    prev_address_4.start_date,
                     (475,
                      498),
                     10,
@@ -312,7 +312,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_4.end_date.strftime('%m/%Y'),
+                    prev_address_4.end_date,
                     (530,
                      498),
                     10,
@@ -353,7 +353,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_5.start_date.strftime('%m/%Y'),
+                    prev_address_5.start_date,
                     (475,
                      480),
                     10,
@@ -361,7 +361,7 @@ class Page_4(Page):
                     "A.III.",
                     "2"))
             fields.append(Field(
-                    prev_address_5.end_date.strftime('%m/%Y'),
+                    prev_address_5.end_date,
                     (530,
                      480),
                     10,

@@ -1,0 +1,8 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: Dockerfile_backend
+    ports:
+     - "12345:12345"

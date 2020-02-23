@@ -20,13 +20,13 @@ class Page_2(Page):
                  is_married: bool,
                  spouse_a_number: str,
                  spouse_passport_id: str,
-                 spouse_date_of_birth: date,
+                 spouse_date_of_birth: str,
                  spouse_ssn: str,
                  spouse_last_name: str,
                  spouse_first_name: str,
                  spouse_middle_name: str,
                  spouse_other_names: List[str],
-                 date_of_marriage: date,
+                 date_of_marriage: str,
                  place_of_marriage: str,
                  spouse_city_birth: str,
                  spouse_country_birth: str,
@@ -39,7 +39,7 @@ class Page_2(Page):
                  spouse_i94: str,
                  spouse_current_status: str,
                  spouse_in_immigration_court: bool,
-                 spouse_previous_arrival_date: date,
+                 spouse_previous_arrival_date: str,
                  spouse_included_in_application: bool,
                  has_children: bool,
                  num_children: Optional[int],
@@ -67,7 +67,7 @@ class Page_2(Page):
                 "2"))
         fields.append(
             Field(
-                spouse_date_of_birth.strftime('%m/%d/%Y'),
+                spouse_date_of_birth,
                 (333,
                  671),
                 10,
@@ -106,7 +106,7 @@ class Page_2(Page):
                             (454, 637), 10, False, "A.II.", "8"))
         fields.append(
             Field(
-                date_of_marriage.strftime('%m/%d/%Y'),
+                date_of_marriage,
                 (40,
                  607),
                 10,
@@ -173,8 +173,7 @@ class Page_2(Page):
                 "A.II.",
                 "16"))
             fields.append(Field(
-                spouse_last_entry.date.strftime(
-                    '%m/%d/%Y'),
+                spouse_last_entry.date,
                 (172,
                     510),
                 10,
@@ -206,8 +205,7 @@ class Page_2(Page):
                 "A.II.",
                 "20"))
             fields.append(Field(
-                spouse_last_entry.expiration_date.strftime(
-                    '%m/%d/%Y'),
+                spouse_last_entry.expiration_date,
                 (155,
                     474),
                 10,
@@ -229,8 +227,7 @@ class Page_2(Page):
                     "A.II.",
                     "22"))
             fields.append(Field(
-                spouse_previous_arrival_date.strftime(
-                    '%m/%d/%Y'),
+                spouse_previous_arrival_date,
                 (439,
                     474),
                 10,
@@ -339,8 +336,7 @@ class Page_2(Page):
                     "7"))
             fields.append(
                 Field(
-                    child_1.date_of_birth.strftime(
-                        '%m/%d/%Y'),
+                    child_1.date_of_birth,
                     (454,
                      280),
                     10,
@@ -393,8 +389,7 @@ class Page_2(Page):
                         "14"))
                 fields.append(
                     Field(
-                        child_1.last_entry.date.strftime(
-                            '%m/%d/%Y'),
+                        child_1.last_entry.date,
                         (197,
                          197),
                         10,
@@ -430,8 +425,7 @@ class Page_2(Page):
                         "18"))
                 fields.append(
                     Field(
-                        child_1.last_entry.expiration_date.strftime(
-                            '%m/%d/%Y'),
+                        child_1.last_entry.expiration_date,
                         (220,
                          162),
                         10,
@@ -483,4 +477,3 @@ class Page_2(Page):
                         "A.II.",
                         "13"))
         Page.__init__(self, fields, "resources/i-589-page-2.pdf")
-        
