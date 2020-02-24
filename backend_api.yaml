@@ -20,7 +20,6 @@ paths:
       - "fill-i589"
       summary: "Fill i-589 and download completed form."
       description: "Fill i-589 and download completed form."
-      operationId: "addPet"
       consumes:
       - "application/json"
       produces:
