@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import FormPageState from "@/data/FormPageState";
+import SetPageModel from "@/data/SetPageModel";
 import { Forms } from "@/enums";
 
 Vue.use(Vuex);
@@ -11,14 +12,27 @@ export default new Vuex.Store({
 		i589PageStates: new Array<FormPageState>()
 	},
 	mutations: {
-		nextI589(state) {
-			state.i589Page++;
+		nextPage(state, form: Forms) {
+			switch (form) {
+				case Forms.i589:
+					state.i589Page++;
+					break;
+			}
+
 		},
-		prevI589(state) {
-			state.i589Page--;
+		prevPage(state, form: Forms) {
+			switch (form) {
+				case Forms.i589:
+					state.i589Page--;
+					break;
+			}
 		},
-		setI589Page(state, page: number) {
-			state.i589Page = page;
+		setPage(state, pageModel: SetPageModel) {
+			switch (pageModel.Form) {
+				case Forms.i589:
+					state.i589Page = pageModel.Page;
+					break;
+			}
 		},
 		addPageState(state, pageState: FormPageState) {
 			switch (pageState.Form) {
@@ -40,14 +54,14 @@ export default new Vuex.Store({
 		}
 	},
 	actions: {
-		nextI589(context) {
-			context.commit("nextI589");
+		nextPage(context, form: Forms) {
+			context.commit("nextPage", form);
 		},
-		prevI589(context) {
-			context.commit("prevI589");
+		prevPage(context, form: Forms) {
+			context.commit("prevPage", form);
 		},
-		setI589Page(context, page: number) {
-			context.commit("setI589Page", page);
+		setPage(context, pageModel: SetPageModel) {
+			context.commit("setPage", pageModel);
 		},
 		addPageState(context, pageState: FormPageState) {
 			context.commit("addPageState", pageState);
