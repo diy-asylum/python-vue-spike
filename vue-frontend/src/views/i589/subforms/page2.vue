@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<h4>Your Name</h4>
 		<div class="form-group"><label>Last Name</label><input name="last-name" type="text"
 				class="form-control undefined" value="">
 		</div>

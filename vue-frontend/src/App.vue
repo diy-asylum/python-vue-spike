@@ -75,6 +75,7 @@
 		//Prop,
 		//Watch
 	} from 'vue-property-decorator'
+	import storeHelper from "@/store/helper";
 
 	// Define the component in class-style
 	@Component
@@ -99,6 +100,9 @@
 			this.$root.$i18n.locale = this.locale;
 		}
 
+		mounted() {
+			storeHelper.InitStore();
+		}
 
 	}
 </script>
@@ -113,16 +117,7 @@
 		color: #2c3e50;
 	}
 
-	#nav {
-		padding: 30px;
-
-		a {
-			font-weight: bold;
-			color: #2c3e50;
-
-			&.router-link-exact-active {
-				color: #42b983;
-			}
-		}
+	.navbar {
+		margin-bottom: 15px;
 	}
 </style>

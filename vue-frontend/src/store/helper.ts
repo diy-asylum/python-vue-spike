@@ -18,4 +18,18 @@ export default new class StoreHelper {
 				break;
 		}
 	}
+
+	SetPage(form: Forms, page: number) {
+		switch (form) {
+			case Forms.i589:
+				store.dispatch(StoreConsts.SetPageI589Action, page);
+				break;
+		}
+	}
+
+	InitStore() {
+		for (let i = 0; i < 9; i++) {
+			console.log(i);
+		}
+	}
 }
