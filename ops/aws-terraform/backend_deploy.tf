@@ -1,5 +1,7 @@
 # AWS credentials are automatically loaded from the default AWS CLI configuration
-provider "aws" {}
+provider "aws" {
+  region = "us-east-1"
+}
 
 # Fetches the data from ECR for the "backend" Docker registry
 # Assumes that such a registry already exists
@@ -322,8 +324,8 @@ resource "aws_ecs_task_definition" "diyasylum-be" {
   family                   = "diyasylum-be"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 1024
-  memory                   = 4096
+  cpu                      = 256
+  memory                   = 512
   execution_role_arn       = "${aws_iam_role.ecs_execution_role.arn}"
 
   container_definitions = <<DEFINITION

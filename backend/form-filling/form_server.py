@@ -4,6 +4,7 @@ from io import BytesIO
 import tornado.ioloop
 import tornado.web
 import tornado
+import json
 from form_constructor import form_constructor
 
 class MainHandler(tornado.web.RequestHandler):
@@ -19,8 +20,14 @@ class MainHandler(tornado.web.RequestHandler):
         self.write(tmp.getvalue())
         self.finish()
 
+class HealthCheckHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.set_header('Content-Type', 'application/json; charset="utf-8"')
+        self.write(json.dumps({'status':'OK'}))
+
 
 application = tornado.web.Application([
+    (r"/", HealthCheckHandler),
     (r"/fill-i589", MainHandler),
 ])
 
