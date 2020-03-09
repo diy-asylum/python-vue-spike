@@ -1,4 +1,4 @@
-import Vue from "vue";
+/* import Vue from "vue";
 import Vuex from "vuex";
 import FormPageState from "@/data/FormPageState";
 import SetPageModel from "@/data/SetPageModel";
@@ -85,3 +85,26 @@ export default new Vuex.Store({
 		}
 	}
 })
+ */
+
+import Vue from "vue";
+import Vuex from "vuex";
+import I589State from "@/store/modules/i589State";
+import {
+	getModule
+} from "vuex-module-decorators";
+
+Vue.use(Vuex);
+
+/* const vuexLocal = new VuexPersistence({
+	storage: window.localStorage
+}); */
+
+const store = new Vuex.Store({
+	modules: {
+		i589State: I589State
+	},
+	//plugins: [vuexLocal.plugin]
+});
+export default store;
+export const i589State: I589State = getModule(I589State, store);

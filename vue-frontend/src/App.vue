@@ -75,7 +75,6 @@
 		//Prop,
 		//Watch
 	} from 'vue-property-decorator'
-	import storeHelper from "@/store/helper";
 
 	// Define the component in class-style
 	@Component
@@ -98,10 +97,6 @@
 			//console.log(this.$i18n);
 
 			this.$root.$i18n.locale = this.locale;
-		}
-
-		mounted() {
-			storeHelper.InitStore();
 		}
 
 	}

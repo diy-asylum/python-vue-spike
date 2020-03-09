@@ -53,11 +53,10 @@
 		//Prop,
 		//Watch
 	} from 'vue-property-decorator'
-	import {
-		Forms
-	} from "@/enums";
 	import formI589 from "@/views/i589/i589-form.vue";
-	import storeHelper from "@/store/helper";
+	import {
+		i589State
+	} from "@/store/index";
 	// Define the component in class-style
 	@Component({
 		components: {
@@ -66,7 +65,9 @@
 	})
 	export default class i589 extends Vue {
 		gotoSection(section: number) {
-			storeHelper.SetPage(Forms.i589, section);
+			i589State.setPageNumber(section);
+
+			//storeHelper.SetPage(Forms.i589, section);
 		}
 	}
 </script>

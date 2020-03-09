@@ -15,7 +15,9 @@
 		Vue,
 		Component
 	} from 'vue-property-decorator'
-	import storeHelper from "@/store/helper";
+	import {
+		i589State
+	} from "@/store/index";
 	import {
 		Forms
 	} from "@/enums";
@@ -33,18 +35,18 @@
 	})
 	export default class formI589 extends Vue {
 		get currentPage(): number {
-			return this.$store.getters.getI589Page;
+			return i589State.currentPageNumber;
 		}
 
 		nextClick() {
 			if (this.currentPage < maxPages) {
-				storeHelper.NextPage(Forms.i589);
+				i589State.setPageNumberAction(this.currentPage + 1);
 			}
 		}
 
 		previousClick() {
 			if (this.currentPage > 1) {
-				storeHelper.PreviousPage(Forms.i589);
+				i589State.setPageNumberAction(this.currentPage - 1);
 			}
 		}
 	}
