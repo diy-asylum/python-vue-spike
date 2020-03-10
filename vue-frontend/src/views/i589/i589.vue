@@ -20,9 +20,13 @@
 		<div class="row top-pad data-entry">
 			<div class="progress-panel col-lg-3">
 				<h4>{{$t("progress-title")}}</h4>
-				<ol>
-					<li @click="gotoSection(1)" class="unfinished">Registration Numbers</li>
-					<li @click="gotoSection(2)" class="unfinished">Your name</li>
+				<ol v-if="loaded">
+					<li @click="gotoSection(1)"
+						v-bind:class="{current: isCurrentSection(1), unfinished: isUnfinished(1)}">Registration Numbers
+					</li>
+					<li @click="gotoSection(2)"
+						v-bind:class="{current: isCurrentSection(2), unfinished: isUnfinished(2)}">Your name
+					</li>
 					<li @click="gotoSection(3)" class="unfinished">Residence in the U.S.</li>
 					<li @click="gotoSection(4)" class="unfinished">Mailing Address in the U.S.</li>
 					<li @click="gotoSection(5)" class="unfinished">Demographic Information</li>
@@ -57,6 +61,9 @@
 	import {
 		i589State
 	} from "@/store/index";
+	import {
+		FormCompletion
+	} from "@/enums";
 	// Define the component in class-style
 	@Component({
 		components: {
@@ -64,10 +71,21 @@
 		}
 	})
 	export default class i589 extends Vue {
+
+		get loaded() {
+			return i589State.loaded;
+		}
+
 		gotoSection(section: number) {
 			i589State.setPageNumber(section);
+		}
 
-			//storeHelper.SetPage(Forms.i589, section);
+		isCurrentSection(pageNumber: number) {
+			return pageNumber === i589State.currentPageNumber;
+		}
+
+		isUnfinished(pageNumber: number) {
+			return i589State.pageStates[pageNumber - 1].Completion !== FormCompletion.Completed;
 		}
 	}
 </script>
@@ -75,6 +93,10 @@
 <style lang="scss">
 	.unfinished {
 		color: #aaa;
+	}
+
+	.current {
+		color: black;
 	}
 
 	.progress-panel ol {

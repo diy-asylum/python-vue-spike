@@ -18,9 +18,6 @@
 	import {
 		i589State
 	} from "@/store/index";
-	import {
-		Forms
-	} from "@/enums";
 	import page1 from "@/views/i589/subforms/page1.vue";
 	import page2 from "@/views/i589/subforms/page2.vue";
 
