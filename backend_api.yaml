@@ -1,0 +1,502 @@
+swagger: "2.0"
+info:
+  description: "This API allows the user to submit data pertaining to their i-589 application for asylum and will return a completed i-589 form in PDF format."
+  version: "1.0.0"
+  title: "DIY Asylum"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "backend.diyasylum.com"
+basePath: "/"
+tags:
+- name: "fill-i589"
+  description: "Fills out the i-589 asylum application."
+schemes:
+- "https"
+paths:
+  /fill-i589:
+    post:
+      tags:
+      - "fill-i589"
+      summary: "Fill i-589 and download completed form."
+      description: "Fill i-589 and download completed form."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/pdf"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "All user data needed to fill out the i-589 form."
+        required: true
+        schema:
+          $ref: "#/definitions/UserData"
+      responses:
+        200:
+          description: "Downloads completed i-589 PDF."
+definitions:
+  UserData:
+    type: "object"
+    properties: 
+      applicantInfo: 
+        $ref: "#/definitions/ApplicantInfo"
+      usTravelHistory:
+        $ref: "#/definitions/USTravelHistory"
+      isMarried:
+        type: "boolean"
+      spouseInfo:
+        $ref: "#/definitions/SpouseInfo"
+      childInfo:
+        type: "array"
+        items:
+          $ref: "#/definitions/ChildInfo"
+      lastAddressBeforeUS:
+        allOf:
+        - description: "Applicant's last address before coming to the US."
+        - $ref: "#/definitions/AddressWithDates"
+      lastAddressPersecuted:
+        allOf:
+        - description: "Applicant's last address in the country where they fear persecution, if different from their last address before coming to the US."
+        - $ref: "#/definitions/AddressWithDates"
+      residencesInLastFiveYears:
+        description: "The applicant's places of residence for the past 5 years."
+        type: "array"
+        items:
+          $ref: "#/definitions/AddressWithDates"
+      educationInfo:
+        description: "List of schools attended by applicant."
+        type: "array"
+        items:
+          $ref: "#/definitions/SchoolInfo"
+      employmentInfo:
+        description: "List of applicant's employment history for past 5 years."
+        type: "array"
+        items:
+          $ref: "#/definitions/EmploymentInfo"
+      motherInfo:
+        $ref: "#/definitions/RelativeInfo"
+      fatherInfo:
+        $ref: "#/definitions/RelativeInfo"
+      siblingInfo:
+        type: "array"
+        items:
+          $ref: "#/definitions/RelativeInfo"
+      whyApplying:
+        description: "Why are you applying for asylum or withholding of removal under section 241(b)(3) of the INA, or for withholding of removal under the Convention Against Torture?"
+        type: "array"
+        items:
+          type: "string"
+          enum:
+          - "RACE" 
+          - "RELIGION"
+          - "NATIONALITY"
+          - "POLITICAL_OPINION"
+          - "MEMBERSHIP_IN_SOCIAL_GROUP"
+          - "TORTURE_CONVENTION"
+      experiencedHarm: 
+        allOf:
+        - description: "Have you, your family, or close friends or colleagues ever experienced harm or mistreatment or threats in the past by anyone?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      fearsHarm: 
+        allOf:
+        - description: "Do you fear harm or mistreatment if you return to your home country?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      arrestedInOtherCountry: 
+        allOf:
+        - description: "Have you or your family members ever been accused, charged, arrested, detained, interrogated, convicted and sentenced, or imprisoned in any country other than the United States?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      organizationInfo:
+        allOf:
+        - description: "Have you or your family members ever belonged to or been associated with any organizations or groups in your home country, such as, but not limited to, a political party, student group, labor union, religious organization, military or paramilitary group, civil patrol, guerrilla organization, ethnic group, human rights group, or the press or media? Do you or your family members continue to participate in any way in these organizations or groups?"
+        - $ref: "#/definitions/OrganizationInfo"
+      afraidOfTorture: 
+        allOf:
+        - description: "Are you afraid of being subjected to torture in your home country or any other country to which you may be returned?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      relativeAppliedForAsylum: 
+        allOf:
+        - description: "Have you, your spouse, your child(ren), your parents or your siblings ever applied to the U.S. Government for refugee status, asylum, or withholding of removal?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      otherCountryApplications: 
+        $ref: "#/definitions/OtherCountryApplications"
+      causedHarm:
+        allOf:
+        - description: "Have you, your spouse or your child(ren) ever ordered, incited, assisted or otherwise participated in causing harm or suffering to any person because of his or her race, religion, nationality, membership in a particular social group or belief in a particular political opinion?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      returnCountry:
+        allOf:
+        - description: "After you left the country where you were harmed or fear harm, did you return to that country?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      applyAfterOneYear:
+        allOf:
+        - description: "Are you filing this application more than 1 year after your last arrival in the United States?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      crimeInUS:
+        allOf:
+        - description: "Have you or any member of your family included in the application ever committed any crime and/or been arrested, charged, convicted, or sentenced for any crimes in the United States?"
+        - $ref: "#/definitions/QuestionWithExplanation"
+      relativeHelpPrepare:
+        $ref: "#/definitions/RelativeHelpPrepare"
+  QuestionWithExplanation:
+    description: "A yes or no question along with an explanation."
+    type: "object"
+    properties:
+      yesNoAnswer:
+        type: "string"
+        enum:
+        - "YES"
+        - "NO"
+      explanation:
+        type: "string"
+  AddressWithDates:
+    type: "object"
+    properties:
+      streetName:
+        type: "string"
+      streetNumber:
+        type: "string"
+      cityOrTown:
+        type: "string"
+      departmentProvinceOrState:
+        type: "string"
+      country:
+        type: "string"
+      fromDate:
+        type: "string"
+        format: "mm/yyyy"
+      toDate:
+        type: "string"
+        format: "mm/yyyy"
+  RelativeInfo:
+    type: "object"
+    properties:
+      fullName:
+        type: "string"
+      cityOrTownOfBirth:
+        type: "string"
+      countryOfBirth:
+        type: "string"
+      currentLocation:
+        type: "string"
+      isDeceased:
+        type: "boolean"
+  RelativeHelpPrepare:
+    type: "object"
+    properties:
+      didRelativeHelp:
+        type: "string"
+        enum:
+        - "YES"
+        - "NO"
+      firstRelative:
+        $ref: "#/definitions/Relative"
+      secondRelative:
+        $ref: "#/definitions/Relative"
+  Relative:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      relationship:
+        type: "string"
+  OtherCountryApplications:
+    type: "object"
+    properties:
+      travelThroughOtherCountry:
+        type: "string"
+        enum:
+        - "YES"
+        - "NO"
+      applyOtherCountry:
+        type: "string"
+        enum:
+        - "YES"
+        - "NO"
+      explanation:
+        type: "string"
+  MailingAddress:
+    type: "object"
+    properties:
+      inCareOf:
+        type: "string"
+      streetName:
+        type: "string"
+      streetNumber:
+        type: "string"
+      apartmentNumber:
+        type: "string"
+      city: 
+        type: "string"
+      state:
+        type: "string"
+      zipCode:
+        type: "string"
+      areaCode:
+        type: "string"
+        format: "Just 3 numbers e.g. 732"
+      phoneNumber:
+        type: "string"
+        format: "456-7890"
+  ApplicantInfo:
+    type: "object"
+    properties:
+      lastName: 
+        type: "string"
+      firstName:
+        type: "string"
+      middleName:
+        type: "string"
+      aliases:
+        type: "array"
+        items: 
+          type: "string"
+      usResidence:
+        $ref: "#/definitions/MailingAddress"
+      usMailingAddress:
+        $ref: "#/definitions/MailingAddress"
+      gender:
+        type: "string"
+        enum:
+        - "MALE"
+        - "FEMALE"
+      maritalStatus:
+        type: "string"
+        enum:
+        - "SINGLE"
+        - "MARRIED"
+        - "DIVORCED"
+        - "WIDOWED"
+      dateOfBirth:
+        type: "string"
+        format: "mm/dd/yyyy"
+      cityOfBirth:
+        type: "string"
+      countryOfBirth:
+        type: "string"
+      presentNationality:
+        type: "string"
+      nationalityAtBirth:
+        type: "string"
+      raceEthnicOrTribalGroup:
+        type: "string"
+      religion:
+        type: "string"
+      nativeLanguage:
+        type: "string"
+      fluentInEnglish:
+        type: "boolean"
+      otherLanguages:
+        type: "array"
+        items:
+          type: "string"
+      alsoApplyingConventionAgainstTorture:
+        type: "boolean"
+      alienRegistrationNumber:
+        type: "string"
+      socialSecurityNumber:
+        type: "string"
+      uscisAccountNumber:
+        type: "string"
+      immigrationCourtHistory:
+        type: "string"
+        enum:
+        - "NEVER"
+        - "CURRENTLY"
+        - "NOT_NOW_BUT_IN_THE_PAST"
+      countryWhoLastIssuedPassport:
+        type: "string"
+      passportNumber:
+        type: "string"
+      travelDocumentNumber:
+        type: "string"
+      travelDocumentExpirationDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+  SpouseInfo:
+    type: "object"
+    properties:
+      lastName: 
+        type: "string"
+      firstName:
+        type: "string"
+      middleName:
+        type: "string"
+      aliases:
+        type: "array"
+        items: 
+          type: "string"
+      dateOfBirth:
+        type: "string"
+        format: "mm/dd/yyyy"
+      alienRegistrationNumber:
+        type: "string"
+      socialSecurityNumber:
+        type: "string"
+      passportNumber:
+        type: "string"
+      dateOfMarriage:
+        type: "string"
+        format: "mm/dd/yyyy"
+      placeOfMarriage:
+        type: "string"
+      cityOfBirth:
+        type: "string"
+      countryOfBirth:
+        type: "string"
+      nationality:
+        type: "string"
+      raceEthnicOrTribalGroup:
+        type: "string"
+      gender:
+        type: "string"
+        enum:
+        - "MALE"
+        - "FEMALE"
+      inUS:
+        type: "boolean"
+      locationInUS:
+        type: "string"
+      placeOfLastEntry:
+        type: "string"
+      dateOfLastEntry:
+        type: "string"
+        format: "mm/dd/yyyy"
+      i94Number: 
+        type: "string"
+      immigrationStatusWhenLastAdmitted:
+        type: "string"
+      currentImmigrationStatus:
+        type: "string"
+      statusExpirationDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+      isInImmigrationCourt:
+        type: "boolean"
+      previousArrivalDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+      includeInApplication:
+        type: "boolean"
+  USTravelHistory:
+    type: "object"
+    properties:
+      travelEvents:
+        type: "array"
+        items:
+          $ref: "#/definitions/USTravelEvent"
+      lastLeftHomeCountry:
+        type: "string"
+        format: "mm/dd/yyyy"
+      i94Number:
+        type: "string"
+      dateStatusExpires:
+        type: "string"
+        format: "mm/dd/yyyy"
+  USTravelEvent:
+    type: "object"
+    properties: 
+      date: 
+        type: "string"
+        format: "mm/dd/yyyy"
+      place: 
+        type: "string"
+      status: 
+        type: "string"
+  ChildInfo:
+    type: "object"
+    properties:
+      lastName: 
+        type: "string"
+      firstName:
+        type: "string"
+      middleName:
+        type: "string"
+      dateOfBirth:
+        type: "string"
+        format: "mm/dd/yyyy"
+      alienRegistrationNumber:
+        type: "string"
+      socialSecurityNumber:
+        type: "string"
+      passportNumber:
+        type: "string"
+      maritalStatus:
+        type: "string"
+        enum:
+        - "SINGLE"
+        - "MARRIED"
+        - "DIVORCED"
+        - "WIDOWED"
+      cityOfBirth:
+        type: "string"
+      countryOfBirth:
+        type: "string"
+      nationality:
+        type: "string"
+      raceEthnicOrTribalGroup:
+        type: "string"   
+      gender:
+        type: "string"
+        enum:
+        - "MALE"
+        - "FEMALE"
+      inUS:
+        type: "boolean"
+      location:
+        description: "Only required if child is not in US."
+        type: "string"
+      placeOfLastEntry:
+        type: "string"
+      dateOfLastEntry:
+        type: "string"
+        format: "mm/dd/yyyy"
+      i94Number: 
+        type: "string"
+      immigrationStatusWhenLastAdmitted:
+        type: "string"
+      currentImmigrationStatus:
+        type: "string"
+      statusExpirationDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+      isInImmigrationCourt:
+        type: "boolean"
+      includeInApplication:
+        type: "boolean"
+  OrganizationInfo:
+    type: "object"
+    properties:
+      associatedWithOrganizations:
+        $ref: '#/definitions/QuestionWithExplanation'
+      continueToParticipate:
+        $ref: '#/definitions/QuestionWithExplanation'
+  SchoolInfo:
+    type: "object"
+    properties:
+      schoolName:
+        type: "string"
+      typeOfSchool:
+        type: "string"
+      address:
+        type: "string"
+      fromDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+      toDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+  EmploymentInfo:
+    type: "object"
+    properties:
+      employerName: 
+        type: "string"
+      employerAddress:
+        type: "string"
+      applicantOccupation:
+        type: "string"
+      fromDate:
+        type: "string"
+        format: "mm/dd/yyyy"
+      toDate:
+        type: "string"
+        format: "mm/dd/yyyy"
