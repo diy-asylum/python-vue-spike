@@ -19,13 +19,14 @@
 		<ValidationObserver>
 			<h4>{{$t("form-name")}}</h4>
 			<div class="form-group"><label>{{$t("alien-reg-num")}}</label>
-				<TextInput v-model="AlienRegNumber" v-bind:name="$t('alien-reg-num')" rules="required" />
+				<TextInput v-model="AlienRegNumber" v-bind:name="$t('alien-reg-num')" rules="required|aregnum" />
 			</div>
 			<div class="form-group"><label>{{$t("us-ssn")}}</label>
 				<TextInput v-model="USSSN" v-bind:name="$t('us-ssn')" type="text" rules="required|ssn" />
 			</div>
 			<div class="form-group"><label>{{$t("uscis-acctnum")}}</label>
-				<TextInput v-model="USCISAcctNum" v-bind:name="$t('uscis-acctnum')" type="text" rules="required" />
+				<TextInput v-model="USCISAcctNum" v-bind:name="$t('uscis-acctnum')" type="text"
+					rules="required|uscisnum" />
 			</div>
 		</ValidationObserver>
 	</div>
