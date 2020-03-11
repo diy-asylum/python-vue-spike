@@ -23,24 +23,16 @@
 			<b-collapse id="nav-collapse" is-nav>
 				<b-navbar-nav>
 
-					<b-nav-item>
-						<router-link class="text-light" to="/">
-							{{$t('home-link')}}
-						</router-link>
+					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/' }">
+						{{$t('home-link')}}
 					</b-nav-item>
-					<b-nav-item>
-						<router-link class="text-light" to="/about">
-							{{$t('about-link')}}
-						</router-link>
+					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/about' }">
+						{{$t('about-link')}}
 					</b-nav-item>
 
-					<b-nav-item>
-						<router-link class="text-light" to="/i589">
-							{{$t('i589-link')}}
-						</router-link>
+					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/i589' }">
+						{{$t('i589-link')}}
 					</b-nav-item>
-
-
 				</b-navbar-nav>
 
 				<!-- Right aligned nav items -->
