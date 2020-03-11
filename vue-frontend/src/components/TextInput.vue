@@ -1,6 +1,6 @@
 <template>
 	<ValidationProvider tag="div" :rules="rules" :name="name" :vid="vid" v-slot="{ errors }">
-		<input class="form-control" :type="type" v-model="currentValue">
+		<input class="form-control" :type="type" v-model="inputVal">
 		<span class="text-danger">{{ errors[0] }}</span>
 	</ValidationProvider>
 </template>
@@ -40,10 +40,14 @@
 		data: () => ({
 			currentValue: ''
 		}),
-		watch: {
-			currentValue(val) {
-				// allows us to use v-model on our input.
-				this.$emit('input', val);
+		computed: {
+			inputVal: {
+				get() {
+					return this.value;
+				},
+				set(val) {
+					this.$emit('input', val);
+				}
 			}
 		}
 	};
