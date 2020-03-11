@@ -63,7 +63,7 @@
 				...this.pageState
 			};
 			state.AlienRegNumber = value;
-			console.log(state);
+			//console.log(state);
 			i589State.setPageStateAction(state);
 		}
 
@@ -75,7 +75,7 @@
 				...this.pageState
 			};
 			state.USSSN = value;
-			console.log(state);
+			//console.log(state);
 			i589State.setPageStateAction(state);
 		}
 		get USCISAcctNum() {
