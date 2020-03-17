@@ -4,6 +4,12 @@
 			"help-title": "Help",
 			"instructions-title": "Instructions",
 			"select-help": "Click on a field for specific instructions."
+		},
+		"validations": {
+			"required": "{_field_} is required",
+			"ssn": "{_value_} is not a valid social security number",
+			"aregnum": "{_value_} is not a Alien Registration Number",
+			"uscisnum": "{_value_} is not a valid USCIS Number (type N/A if none)"
 		}
 	},
 	"es": {
@@ -11,6 +17,12 @@
 			"help-title": "Ayuda",
 			"instructions-title": "Instrucciones",
 			"select-help": "Haga clic en un campo para obtener instrucciones específicas."
+		},
+		"validations": {
+			"required": "{_field_} es obligatorio",
+			"ssn": "{_value_} no es un número de seguro social válido",
+			"aregnum": "{_value_} no es un número de registro de extranjero",
+			"uscisnum": "{_value_} no es un número válido de USCIS"
 		}
 	}
 }

@@ -1,15 +1,15 @@
-import Vue from 'vue';
-import App from './App.vue';
-import router from './router';
-import store, { i589State } from './store';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-import VueI18n from 'vue-i18n';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+import VueI18n from "vue-i18n";
+import { ValidationProvider, ValidationObserver } from "vee-validate";
 import TextInput from "@/components/TextInput.vue";
 import ValidateSetup from "@/data/validationSetup";
-import messages from "@/i18n/messages/messages.json";
+import i18n from "@/i18n/setup";
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
@@ -24,13 +24,6 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
 Vue.use(VueI18n);
-
-const i18n = new VueI18n({
-	locale: 'en',
-	messages: messages
-})
-
-i589State.setupPageStatesAction();
 
 new Vue({
 	i18n,
