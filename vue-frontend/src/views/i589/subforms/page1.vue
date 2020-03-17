@@ -6,9 +6,9 @@
 	"alien-reg-num": "Alien Registration Number(s)",
 	"alien-reg-num-help": "If you have multiple, enter them separated by commas. If you do not have any, please leave this blank",
 	"us-ssn": "U.S. Social Security Number",
-	"us-ssn-help": "Alien Registration Number(s)",
+	"us-ssn-help": "If you do not have one, please leave this blank",
 	"uscis-acctnum" : "USCIS Online Account Number",
-	"uscis-acctnum-help": "Alien Registration Number(s)"
+	"uscis-acctnum-help": "If you do not have one, please leave this blank"
 	},
 	"es": {
 	"instructions": "Números que ayudan a identificarlo y rastrear su solicitud",
@@ -27,14 +27,14 @@
 				<ValidationObserver>
 					<h4>{{$t("form-name")}}</h4>
 					<div class="form-group"><label>{{$t("alien-reg-num")}}</label>
-						<TextInput @focus="focused" v-model="AlienRegNumber" form="alien-reg-num" :name="$t('alien-reg-num')" rules="required|aregnum" />
+						<TextInput @focus="focused" v-model="AlienRegNumber" form="alien-reg-num" :name="$t('alien-reg-num')" rules="aregnum" />
 					</div>
 					<div class="form-group"><label>{{$t("us-ssn")}}</label>
-						<TextInput v-model="USSSN" :name="$t('us-ssn')" type="text" rules="required|ssn" />
+						<TextInput v-model="USSSN" form="us-ssn" :name="$t('us-ssn')" type="text" rules="ssn" />
 					</div>
 					<div class="form-group"><label>{{$t("uscis-acctnum")}}</label>
-						<TextInput v-model="USCISAcctNum" :name="$t('uscis-acctnum')" type="text"
-							rules="required|uscisnum" />
+						<TextInput v-model="USCISAcctNum" form="uscis-acctnum" :name="$t('uscis-acctnum')" type="text"
+							rules="uscisnum" />
 					</div>
 				</ValidationObserver>
 			</div>
@@ -58,11 +58,7 @@
 	import i589FormPage from "@/components/i589FormPage";
 
 	// Define the component in class-style
-	@Component({
-		components: {
-			HelpSideBar
-		}
-	})
+	@Component
 	export default class page1 extends i589FormPage {
 
 		get pageState() {

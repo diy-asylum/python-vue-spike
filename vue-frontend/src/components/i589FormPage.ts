@@ -5,8 +5,13 @@ import {
 import {
 	i589State
 } from "@/store/index";
+import HelpSideBar from "@/components/HelpSideBar.vue";
 
-@Component
+@Component({
+	components: {
+		HelpSideBar
+	}
+})
 export default class i589FormPage extends Vue {
 	helpField: string | null = null;
 
