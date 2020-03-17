@@ -17,17 +17,32 @@
 	}
 </i18n>
 <template>
-	<div>
-		<h4>{{$t("form-name")}}</h4>
-		<div class="form-group"><label>{{$t("last-name")}}</label><input v-model="lastName" type="text"
-				class="form-control" value="">
+	<div class="container" v-if="loaded">
+		<div class="row">
+			<div class="center-form col-md-8">
+				<ValidationObserver>
+					<h4>{{$t("form-name")}}</h4>
+					<div class="form-group"><label>{{$t("last-name")}}</label><input v-model="lastName" type="text"
+							class="form-control" value="">
+					</div>
+					<div class="form-group"><label>{{$t("first-name")}}</label><input v-model="firstName" type="text"
+							class="form-control" value=""></div>
+					<div class="form-group"><label>{{$t("middle-name")}}</label><input v-model="middleName" type="text"
+							class="form-control" value=""></div>
+					<div class="form-group"><label>{{$t("other-names")}}</label><input v-model="otherNames" type="text"
+							class="form-control" value=""></div>
+				</ValidationObserver>
+			</div>
+			<div class="instructions-panel col-md-4">
+				<h4>{{$t("shared.instructions-title")}}</h4>
+				<p>Numbers that help identify you and track your application</p>
+				<div>
+					<h5>{{$t("shared.help-title")}}</h5>
+					<p>Click on a question box to for specific instructions</p>
+				</div>
+			</div>
 		</div>
-		<div class="form-group"><label>{{$t("first-name")}}</label><input v-model="firstName" type="text"
-				class="form-control" value=""></div>
-		<div class="form-group"><label>{{$t("middle-name")}}</label><input v-model="middleName" type="text"
-				class="form-control" value=""></div>
-		<div class="form-group"><label>{{$t("other-names")}}</label><input v-model="otherNames" type="text"
-				class="form-control" value=""></div>
+
 	</div>
 </template>
 

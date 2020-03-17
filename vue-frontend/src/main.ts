@@ -9,6 +9,7 @@ import VueI18n from 'vue-i18n';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import TextInput from "@/components/TextInput.vue";
 import ValidateSetup from "@/data/validationSetup";
+import messages from "@/i18n/messages/messages.json";
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
@@ -25,7 +26,8 @@ Vue.use(IconsPlugin);
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-	locale: 'en'
+	locale: 'en',
+	messages: messages
 })
 
 i589State.setupPageStatesAction();

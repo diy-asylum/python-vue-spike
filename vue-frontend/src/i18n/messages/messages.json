@@ -1,122 +1,16 @@
-[
-  {
-    "id": "App.title",
-    "defaultMessage": "Title of the app",
-    "filepath": "src/App.js"
-  },
-  {
-    "id": "LanguageSwitcher.title",
-    "defaultMessage": "Choose language",
-    "filepath": "src/components/LanguageSwitcher.js"
-  },
-  {
-    "id": "Footer.footerText",
-    "defaultMessage": "DIY Asylum, LLC is not affiliated with any law firm, nor is it affiliated with any government agency. This tool is offered free of charge. The I-589 application for asylum can be downloaded at https://www.uscis.gov/i-589 . This website is not a lawyer, and does not offer legal advice.",
-    "filepath": "src/components/layout/Footer.js"
-  },
-  {
-    "id": "Header.headerText",
-    "defaultMessage": "Some header text would go here, if we had any. We might even do some kind of navbar, although to be honest, I'm not sure what we would nav.",
-    "filepath": "src/components/NavHeader/index.js"
-  },
-  {
-    "id": "FormEnd.header",
-    "defaultMessage": "Form! page 3 of 3",
-    "filepath": "src/pages/FormEnd.js"
-  },
-  {
-    "id": "FormEnd.pageDescription",
-    "defaultMessage": "This is the beginning of the form. If there was content, this would be where it started",
-    "filepath": "src/pages/FormEnd.js"
-  },
-  {
-    "id": "FormEnd.homeLink",
-    "defaultMessage": "Go back home",
-    "filepath": "src/pages/FormEnd.js"
-  },
-  {
-    "id": "FormEnd.formStartLink",
-    "defaultMessage": "Go back to the beginning of the form",
-    "filepath": "src/pages/FormEnd.js"
-  },
-  {
-    "id": "FormEnd.formMiddleLink",
-    "defaultMessage": "Go back to the middle of the form",
-    "filepath": "src/pages/FormEnd.js"
-  },
-  {
-    "id": "FormMiddle.header",
-    "defaultMessage": "Form! page 2 of 3",
-    "filepath": "src/pages/FormMiddle.js"
-  },
-  {
-    "id": "FormMiddle.pageDescription",
-    "defaultMessage": "This is the middle of the form. If there was content, some good stuff would go right here.",
-    "filepath": "src/pages/FormMiddle.js"
-  },
-  {
-    "id": "FormMiddle.homeLink",
-    "defaultMessage": "Go back home",
-    "filepath": "src/pages/FormMiddle.js"
-  },
-  {
-    "id": "FormMiddle.formStartLink",
-    "defaultMessage": "Go to the beginning of the form",
-    "filepath": "src/pages/FormMiddle.js"
-  },
-  {
-    "id": "FormMiddle.formEndLink",
-    "defaultMessage": "Go to the end of the form",
-    "filepath": "src/pages/FormMiddle.js"
-  },
-  {
-    "id": "FormStart.header",
-    "defaultMessage": "Form! page 1 of 3",
-    "filepath": "src/pages/FormStart/index.js"
-  },
-  {
-    "id": "FormStart.pageDescription",
-    "defaultMessage": "This is the beginning of the form. If there was content, this would be where it started",
-    "filepath": "src/pages/FormStart/index.js"
-  },
-  {
-    "id": "FormStart.homeLink",
-    "defaultMessage": "Go back home",
-    "filepath": "src/pages/FormStart/index.js"
-  },
-  {
-    "id": "FormStart.formMiddleLink",
-    "defaultMessage": "Go to the middle of the form",
-    "filepath": "src/pages/FormStart/index.js"
-  },
-  {
-    "id": "FormStart.formEndLink",
-    "defaultMessage": "Go to the end of the form",
-    "filepath": "src/pages/FormStart/index.js"
-  },
-  {
-    "id": "Home.header",
-    "defaultMessage": "Hello, international world!",
-    "filepath": "src/pages/Home.js"
-  },
-  {
-    "id": "Home.paragraph",
-    "defaultMessage": "Welcome to the form! I'm sure everything will be fine.",
-    "filepath": "src/pages/Home.js"
-  },
-  {
-    "id": "Home.formStartLink",
-    "defaultMessage": "Go to the beginning of the form",
-    "filepath": "src/pages/Home.js"
-  },
-  {
-    "id": "Home.formMiddleLink",
-    "defaultMessage": "Go to the middle of the form",
-    "filepath": "src/pages/Home.js"
-  },
-  {
-    "id": "Home.formEndLink",
-    "defaultMessage": "Go to the end of the form",
-    "filepath": "src/pages/Home.js"
-  }
-]
+{
+	"en": {
+		"shared": {
+			"help-title": "Help",
+			"instructions-title": "Instructions",
+			"select-help": "Click on a field for specific instructions."
+		}
+	},
+	"es": {
+		"shared": {
+			"help-title": "Ayuda",
+			"instructions-title": "Instrucciones",
+			"select-help": "Haga clic en un campo para obtener instrucciones específicas."
+		}
+	}
+}
