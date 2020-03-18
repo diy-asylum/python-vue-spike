@@ -19,7 +19,6 @@ export default class i589FormPage extends Vue {
 		this.helpField = (arg.target as HTMLElement).getAttribute("form");
 	}
 	get help(): string {
-		console.log(`${this.helpField ? this.helpField : "shared.select"}-help`);
 		return this.$t(`${this.helpField ? this.helpField : "shared.select"}-help`).toString();
 	}
 
