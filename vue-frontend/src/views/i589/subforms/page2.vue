@@ -32,20 +32,12 @@
 			<div class="center-form col-md-8">
 				<ValidationObserver>
 					<h4>{{$t("form-name")}}</h4>
-					<div class="form-group"><label>{{$t("last-name")}}</label>
-						<TextInput @focus="focused" v-model="LastName" form="last-name" :name="$t('last-name')"
-							rules="required" />
-					</div>
-					<div class="form-group"><label>{{$t("first-name")}}</label>
-						<TextInput @focus="focused" v-model="FirstName" form="first-name" :name="$t('first-name')"
-							rules="required" />
-					</div>
-					<div class="form-group"><label>{{$t("middle-name")}}</label>
-						<TextInput @focus="focused" v-model="MiddleName" form="middle-name" :name="$t('middle-name')" />
-					</div>
-					<div class="form-group"><label>{{$t("other-names")}}</label>
-						<TextInput @focus="focused" v-model="OtherNames" form="other-names" :name="$t('other-names')" />
-					</div>
+					<TextInput @focus="focused" v-model="LastName" form="last-name" :name="$t('last-name')"
+						rules="required" />
+					<TextInput @focus="focused" v-model="FirstName" form="first-name" :name="$t('first-name')"
+						rules="required" />
+					<TextInput @focus="focused" v-model="MiddleName" form="middle-name" :name="$t('middle-name')" />
+					<TextInput @focus="focused" v-model="OtherNames" form="other-names" :name="$t('other-names')" />
 				</ValidationObserver>
 			</div>
 			<HelpSideBar class="col-md-4" :help="help" :instructions="$t('instructions')"></HelpSideBar>
@@ -56,7 +48,6 @@
 
 <script lang="ts">
 	import {
-		Vue,
 		Component
 	} from 'vue-property-decorator'
 	import i589FormPage from "@/components/i589FormPage";

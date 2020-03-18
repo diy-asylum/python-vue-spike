@@ -16,7 +16,9 @@
 	"alien-reg-num": "Número (s) de registro de extranjero",
 	"alien-reg-num-help": "Si tiene múltiples, ingréselos separados por comas. Si no tiene ninguno, déjelo en blanco",
 	"us-ssn": "Número de Seguro Social EE.UU",
-	"uscis-acctnum": "Número de cuenta en línea de USCIS"
+		"us-ssn-help": "Si no tiene uno, déjelo en blanco",
+	"uscis-acctnum": "Número de cuenta en línea de USCIS",
+	"uscis-acctnum-help": "Si no tiene uno, déjelo en blanco"
 	}
 	}
 </i18n>
@@ -26,16 +28,10 @@
 			<div class="center-form col-md-8">
 				<ValidationObserver>
 					<h4>{{$t("form-name")}}</h4>
-					<div class="form-group"><label>{{$t("alien-reg-num")}}</label>
 						<TextInput @focus="focused" v-model="AlienRegNumber" form="alien-reg-num" :name="$t('alien-reg-num')" rules="aregnum" />
-					</div>
-					<div class="form-group"><label>{{$t("us-ssn")}}</label>
-						<TextInput v-model="USSSN" form="us-ssn" :name="$t('us-ssn')" type="text" rules="ssn" />
-					</div>
-					<div class="form-group"><label>{{$t("uscis-acctnum")}}</label>
-						<TextInput v-model="USCISAcctNum" form="uscis-acctnum" :name="$t('uscis-acctnum')" type="text"
+						<TextInput @focus="focused" v-model="USSSN" form="us-ssn" :name="$t('us-ssn')" type="text" rules="ssn" />
+						<TextInput @focus="focused" v-model="USCISAcctNum" form="uscis-acctnum" :name="$t('uscis-acctnum')" type="text"
 							rules="uscisnum" />
-					</div>
 				</ValidationObserver>
 			</div>
 			<HelpSideBar class="col-md-4" :help="help" :instructions="$t('instructions')"></HelpSideBar>
@@ -54,7 +50,6 @@
 	import {
 		Page1
 	} from "@/data/pageStates/i589/page1";
-	import HelpSideBar from "@/components/HelpSideBar.vue";
 	import i589FormPage from "@/components/i589FormPage";
 
 	// Define the component in class-style

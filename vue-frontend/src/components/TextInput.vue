@@ -1,8 +1,10 @@
 <template>
-	<ValidationProvider tag="div" :rules="rules" :vid="vid" v-slot="{ errors }">
-		<input class="form-control" :name="name" :form="form" v-on="inputListeners" :type="type" v-model="inputVal">
-		<span class="text-danger">{{ errors[0] }}</span>
-	</ValidationProvider>
+	<div class="form-group"><label>{{name}}</label>
+		<ValidationProvider tag="div" :rules="rules" :vid="vid" v-slot="{ errors }">
+			<input class="form-control" :name="name" :form="form" v-on="inputListeners" :type="type" v-model="inputVal">
+			<span class="text-danger">{{ errors[0] }}</span>
+		</ValidationProvider>
+	</div>
 </template>
 
 <script>
