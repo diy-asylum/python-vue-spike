@@ -33,7 +33,7 @@ class ImmigrationCourtStatus(Enum):
 
 class UsEntry():
     def __init__(self, date: str, place: str, status: str,
-                 expiration_date: Optional[date] = None):
+                 expiration_date: Optional[str] = None):
         self.date = date
         self.place = place
         self.status = status
@@ -46,8 +46,8 @@ class AddressFields():
                  city: str,
                  state: str,
                  country: str,
-                 start_date: date,
-                 end_date: date):
+                 start_date: str,
+                 end_date: str):
         self.house_number = house_number
         self.street = street
         self.city = city
@@ -213,7 +213,7 @@ class ChildFields():
                  last_name: str,
                  first_name: str,
                  middle_name: str,
-                 date_of_birth: date,
+                 date_of_birth: str,
                  city_birth: str,
                  country_birth: str,
                  nationality: str,

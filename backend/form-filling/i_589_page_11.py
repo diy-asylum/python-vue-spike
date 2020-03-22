@@ -16,7 +16,7 @@ class Page_11(Page):
     def __init__(self,
                  a_number: Optional[str],
                  name: str,
-                 date: date,
+                 date: str,
                  child_1: Optional[ChildFields],
                  child_2: Optional[ChildFields]
                  ):
@@ -31,7 +31,7 @@ class Page_11(Page):
                     "",
                     ""))
         fields.append(Field(
-                    date.strftime('%m/%d/%Y'),
+                    date,
                     (310,
                      695),
                     10,
@@ -112,8 +112,7 @@ class Page_11(Page):
                     "7"))
             fields.append(
                 Field(
-                    child_1.date_of_birth.strftime(
-                        '%m/%d/%Y'),
+                    child_1.date_of_birth,
                     (454,
                      532),
                     10,
@@ -166,8 +165,7 @@ class Page_11(Page):
                         "14"))
                 fields.append(
                     Field(
-                        child_1.last_entry.date.strftime(
-                            '%m/%d/%Y'),
+                        child_1.last_entry.date,
                         (197,
                          449),
                         10,
@@ -203,8 +201,7 @@ class Page_11(Page):
                         "18"))
                 fields.append(
                     Field(
-                        child_1.last_entry.expiration_date.strftime(
-                            '%m/%d/%Y'),
+                        child_1.last_entry.expiration_date,
                         (220,
                          414),
                         10,
@@ -321,8 +318,7 @@ class Page_11(Page):
                     "7"))
             fields.append(
                 Field(
-                    child_2.date_of_birth.strftime(
-                        '%m/%d/%Y'),
+                    child_2.date_of_birth,
                     (454,
                      299),
                     10,
@@ -375,8 +371,7 @@ class Page_11(Page):
                         "14"))
                 fields.append(
                     Field(
-                        child_2.last_entry.date.strftime(
-                            '%m/%d/%Y'),
+                        child_2.last_entry.date,
                         (197,
                          216),
                         10,
@@ -412,8 +407,7 @@ class Page_11(Page):
                         "18"))
                 fields.append(
                     Field(
-                        child_2.last_entry.expiration_date.strftime(
-                            '%m/%d/%Y'),
+                        child_2.last_entry.expiration_date,
                         (220,
                          181),
                         10,

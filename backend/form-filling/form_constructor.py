@@ -10,9 +10,13 @@ from i_589_page_9 import Page_9
 from i_589_page_10 import Page_10
 
 from data_types import *
+from data_conversion import *
+from child_supplement import construct_child_supplements
+from datetime import datetime
 
 def form_constructor(data):
     applicant_info = data['applicantInfo']
+    date = datetime.now().strftime("%m/%d/%y")
     residence = applicant_info['usResidence']
     mailing_address = applicant_info['usMailingAddress']
     travel_history = data['usTravelHistory']
@@ -72,7 +76,7 @@ def form_constructor(data):
             second_event,
             third_event)
     spouse_info = data['spouseInfo']
-    child_info = data['childInfo']
+    child_info = [child_data_to_fields(x) for x in data['childInfo']]
     spouse_last_entry = UsEntry(spouse_info['dateOfLastEntry'], spouse_info['placeOfLastEntry'], spouse_info['immigrationStatusWhenLastAdmitted'], spouse_info['statusExpirationDate'])
     if len(child_info) == 0:
         first_child = None
@@ -81,8 +85,7 @@ def form_constructor(data):
     else:
         num_children = len(child_info)
         has_children = True
-        child = child_info[0]
-        first_child = child_data_to_fields(child)
+        first_child = child_info[0]
     page_2 = Page_2(data['isMarried'],
                     spouse_info['alienRegistrationNumber'],
                     spouse_info['passportNumber'],
@@ -112,20 +115,20 @@ def form_constructor(data):
                     first_child
                     )
     if len(child_info) > 1:
-        child_2 = child_data_to_fields(child_info[1])
+        child_2 = child_info[1]
     else:
         child_2 = None
     if len(child_info) > 2:
-        child_3 = child_data_to_fields(child_info[2])
+        child_3 = child_info[2]
     else:
         child_3 = None
     if len(child_info) > 3:
-        child_4 = child_data_to_fields(child_info[3])
+        child_4 = child_info[3]
     else:
         child_4 = None
     page_3 = Page_3(child_2, child_3, child_4)
 
-    residences = data['residencesInLastFiveYears']
+    residences = [address_to_fields(x) for x in data['residencesInLastFiveYears']]
     if len(residences) > 0:
         res_1 = residences[0]
     else:
@@ -147,7 +150,7 @@ def form_constructor(data):
     else:
         res_5 = None
 
-    schools = data['educationInfo']
+    schools = [school_to_fields(x) for x in data['educationInfo']]
     if len(schools) > 0:
         school_1 = schools[0]
     else:
@@ -165,7 +168,7 @@ def form_constructor(data):
     else:
         school_4 = None
 
-    employers = data['employmentInfo']
+    employers = [employer_to_fields(x) for x in data['employmentInfo']]
     if len(employers) > 0:
         job_1 = employers[0]
     else:
@@ -179,7 +182,7 @@ def form_constructor(data):
     else:
         job_3 = None
 
-    siblings = data['siblingInfo']
+    siblings = [relative_to_fields(x) for x in data['siblingInfo']]
     if len(siblings) > 0:
         sibling_1 = siblings[0]
     else:
@@ -199,24 +202,24 @@ def form_constructor(data):
 
     page_4 = Page_4(address_to_fields(data['lastAddressBeforeUS']),
                     address_to_fields(data['lastAddressPersecuted']),
-                    address_to_fields(res_1),
-                    address_to_fields(res_2),
-                    address_to_fields(res_3),
-                    address_to_fields(res_4),
-                    address_to_fields(res_5),
-                    school_to_fields(school_1),
-                    school_to_fields(school_2),
-                    school_to_fields(school_3),
-                    school_to_fields(school_4),
-                    employer_to_fields(job_1),
-                    employer_to_fields(job_2),
-                    employer_to_fields(job_3),
+                    res_1,
+                    res_2,
+                    res_3,
+                    res_4,
+                    res_5,
+                    school_1,
+                    school_2,
+                    school_3,
+                    school_4,
+                    job_1,
+                    job_2,
+                    job_3,
                     relative_to_fields(data['motherInfo']),
                     relative_to_fields(data['fatherInfo']),
-                    relative_to_fields(sibling_1),
-                    relative_to_fields(sibling_2),
-                    relative_to_fields(sibling_3),
-                    relative_to_fields(sibling_4),
+                    sibling_1,
+                    sibling_2,
+                    sibling_3,
+                    sibling_4,
                     )
 
     page_5 = Page_5([AsylumReason[reason] for reason in data['whyApplying']],
@@ -253,72 +256,11 @@ def form_constructor(data):
                     )
     page_9 = Page_9()
     page_10 = Page_10()
-    pages = [page_1, page_2, page_3, page_4, page_5, page_6, page_7, page_8, page_9, page_10]
+
+    child_supplements = construct_child_supplements(child_info,
+                                                    applicant_info['firstName'] + ' ' + applicant_info['lastName'],
+                                                    applicant_info.get('alienRegistrationNumber'),
+                                                    date
+                                                    )
+    pages = [page_1, page_2, page_3, page_4, page_5, page_6, page_7, page_8, page_9, page_10] + child_supplements
     return pages
-
-def relative_to_fields(relative):
-    if relative is None:
-        return None
-    return RelativeFields(relative['fullName'],
-                          relative['cityOrTownOfBirth'],
-                          relative['countryOfBirth'],
-                          relative['currentLocation'],
-                          relative['isDeceased']
-                         )
-
-def employer_to_fields(employer):
-    if employer is None:
-        return None
-    return EmployerFields(employer['employerName'] + ", " + employer['employerAddress'],
-                          employer['applicantOccupation'],
-                          employer['fromDate'],
-                          employer['toDate']
-                         )
-
-def school_to_fields(school):
-    if school is None:
-        return None
-    return SchoolFields(school['schoolName'],
-                        school['typeOfSchool'],
-                        school['address'],
-                        school['fromDate'],
-                        school['toDate']
-                        )
-
-def address_to_fields(address):
-    if address is None:
-        return None
-    return AddressFields(address['streetNumber'],
-                         address['streetName'],
-                         address['cityOrTown'],
-                         address['departmentProvinceOrState'],
-                         address['country'],
-                         address['fromDate'],
-                         address['toDate']
-                         )
-
-def child_data_to_fields(child):
-    if child is None:
-        return None
-    child_last_entry = UsEntry(child['dateOfLastEntry'], child['placeOfLastEntry'], child['immigrationStatusWhenLastAdmitted'], child['statusExpirationDate'])
-    return ChildFields(child['alienRegistrationNumber'],
-                              child['passportNumber'],
-                              MaritalStatus[child['maritalStatus']],
-                              child['socialSecurityNumber'],
-                              child['lastName'],
-                              child['firstName'],
-                              child['middleName'],
-                              child['dateOfBirth'],
-                              child['cityOfBirth'],
-                              child['countryOfBirth'],
-                              child['nationality'],
-                              child['raceEthnicOrTribalGroup'],
-                              Gender[child['gender']],
-                              child['inUS'],
-                              child['location'],
-                              child_last_entry,
-                              child['i94Number'],
-                              child['currentImmigrationStatus'],
-                              child['isInImmigrationCourt'],
-                              child['includeInApplication']
-                             )
