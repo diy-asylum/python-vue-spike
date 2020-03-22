@@ -30,7 +30,7 @@
 						{{$t('about-link')}}
 					</b-nav-item>
 
-					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/i589' }">
+					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/i589/1' }">
 						{{$t('i589-link')}}
 					</b-nav-item>
 				</b-navbar-nav>

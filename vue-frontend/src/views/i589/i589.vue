@@ -34,17 +34,6 @@
 			<div class="col-lg-9">
 				<i589-form></i589-form>
 			</div>
-			<!-- <div class="center-form col-lg-6">
-				<i589-form></i589-form>
-			</div>
-			<div class="instructions-panel col-lg-3">
-				<h4>{{$t("instructions-title")}}</h4>
-				<p>Numbers that help identify you and track your application</p>
-				<div>
-					<h5>{{$t("help-title")}}</h5>
-					<p>Click on a question box to for specific instructions</p>
-				</div>
-			</div> -->
 		</div>
 	</div>
 </template>
@@ -63,6 +52,7 @@
 	import {
 		FormCompletion
 	} from "@/enums";
+	import router from "@/router";
 	// Define the component in class-style
 	@Component({
 		components: {
@@ -77,6 +67,7 @@
 
 		gotoSection(section: number) {
 			i589State.setPageNumber(section);
+			router.push(`/i589/${section}`);
 		}
 
 		isCurrentSection(pageNumber: number) {

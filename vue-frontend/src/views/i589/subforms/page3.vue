@@ -1,7 +1,7 @@
 <i18n>
 	{
 	"en": {
-			"instructions": "Your complete name",
+	"instructions": "Use the address where you are currently staying in the United States. This may be a government facility.",
 	"form-name": "Your Name",
 	"last-name": "Last Name",
 	"last-name-help": "Your complete last (family) name",
@@ -13,7 +13,7 @@
 	"other-names-help" : "Other Names"
 	},
 	"es": {
-			"instructions": "Tu nombre completo",
+	"instructions": "Use la dirección donde se encuentra actualmente en los Estados Unidos. Esto puede ser una instalación del gobierno.",
 	"form-name": "Tu Nombre",
 	"last-name": "Apellido",
 	"last-name-help": "Su apellido completo (familia)",
@@ -55,60 +55,29 @@
 		i589State
 	} from "@/store/index";
 	import {
-		Page2
-	} from '@/data/pageStates/i589/page2';
+		Page3
+	} from '@/data/pageStates/i589/page3';
 
 	// Define the component in class-style
 	@Component
-	export default class page2 extends i589FormPage {
+	export default class page3 extends i589FormPage {
 		get pageState() {
-			return i589State.pageStates.find(ps => ps.FormPage === 2) as Page2
+			return i589State.pageStates.find(ps => ps.FormPage === 3) as Page3
 		}
 
-		get LastName() {
-			return this.pageState.LastName;
+		get StreetNameNum() {
+			return this.pageState.StreetNameNum;
 		}
-		set LastName(value) {
+		set StreetNameNum(value) {
 			const state = {
 				...this.pageState
 			};
-			state.LastName = value;
+			state.StreetNameNum = value;
 			//console.log(state);
 			i589State.setPageStateAction(state);
 		}
 
-		get FirstName() {
-			return this.pageState.FirstName;
-		}
-		set FirstName(value) {
-			const state = {
-				...this.pageState
-			};
-			state.FirstName = value;
-			//console.log(state);
-			i589State.setPageStateAction(state);
-		}
-		get MiddleName() {
-			return this.pageState.MiddleName;
-		}
-		set MiddleName(value) {
-			const state = {
-				...this.pageState
-			};
-			state.MiddleName = value;
-			i589State.setPageStateAction(state);
-		}
 
-		get OtherNames() {
-			return this.pageState.OtherNames;
-		}
-		set OtherNames(value) {
-			const state = {
-				...this.pageState
-			};
-			state.OtherNames = value;
-			i589State.setPageStateAction(state);
-		}
 	}
 </script>
 

@@ -3,6 +3,9 @@ import VueRouter from "vue-router";
 import Home from "@/views/Home.vue";
 import i589 from "@/views/i589/i589.vue";
 import About from "@/views/About.vue";
+import page1 from "@/views/i589/subforms/page1.vue";
+import page2 from "@/views/i589/subforms/page2.vue";
+import page3 from "@/views/i589/subforms/page3.vue";
 
 Vue.use(VueRouter);
 
@@ -21,9 +24,14 @@ const routes = [
 		component: About
 	},
 	{
-		path: "/i589",
+		path: "/i589/",
 		name: "i589",
-		component: i589
+		component: i589,
+		children: [
+			{ path: '1', component: page1 },
+			{ path: '2', component: page2 },
+			{ path: '3', component: page3 },
+		]
 	},
 ]
 
