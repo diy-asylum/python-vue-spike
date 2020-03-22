@@ -1,0 +1,260 @@
+{
+  "applicantInfo": {
+    "lastName": "string",
+    "firstName": "string",
+    "middleName": "string",
+    "aliases": [
+      "string"
+    ],
+    "usResidence": {
+      "inCareOf": "string",
+      "streetName": "string",
+      "streetNumber": "string",
+      "apartmentNumber": "string",
+      "city": "string",
+      "state": "string",
+      "zipCode": "string",
+      "areaCode": "string",
+      "phoneNumber": "string"
+    },
+    "usMailingAddress": {
+      "inCareOf": "string",
+      "streetName": "string",
+      "streetNumber": "string",
+      "apartmentNumber": "string",
+      "city": "string",
+      "state": "string",
+      "zipCode": "string",
+      "areaCode": "string",
+      "phoneNumber": "string"
+    },
+    "gender": "MALE",
+    "maritalStatus": "SINGLE",
+    "dateOfBirth": "string",
+    "cityOfBirth": "string",
+    "countryOfBirth": "string",
+    "presentNationality": "string",
+    "nationalityAtBirth": "string",
+    "raceEthnicOrTribalGroup": "string",
+    "religion": "string",
+    "nativeLanguage": "string",
+    "fluentInEnglish": true,
+    "otherLanguages": [
+      "string"
+    ],
+    "alsoApplyingConventionAgainstTorture": true,
+    "alienRegistrationNumber": "string",
+    "socialSecurityNumber": "string",
+    "uscisAccountNumber": "string",
+    "immigrationCourtHistory": "NEVER",
+    "countryWhoLastIssuedPassport": "string",
+    "passportNumber": "string",
+    "travelDocumentNumber": "string",
+    "travelDocumentExpirationDate": "string"
+  },
+  "usTravelHistory": {
+    "travelEvents": [
+      {
+        "date": "string",
+        "place": "string",
+        "status": "string"
+      }
+    ],
+    "lastLeftHomeCountry": "string",
+    "i94Number": "string",
+    "dateStatusExpires": "string"
+  },
+  "isMarried": true,
+  "spouseInfo": {
+    "lastName": "string",
+    "firstName": "string",
+    "middleName": "string",
+    "aliases": [
+      "string"
+    ],
+    "dateOfBirth": "string",
+    "alienRegistrationNumber": "string",
+    "socialSecurityNumber": "string",
+    "passportNumber": "string",
+    "dateOfMarriage": "string",
+    "placeOfMarriage": "string",
+    "cityOfBirth": "string",
+    "countryOfBirth": "string",
+    "nationality": "string",
+    "raceEthnicOrTribalGroup": "string",
+    "gender": "MALE",
+    "inUS": true,
+    "locationInUS": "string",
+    "placeOfLastEntry": "string",
+    "dateOfLastEntry": "string",
+    "i94Number": "string",
+    "immigrationStatusWhenLastAdmitted": "string",
+    "currentImmigrationStatus": "string",
+    "statusExpirationDate": "string",
+    "isInImmigrationCourt": true,
+    "previousArrivalDate": "string",
+    "includeInApplication": true
+  },
+  "childInfo": [
+    {
+      "lastName": "string",
+      "firstName": "string",
+      "middleName": "string",
+      "dateOfBirth": "string",
+      "alienRegistrationNumber": "string",
+      "socialSecurityNumber": "string",
+      "passportNumber": "string",
+      "maritalStatus": "SINGLE",
+      "cityOfBirth": "string",
+      "countryOfBirth": "string",
+      "nationality": "string",
+      "raceEthnicOrTribalGroup": "string",
+      "gender": "MALE",
+      "inUS": true,
+      "location": "string",
+      "placeOfLastEntry": "string",
+      "dateOfLastEntry": "string",
+      "i94Number": "string",
+      "immigrationStatusWhenLastAdmitted": "string",
+      "currentImmigrationStatus": "string",
+      "statusExpirationDate": "string",
+      "isInImmigrationCourt": true,
+      "includeInApplication": true
+    }
+  ],
+  "lastAddressBeforeUS": {
+    "streetName": "string",
+    "streetNumber": "string",
+    "cityOrTown": "string",
+    "departmentProvinceOrState": "string",
+    "country": "string",
+    "fromDate": "string",
+    "toDate": "string"
+  },
+  "lastAddressPersecuted": {
+    "streetName": "string",
+    "streetNumber": "string",
+    "cityOrTown": "string",
+    "departmentProvinceOrState": "string",
+    "country": "string",
+    "fromDate": "string",
+    "toDate": "string"
+  },
+  "residencesInLastFiveYears": [
+    {
+      "streetName": "string",
+      "streetNumber": "string",
+      "cityOrTown": "string",
+      "departmentProvinceOrState": "string",
+      "country": "string",
+      "fromDate": "string",
+      "toDate": "string"
+    }
+  ],
+  "educationInfo": [
+    {
+      "schoolName": "string",
+      "typeOfSchool": "string",
+      "address": "string",
+      "fromDate": "string",
+      "toDate": "string"
+    }
+  ],
+  "employmentInfo": [
+    {
+      "employerName": "string",
+      "employerAddress": "string",
+      "applicantOccupation": "string",
+      "fromDate": "string",
+      "toDate": "string"
+    }
+  ],
+  "motherInfo": {
+    "fullName": "string",
+    "cityOrTownOfBirth": "string",
+    "countryOfBirth": "string",
+    "currentLocation": "string",
+    "isDeceased": true
+  },
+  "fatherInfo": {
+    "fullName": "string",
+    "cityOrTownOfBirth": "string",
+    "countryOfBirth": "string",
+    "currentLocation": "string",
+    "isDeceased": true
+  },
+  "siblingInfo": [
+    {
+      "fullName": "string",
+      "cityOrTownOfBirth": "string",
+      "countryOfBirth": "string",
+      "currentLocation": "string",
+      "isDeceased": true
+    }
+  ],
+  "whyApplying": [
+    "RACE"
+  ],
+  "experiencedHarm": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "fearsHarm": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "arrestedInOtherCountry": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "organizationInfo": {
+    "associatedWithOrganizations": {
+      "yesNoAnswer": "YES",
+      "explanation": "string"
+    },
+    "continueToParticipate": {
+      "yesNoAnswer": "YES",
+      "explanation": "string"
+    }
+  },
+  "afraidOfTorture": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "relativeAppliedForAsylum": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "otherCountryApplications": {
+    "travelThroughOtherCountry": "YES",
+    "applyOtherCountry": "YES",
+    "explanation": "string"
+  },
+  "causedHarm": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "returnCountry": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "applyAfterOneYear": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "crimeInUS": {
+    "yesNoAnswer": "YES",
+    "explanation": "string"
+  },
+  "relativeHelpPrepare": {
+    "didRelativeHelp": "YES",
+    "firstRelative": {
+      "name": "string",
+      "relationship": "string"
+    },
+    "secondRelative": {
+      "name": "string",
+      "relationship": "string"
+    }
+  }
+}

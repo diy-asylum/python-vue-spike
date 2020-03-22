@@ -34,7 +34,7 @@ class Page:
         self,
         fields: List[Field],
         filename: str):
-        self.fields=fields
+        self.fields = fields
         self.filename = filename
 
     def fill(self):
