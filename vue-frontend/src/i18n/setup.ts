@@ -7,7 +7,8 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
 	locale: 'en',
-	messages: messages
+	messages: messages,
+	silentFallbackWarn: true
 })
 
 i589State.setupPageStatesAction();

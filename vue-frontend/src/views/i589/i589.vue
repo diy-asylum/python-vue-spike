@@ -66,8 +66,13 @@
 		}
 
 		gotoSection(section: number) {
-			i589State.setPageNumber(section);
-			router.push(`/i589/${section}`);
+			if (section !== i589State.currentPageNumber)
+			{
+i589State.setPageNumber(section);
+router.push(`/i589/${section}`);
+			}
+
+			
 		}
 
 		isCurrentSection(pageNumber: number) {
