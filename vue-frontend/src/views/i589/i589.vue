@@ -18,12 +18,17 @@
 				<h4 class="ml-4">{{$t("progress-title")}}</h4>
 				<ol v-if="loaded">
 					<li @click="gotoSection(1)"
-						v-bind:class="{current: isCurrentSection(1), unfinished: isUnfinished(1)}">Registration Numbers
+						v-bind:class="{current: isCurrentSection(1), unfinished: isUnfinished(1)}">
+						Registration Numbers
 					</li>
 					<li @click="gotoSection(2)"
-						v-bind:class="{current: isCurrentSection(2), unfinished: isUnfinished(2)}">Your name
+						v-bind:class="{current: isCurrentSection(2), unfinished: isUnfinished(2)}">
+						Your name
 					</li>
-					<li @click="gotoSection(3)" class="unfinished">Residence in the U.S.</li>
+					<li @click="gotoSection(3)" v-bind:class="{current: isCurrentSection(3), unfinished: isUnfinished(3)}">
+						Residence in
+						the U.S.
+					</li>
 					<li @click="gotoSection(4)" class="unfinished">Mailing Address in the U.S.</li>
 					<li @click="gotoSection(5)" class="unfinished">Demographic Information</li>
 					<li @click="gotoSection(6)" class="unfinished">Immigration Status</li>

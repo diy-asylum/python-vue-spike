@@ -1,6 +1,6 @@
 import { Module, VuexModule, Mutation, Action } from "vuex-module-decorators";
 import FormPageState from "@/data/FormPageState";
-import { Page1, Page2 } from "@/data/pageStates/i589/pages";
+import { Page1, Page2, Page3, Page4 } from "@/data/pageStates/i589/pages";
 import { Forms } from "@/enums";
 import Vue from "vue";
 
@@ -19,6 +19,8 @@ export default class I589State extends VuexModule {
 	setupPageStates(): void {
 		this.pageStates.push(new Page1(Forms.i589, 1));
 		this.pageStates.push(new Page2(Forms.i589, 2));
+		this.pageStates.push(new Page3(Forms.i589, 3));
+		this.pageStates.push(new Page4(Forms.i589, 4));
 		this.loaded = true;
 	}
 

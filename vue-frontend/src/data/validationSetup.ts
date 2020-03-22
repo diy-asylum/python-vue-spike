@@ -39,6 +39,18 @@ export default new class ValidateSetup {
 				return ValidationRegex.USCISAcctNumRegex.test(value)
 			},
 		});
+
+		extend("phone", {
+			validate(value) {
+				return ValidationRegex.PhoneRegex.test(value)
+			},
+		});
+
+		extend("zip", {
+			validate(value) {
+				return ValidationRegex.ZipCodeRegex.test(value)
+			},
+		});
 	}
 }
 

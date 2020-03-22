@@ -9,7 +9,9 @@
 			"required": "{_field_} is required",
 			"ssn": "{_value_} is not a valid social security number",
 			"aregnum": "{_value_} is not a Alien Registration Number",
-			"uscisnum": "{_value_} is not a valid USCIS Number (type N/A if none)"
+			"uscisnum": "{_value_} is not a valid USCIS Number (type N/A if none)",
+			"zip": "{_value_} is not a valid zip code",
+			"phone": "{_value_} is not a valid phone number"
 		}
 	},
 	"es": {
@@ -22,7 +24,9 @@
 			"required": "{_field_} es obligatorio",
 			"ssn": "{_value_} no es un número de seguro social válido",
 			"aregnum": "{_value_} no es un número de registro de extranjero",
-			"uscisnum": "{_value_} no es un número válido de USCIS"
+			"uscisnum": "{_value_} no es un número válido de USCIS",
+			"zip": "{_value_} no es un código postal válido",
+			"phone": "{_value_} no es un número de teléfono válido"
 		}
 	}
 }

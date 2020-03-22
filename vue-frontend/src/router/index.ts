@@ -6,6 +6,7 @@ import About from "@/views/About.vue";
 import page1 from "@/views/i589/subforms/page1.vue";
 import page2 from "@/views/i589/subforms/page2.vue";
 import page3 from "@/views/i589/subforms/page3.vue";
+import page4 from "@/views/i589/subforms/page4.vue";
 
 Vue.use(VueRouter);
 
@@ -31,6 +32,7 @@ const routes = [
 			{ path: '1', component: page1 },
 			{ path: '2', component: page2 },
 			{ path: '3', component: page3 },
+			{ path: '4', component: page4 },
 		]
 	},
 ]
