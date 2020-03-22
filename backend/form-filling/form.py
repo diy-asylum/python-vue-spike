@@ -21,6 +21,12 @@ class Field:
         self.part = part
         self.question = question
 
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Field):
+            return self.value == other.value and self.location == other.location and self.container_length == other.container_length and self.overflow_to_supplement == other.overflow_to_supplement and self.part == other.part and self.question == other.question
+        return False
+
 class BooleanField(Field):
     def __init__(self, is_marked: bool, location: Tuple[int, int], part: str, question: str):
         if is_marked:
@@ -59,6 +65,12 @@ class Page:
         tmp = BytesIO()
         output.write(tmp)
         return tmp
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Page):
+            return self.fields == other.fields and self.filename == other.filename
+        return False
 
 
 class Form:

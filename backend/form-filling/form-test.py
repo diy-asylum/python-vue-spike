@@ -1,7 +1,16 @@
-from form import Field, Page, Form
+from form_constructor import form_constructor
+import json
+from form import Form
+import sys
+import os
 
-pages = [Page(fields=[Field("hhhihihihhihhi", (50,50),50, False, "","")], filename="resources/i-589-page-" + str(i)+ ".pdf") for i in range(1,13)]
-form = Form(pages)
-output = form.assemble()
+with open(os.path.dirname(sys.path[0]) + '/tests/resources/dummy_example.json', 'r') as f:
+    data = ''
+    for line in f:
+        data += line
+    data = json.loads(data)
+    data['childInfo'] = data['childInfo'] * 9
+
+output = Form(form_constructor(data)).assemble()
 with open("i-589-test.pdf",'wb') as out:
     output.write(out)

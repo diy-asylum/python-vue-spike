@@ -89,8 +89,7 @@ class Page_3(Page):
                     "7"))
             fields.append(
                 Field(
-                    child_1.date_of_birth.strftime(
-                        '%m/%d/%Y'),
+                    child_1.date_of_birth,
                     (454,
                      682),
                     10,
@@ -143,8 +142,7 @@ class Page_3(Page):
                         "14"))
                 fields.append(
                     Field(
-                        child_1.last_entry.date.strftime(
-                            '%m/%d/%Y'),
+                        child_1.last_entry.date,
                         (197,
                          599),
                         10,
@@ -180,8 +178,7 @@ class Page_3(Page):
                         "18"))
                 fields.append(
                     Field(
-                        child_1.last_entry.expiration_date.strftime(
-                            '%m/%d/%Y'),
+                        child_1.last_entry.expiration_date,
                         (220,
                          564),
                         10,
@@ -298,8 +295,7 @@ class Page_3(Page):
                     "7"))
             fields.append(
                 Field(
-                    child_2.date_of_birth.strftime(
-                        '%m/%d/%Y'),
+                    child_2.date_of_birth,
                     (454,
                      449),
                     10,
@@ -352,8 +348,7 @@ class Page_3(Page):
                         "14"))
                 fields.append(
                     Field(
-                        child_2.last_entry.date.strftime(
-                            '%m/%d/%Y'),
+                        child_2.last_entry.date,
                         (197,
                          366),
                         10,
@@ -389,8 +384,7 @@ class Page_3(Page):
                         "18"))
                 fields.append(
                     Field(
-                        child_2.last_entry.expiration_date.strftime(
-                            '%m/%d/%Y'),
+                        child_2.last_entry.expiration_date,
                         (220,
                          331),
                         10,
@@ -507,8 +501,7 @@ class Page_3(Page):
                     "7"))
             fields.append(
                 Field(
-                    child_3.date_of_birth.strftime(
-                        '%m/%d/%Y'),
+                    child_3.date_of_birth,
                     (454,
                      214),
                     10,
@@ -561,8 +554,7 @@ class Page_3(Page):
                         "14"))
                 fields.append(
                     Field(
-                        child_3.last_entry.date.strftime(
-                            '%m/%d/%Y'),
+                        child_3.last_entry.date,
                         (197,
                          131),
                         10,
@@ -598,8 +590,7 @@ class Page_3(Page):
                         "18"))
                 fields.append(
                     Field(
-                        child_3.last_entry.expiration_date.strftime(
-                            '%m/%d/%Y'),
+                        child_3.last_entry.expiration_date,
                         (220,
                          96),
                         10,
