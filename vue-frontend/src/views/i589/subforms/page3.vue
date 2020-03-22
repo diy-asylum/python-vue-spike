@@ -1,28 +1,16 @@
 <i18n>
 	{
 	"en": {
-	"instructions": "Use the address where you are currently staying in the United States. This may be a government facility.",
-	"form-name": "Your Name",
-	"last-name": "Last Name",
-	"last-name-help": "Your complete last (family) name",
-	"first-name": "First Name",
-	"first-name-help": "Your first (given) name",
-	"middle-name" : "Middle Name",
-	"middle-name-help" : "Your middle name",
-	"other-names" : "Other Names",
-	"other-names-help" : "Other Names"
+		"instructions": "Use the address where you are currently staying in the United States. This may be a government facility.",
+		"form-name": "Residence in the U.S.",
+		"street-namenum": "Street Number and Name",
+		"apt-num": ""
 	},
 	"es": {
-	"instructions": "Use la dirección donde se encuentra actualmente en los Estados Unidos. Esto puede ser una instalación del gobierno.",
-	"form-name": "Tu Nombre",
-	"last-name": "Apellido",
-	"last-name-help": "Su apellido completo (familia)",
-	"first-name": "Nombre de pila",
-	"first-name-help": "Tu nombre (dado)",
-	"middle-name": "Segundo nombre",
-	"middle-name-help" : "Tu segundo nombre",
-	"other-names": "Otros nombres",
-	"other-names-help" : "Incluya nombre de soltera y alias, si los hay. Separados por comas. Si no hay otros nombres,déjelo en blanco."
+		"instructions": "Use la dirección donde se encuentra actualmente en los Estados Unidos. Esto puede ser una instalación del gobierno.",
+		"form-name": "Residencia en los EE. UU.",
+		"street-namenum": "Número y nombre de la calle",
+		"apt-num": ""
 	}
 	}
 </i18n>
@@ -32,12 +20,11 @@
 			<div class="center-form col-md-8">
 				<ValidationObserver>
 					<h4>{{$t("form-name")}}</h4>
-					<TextInput @focus="focused" v-model="LastName" form="last-name" :name="$t('last-name')"
+					<TextInput @focus="focused" v-model="StreetNameNum" form="street-namenum" type="text"
 						rules="required" />
-					<TextInput @focus="focused" v-model="FirstName" form="first-name" :name="$t('first-name')"
-						rules="required" />
-					<TextInput @focus="focused" v-model="MiddleName" form="middle-name" :name="$t('middle-name')" />
-					<TextInput @focus="focused" v-model="OtherNames" form="other-names" :name="$t('other-names')" />
+							<TextInput @focus="focused" v-model="AptNum" form="street-namenum" type="text" rules="required" />
+								<TextInput @focus="focused" v-model="StreetNameNum" form="street-namenum" type="text" rules="required" />
+
 				</ValidationObserver>
 			</div>
 			<HelpSideBar class="col-md-4" :help="help" :instructions="$t('instructions')"></HelpSideBar>
@@ -65,18 +52,19 @@
 			return i589State.pageStates.find(ps => ps.FormPage === 3) as Page3
 		}
 
+		get AptNum() {
+			return this.pageState.AptNum;
+		}
+		set AptNum(value) {
+			this.SetStateVal(value, "AptNum", this.pageState );
+		}
+
 		get StreetNameNum() {
 			return this.pageState.StreetNameNum;
 		}
 		set StreetNameNum(value) {
-			const state = {
-				...this.pageState
-			};
-			state.StreetNameNum = value;
-			//console.log(state);
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "StreetNameNum", this.pageState );
 		}
-
 
 	}
 </script>

@@ -32,12 +32,12 @@
 			<div class="center-form col-md-8">
 				<ValidationObserver>
 					<h4>{{$t("form-name")}}</h4>
-					<TextInput @focus="focused" v-model="LastName" form="last-name" :name="$t('last-name')"
+					<TextInput @focus="focused" v-model="LastName" form="last-name" type="text"
 						rules="required" />
-					<TextInput @focus="focused" v-model="FirstName" form="first-name" :name="$t('first-name')"
+					<TextInput @focus="focused" v-model="FirstName" form="first-name" type="text"
 						rules="required" />
-					<TextInput @focus="focused" v-model="MiddleName" form="middle-name" :name="$t('middle-name')" />
-					<TextInput @focus="focused" v-model="OtherNames" form="other-names" :name="$t('other-names')" />
+					<TextInput @focus="focused" v-model="MiddleName" form="middle-name" type="text" />
+					<TextInput @focus="focused" v-model="OtherNames" form="other-names" type="text" />
 				</ValidationObserver>
 			</div>
 			<HelpSideBar class="col-md-4" :help="help" :instructions="$t('instructions')"></HelpSideBar>
@@ -69,45 +69,27 @@
 			return this.pageState.LastName;
 		}
 		set LastName(value) {
-			const state = {
-				...this.pageState
-			};
-			state.LastName = value;
-			//console.log(state);
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "LastName", this.pageState );
 		}
 
 		get FirstName() {
 			return this.pageState.FirstName;
 		}
 		set FirstName(value) {
-			const state = {
-				...this.pageState
-			};
-			state.FirstName = value;
-			//console.log(state);
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "FirstName", this.pageState );
 		}
 		get MiddleName() {
 			return this.pageState.MiddleName;
 		}
 		set MiddleName(value) {
-			const state = {
-				...this.pageState
-			};
-			state.MiddleName = value;
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "MiddleName", this.pageState );
 		}
 
 		get OtherNames() {
 			return this.pageState.OtherNames;
 		}
 		set OtherNames(value) {
-			const state = {
-				...this.pageState
-			};
-			state.OtherNames = value;
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "OtherNames", this.pageState );
 		}
 	}
 </script>

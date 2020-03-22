@@ -26,10 +26,6 @@
 				type: [String, Object],
 				default: ''
 			},
-			name: {
-				type: String,
-				default: ''
-			},
 			form: {
 				type: String,
 				default: ''
@@ -54,6 +50,12 @@
 				set(val) {
 					this.$emit('input', val);
 				}
+			},
+			name: {
+				get() {
+					return this.$parent.$parent.$t(this.form);
+				}
+				
 			},
 			inputListeners: function () {
 				/* eslint-disable */

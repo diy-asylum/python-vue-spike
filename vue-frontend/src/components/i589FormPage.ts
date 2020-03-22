@@ -25,5 +25,12 @@ export default class i589FormPage extends Vue {
 	get loaded() {
 		return i589State.loaded;
 	}
+	/* eslint-disable */
+	SetStateVal(value: any, name: string, pageState: any) {
+		const state = { ...pageState };
+		Reflect.set(state, name, value);
+		i589State.setPageStateAction(state);
+	}
+	/* eslint-enable */
 
 }

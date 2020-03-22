@@ -28,9 +28,9 @@
 			<div class="center-form col-md-8">
 				<ValidationObserver>
 					<h4>{{$t("form-name")}}</h4>
-						<TextInput @focus="focused" v-model="AlienRegNumber" form="alien-reg-num" :name="$t('alien-reg-num')" rules="aregnum" />
-						<TextInput @focus="focused" v-model="USSSN" form="us-ssn" :name="$t('us-ssn')" type="text" rules="ssn" />
-						<TextInput @focus="focused" v-model="USCISAcctNum" form="uscis-acctnum" :name="$t('uscis-acctnum')" type="text"
+						<TextInput @focus="focused" v-model="AlienRegNumber" form="alien-reg-num" type="text" rules="aregnum" />
+						<TextInput @focus="focused" v-model="USSSN" form="us-ssn" type="text" rules="ssn" />
+						<TextInput @focus="focused" v-model="USCISAcctNum" form="uscis-acctnum" type="text"
 							rules="uscisnum" />
 				</ValidationObserver>
 			</div>
@@ -64,34 +64,20 @@
 			return this.pageState.AlienRegNumber;
 		}
 		set AlienRegNumber(value) {
-			const state = {
-				...this.pageState
-			};
-			state.AlienRegNumber = value;
-			//console.log(state);
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "AlienRegNumber", this.pageState );
 		}
 
 		get USSSN() {
 			return this.pageState.USSSN;
 		}
 		set USSSN(value) {
-			const state = {
-				...this.pageState
-			};
-			state.USSSN = value;
-			//console.log(state);
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "USSSN", this.pageState );
 		}
 		get USCISAcctNum() {
 			return this.pageState.USCISAcctNum;
 		}
 		set USCISAcctNum(value) {
-			const state = {
-				...this.pageState
-			};
-			state.USCISAcctNum = value;
-			i589State.setPageStateAction(state);
+			this.SetStateVal(value, "USCISAcctNum", this.pageState );
 		}
 	}
 </script>
