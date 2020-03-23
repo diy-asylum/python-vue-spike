@@ -1,22 +1,27 @@
 inputVal<i18n>
 	{
 	"en": {
-	"form-name": "Registration Numbers",
-	"alien-reg-num": "Alien Registration Number(s)",
-	"us-ssn": "U.S. Social Security Number",
-	"uscis-acctnum" : "USCIS Online Account Number"
+		"form-name": "Finalize i589"
 	},
 	"es": {
-	"form-name": "Números de registro",
-	"alien-reg-num": "Número (s) de registro de extranjero",
-	"us-ssn": "Número de Seguro Social EE.UU",
-	"uscis-acctnum": "Número de cuenta en línea de USCIS"
+	"form-name": "Finalizar i589"
 	}
 	}
 </i18n>
 <template>
-	<div v-if="loaded">
-		<button>Generate PDF</button>
+	<div class="container" v-if="loaded">
+		<div class="row">
+			<div class="center-form col-md-8">
+				
+					<h4>{{$t("form-name")}}</h4>
+					<p>
+						Let's check over your form to make sure we have all the information we need.
+					</p>
+					<button class="btn btn-info">Generate PDF Form</button>
+			</div>
+			
+		</div>
+
 	</div>
 </template>
 

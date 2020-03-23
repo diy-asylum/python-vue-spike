@@ -11,29 +11,25 @@
 	}
 </i18n>
 <template>
-	<div class="container">
-		<h2>{{$t("form-name")}}</h2>
-		<div class="row top-pad data-entry">
+	<div class="container card">
+		<div class="row card-header">
+			<h2 >{{$t("form-name")}}</h2>
+		</div>
+		
+		<div class="row top-pad data-entry card-body">
 			<div class="progress-panel col-lg-3">
 				<h4 class="ml-4">{{$t("progress-title")}}</h4>
 				<ol v-if="loaded">
-					<li @click="gotoSection(1)"
-						v-bind:class="{current: isCurrentSection(1), unfinished: isUnfinished(1)}">
-						Registration Numbers
-					</li>
-					<li @click="gotoSection(2)"
-						v-bind:class="{current: isCurrentSection(2), unfinished: isUnfinished(2)}">
-						Your name
-					</li>
-					<li @click="gotoSection(3)" v-bind:class="{current: isCurrentSection(3), unfinished: isUnfinished(3)}">
-						Residence in
-						the U.S.
-					</li>
-					<li @click="gotoSection(4)" class="unfinished">Mailing Address in the U.S.</li>
-					<li @click="gotoSection(5)" class="unfinished">Demographic Information</li>
+					<NavSection :section="1">Registration Numbers</NavSection>
+					<NavSection :section="2">Your Name</NavSection>
+					<NavSection :section="3">Residence in the U.S.</NavSection>
+					<NavSection :section="4">Mailing Address in the U.S.</NavSection>
+					<NavSection :section="-1">Finalize</NavSection>
+
+					<!--<li @click="gotoSection(5)" class="unfinished">Demographic Information</li>
 					<li @click="gotoSection(6)" class="unfinished">Immigration Status</li>
 					<li @click="gotoSection(7)" class="unfinished">Travel Documents</li>
-					<li @click="gotoSection(8)" class="unfinished">Language</li>
+					<li @click="gotoSection(8)" class="unfinished">Language</li> -->
 				</ol>
 			</div>
 			<div class="col-lg-9">
@@ -54,14 +50,13 @@
 	import {
 		i589State
 	} from "@/store/index";
-	import {
-		FormCompletion
-	} from "@/enums";
-	import router from "@/router";
+	import NavSection from "@/components/NavSection.vue";
+
 	// Define the component in class-style
 	@Component({
 		components: {
-			'i589-form': formI589
+			'i589-form': formI589,
+			'NavSection': NavSection
 		}
 	})
 	export default class i589 extends Vue {
@@ -70,20 +65,7 @@
 			return i589State.loaded;
 		}
 
-		gotoSection(section: number) {
-			if (section !== i589State.currentPageNumber) {
-				i589State.setPageNumber(section);
-				router.push(`/i589/${section}`);
-			}
-		}
-
-		isCurrentSection(pageNumber: number) {
-			return pageNumber === i589State.currentPageNumber;
-		}
-
-		isUnfinished(pageNumber: number) {
-			return i589State.pageStates[pageNumber - 1].Completion !== FormCompletion.Completed;
-		}
+		
 	}
 </script>
 

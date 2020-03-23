@@ -1,7 +1,7 @@
 <template>
 	<form v-on:submit.prevent>
 		<router-view></router-view>
-		<div class="btn-group" role="group">
+		<div v-if="currentPage !== -1" class="btn-group ml-3" role="group">
 			<button class="btn btn-secondary" @click="previousClick">Previous</button>
 			<button class="btn btn-primary" @click="nextClick">Next</button>
 		</div>
@@ -19,7 +19,7 @@
 	} from "@/store/index";
 	import router from "@/router";
 
-	const maxPages = 2;
+	const maxPages = 4;
 
 	// Define the component in class-style
 	@Component
@@ -33,6 +33,10 @@
 				const newPage = this.currentPage + 1;
 				i589State.setPageNumberAction(newPage);
 				router.push(`/i589/${newPage}`);
+			}
+			else{
+				i589State.setPageNumberAction(-1);
+				router.push(`/i589/finalize`);
 			}
 		}
 

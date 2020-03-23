@@ -54,7 +54,7 @@
 			</b-collapse>
 		</b-navbar>
 		<router-view />
-		<footer class="container">
+		<footer class="container mt-2">
 			<p>&copy; DIY-Asylum {{new Date().getFullYear()}}</p>
 		</footer>
 	</div>
