@@ -12,11 +12,13 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/pdf; charset="utf-8"')
         self.set_header('Content-Disposition', 'attachment; filename="i-589-filled.pdf"')
         data = tornado.escape.json_decode(self.request.body)
-        pages = form_constructor(data)
+        pages, num_copies = form_constructor(data)
         form = Form(pages)
         output = form.assemble()
         tmp = BytesIO()
-        output.write(tmp)
+        for i in range(num_copies):
+            output.write(tmp)
+        tmp.seek(0)
         self.write(tmp.getvalue())
         self.finish()
 

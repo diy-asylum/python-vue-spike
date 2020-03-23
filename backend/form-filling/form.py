@@ -24,7 +24,12 @@ class Field:
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Field):
-            return self.value == other.value and self.location == other.location and self.container_length == other.container_length and self.overflow_to_supplement == other.overflow_to_supplement and self.part == other.part and self.question == other.question
+            return (self.value == other.value and
+            self.location == other.location and
+            self.container_length == other.container_length and
+            self.overflow_to_supplement == other.overflow_to_supplement and
+            self.part == other.part and
+            self.question == other.question)
         return False
 
 class BooleanField(Field):

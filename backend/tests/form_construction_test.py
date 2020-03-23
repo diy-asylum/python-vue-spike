@@ -14,20 +14,23 @@ class TestFormConstruction(unittest.TestCase):
             self.data = json.loads(data)
 
     def test_basic_example(self):
-        output = form_constructor(self.data)
-        self.assertEqual(len(output), 10)
+        pages, num_copies = form_constructor(self.data)
+        self.assertEqual(len(pages), 10)
+        self.assertEqual(num_copies, 3 * 3)
 
     def test_child_supplement_even(self):
         data = self.data
         data['childInfo'] = data['childInfo'] * 10
-        output = form_constructor(data)
-        self.assertEqual(len(output), 13)
+        pages, num_copies = form_constructor(data)
+        self.assertEqual(len(pages), 13)
+        self.assertEqual(num_copies, 12 * 3)
 
     def test_child_supplement_odd(self):
         data = self.data
         data['childInfo'] = data['childInfo'] * 9
-        output = form_constructor(data)
-        self.assertEqual(len(output), 13)
+        pages, num_copies = form_constructor(data)
+        self.assertEqual(len(pages), 13)
+        self.assertEqual(num_copies, 11 * 3)
 
 if __name__ == '__main__':
     unittest.main()

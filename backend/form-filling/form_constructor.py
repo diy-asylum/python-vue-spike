@@ -22,6 +22,7 @@ def form_constructor(data):
     travel_history = data['usTravelHistory']
     travel_events = travel_history['travelEvents']
     most_recent_event = travel_events[0]
+
     if len(travel_events) > 1:
         second_event = UsEntry(travel_events[1]['date'], travel_events[1]['place'], travel_events[1]['status'])
     else:
@@ -86,6 +87,7 @@ def form_constructor(data):
         num_children = len(child_info)
         has_children = True
         first_child = child_info[0]
+
     page_2 = Page_2(data['isMarried'],
                     spouse_info['alienRegistrationNumber'],
                     spouse_info['passportNumber'],
@@ -263,4 +265,13 @@ def form_constructor(data):
                                                     date
                                                     )
     pages = [page_1, page_2, page_3, page_4, page_5, page_6, page_7, page_8, page_9, page_10] + child_supplements
-    return pages
+
+    num_copies = 1
+    if spouse_info['includeInApplication']:
+        num_copies += 1
+    for child in child_info:
+        if child.included_in_application:
+            num_copies += 1
+    num_copies = num_copies * 3
+
+    return pages, num_copies
