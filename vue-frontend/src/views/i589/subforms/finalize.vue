@@ -59,10 +59,10 @@ inputVal<i18n>
 
 			axios.post(`${Consts.ServerBase}fill-i589`, data)
 				.then(response => {
-					console.log("Submit success", response)
+					//console.log("Submit success", response)
 				})
 				.catch(err => {
-					console.error("Submit error", err);
+					//console.error("Submit error", err);
 				})
 				.finally(() => {
 					this.submitting = false;
