@@ -70,9 +70,9 @@ class Page_1(Page):
     ):
         fields = []
         fields.append(BooleanField(apply_cat, (76, 672), "", ""))
-        fields.append(Field(a_number, (40, 625), 10, False, "A.I.", "1"))
-        fields.append(Field(ssn, (237, 625), 10, False, "A.I.", "2"))
-        fields.append(Field(uscis_number, (388, 625), 10, False, "A.I.", "3"))
+        fields.append(Field(a_number, (40, 625), 10, False, "A.I.", "1", "NONE"))
+        fields.append(Field(ssn, (237, 625), 10, False, "A.I.", "2", "NONE"))
+        fields.append(Field(uscis_number, (388, 625), 10, False, "A.I.", "3", "NONE"))
         fields.append(Field(last_name, (40, 595), 10, False, "A.I.", "4"))
         fields.append(Field(first_name, (280, 595), 10, False, "A.I.", "5"))
         fields.append(Field(middle_name, (441, 595), 10, False, "A.I.", "6"))
@@ -111,8 +111,22 @@ class Page_1(Page):
         fields.append(Field(
             res_phone_number, (490, 487), 10, False, "A.I.", "8"))
         fields.append(Field(in_care_of, (40, 439), 10, False, "A.I.", "9"))
+        if (mail_area_code == res_area_code and
+        mail_phone_number == res_phone_number and
+        mail_city == res_city and
+        mail_state == res_state and
+        mail_zipcode == res_zipcode and
+        mail_apt_number == res_apt_number and
+        mail_st_number_and_name == res_st_number_and_name):
+            mail_area_code = ''
+            mail_phone_number = 'SAME'
+            mail_city = 'SAME'
+            mail_state = 'SAME'
+            mail_zipcode = 'SAME'
+            mail_apt_number = 'SAME'
+            mail_st_number_and_name = 'SAME'
         fields.append(
-            Field(mail_phone_number, (412, 439), 10, False, "A.I.", "9"))
+            Field(mail_area_code, (412, 439), 10, False, "A.I.", "9", ""))
         fields.append(Field(
             mail_phone_number, (447, 439), 10, False, "A.I.", "9"))
         fields.append(
@@ -251,27 +265,28 @@ class Page_1(Page):
                 10,
                 False,
                 "A.I.",
-                "20"))
-        if passport_number:
-            fields.append(
-                Field(
-                    passport_number,
-                    (323,
-                     145),
-                    10,
-                    False,
-                    "A.I.",
-                    "21"))
-        if travel_doc_number:
-            fields.append(
-                Field(
-                    travel_doc_number,
-                    (341,
-                     125),
-                    10,
-                    False,
-                    "A.I.",
-                    "21"))
+                "20",
+                "NO PASSPORT AVAILABLE"))
+        fields.append(
+            Field(
+                passport_number,
+                (323,
+                 145),
+                10,
+                False,
+                "A.I.",
+                "21",
+                "NONE"))
+        fields.append(
+            Field(
+                travel_doc_number,
+                (341,
+                 125),
+                10,
+                False,
+                "A.I.",
+                "21",
+                "NONE"))
         fields.append(Field(passport_expiration, (467, 125), 10, False, "A.I.", "22"))
         fields.append(
             Field(
@@ -294,5 +309,6 @@ class Page_1(Page):
                 10,
                 False,
                 "A.I.",
-                "25"))
+                "25",
+                "NONE"))
         Page.__init__(self, fields, "resources/i-589-page-1.pdf")

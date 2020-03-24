@@ -1,5 +1,5 @@
 import sys
-sys.path.append('form-filling')
+sys.path.append(sys.path[0] + '/backend/form-filling')
 from form_constructor import form_constructor
 import unittest
 import json

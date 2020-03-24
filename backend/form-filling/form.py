@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -7,14 +7,18 @@ from io import BytesIO
 
 class Field:
     def __init__(self,
-                 value: str,
+                 value: Optional[str],
                  location: Tuple[int,
                                  int],
                  container_length: int,
                  overflow_to_supplement: bool,
                  part: str,
-                 question: str):
-        self.value = value
+                 question: str,
+                 default_value: Optional[str] = 'N/A'):
+        if value is None or value == '':
+            self.value = default_value
+        else:
+            self.value = value
         self.location = location
         self.container_length = container_length
         self.overflow_to_supplement = overflow_to_supplement
@@ -33,7 +37,14 @@ class BooleanField(Field):
             value = "x"
         else:
             value = ""
-        Field.__init__(self, value=value, location=location, container_length=0, overflow_to_supplement=False, part=part, question=question)
+        Field.__init__(self,
+                       value=value,
+                       location=location,
+                       container_length=0,
+                       overflow_to_supplement=False,
+                       part=part,
+                       question=question,
+                       default_value='x')
 
 class Page:
     def __init__(

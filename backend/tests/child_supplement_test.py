@@ -1,4 +1,5 @@
 import sys
+sys.path.append(sys.path[0] + '/backend/form-filling')
 import unittest
 import json
 from child_supplement import construct_child_supplements
