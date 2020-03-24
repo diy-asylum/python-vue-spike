@@ -1,16 +1,19 @@
 import { Module, VuexModule, Mutation, Action } from "vuex-module-decorators";
 import FormPageState from "@/data/FormPageState";
-import { Page1, Page2, Page3, Page4 } from "@/data/pageStates/i589/pages";
-import { Forms } from "@/enums";
+import FormSubject from "@/data/FormSubject";
+import { FormSubjectEnum } from "@/enums";
 import Vue from "vue";
 
 @Module({ name: "i589State", stateFactory: true })
 export default class I589State extends VuexModule {
 	loaded = false;
-	pageStates = new Array<FormPageState>();
+	currentFormSubject = new FormSubject(FormSubjectEnum.Self);
 	currentPageNumber = 0;
 
-	applicantList = new Array<Array<FormPageState>>();
+	hasSpouse = false;
+	numChildren = 0;
+
+	formSubjectList = new Array<FormSubject>();
 
 	@Mutation
 	setPageNumber(pageNumber: number): void {
@@ -19,16 +22,13 @@ export default class I589State extends VuexModule {
 
 	@Mutation
 	setupPageStates(): void {
-		this.pageStates.push(new Page1(Forms.i589, 1));
-		this.pageStates.push(new Page2(Forms.i589, 2));
-		this.pageStates.push(new Page3(Forms.i589, 3));
-		this.pageStates.push(new Page4(Forms.i589, 4));
+		this.formSubjectList.push(this.currentFormSubject);
 		this.loaded = true;
 	}
 
 	@Mutation
 	setPageState(pageState: FormPageState): void {
-		Vue.set(this.pageStates, pageState.FormPage - 1, pageState);
+		Vue.set(this.currentFormSubject, pageState.FormPage - 1, pageState);
 	}
 
 	/**
@@ -40,9 +40,6 @@ export default class I589State extends VuexModule {
 		return pageNumber;
 	}
 
-	/**
-	 * setup initial page states
-	 */
 	@Action({ commit: "setupPageStates" })
 	setupPageStatesAction(): void {
 		return;

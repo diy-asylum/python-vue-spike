@@ -46,11 +46,6 @@ inputVal<i18n>
 	import {
 		i589State
 	} from "@/store/index";
-	import Consts from "@/data/consts";
-	import
-	I589DataGenerator
-	from "@/data/api/I589DataGenerator";
-	import axios from "axios";
 
 	// Define the component in class-style
 	@Component

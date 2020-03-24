@@ -8,7 +8,7 @@ export enum FormCompletion {
 	Completed = 2
 }
 
-export enum FormSubject {
+export enum FormSubjectEnum {
 	Self = 0,
 	Spouse = 1,
 	FirstChild = 2,

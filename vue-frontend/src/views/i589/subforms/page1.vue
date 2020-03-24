@@ -57,7 +57,7 @@
 	export default class page1 extends i589FormPage {
 
 		get pageState() {
-			return i589State.pageStates.find(ps => ps.FormPage === 1) as Page1
+			return i589State.currentFormSubject.Data.find(ps => ps.FormPage === 1) as Page1
 		}
 
 		get AlienRegNumber() {

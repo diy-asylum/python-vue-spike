@@ -62,7 +62,7 @@
 	@Component
 	export default class page2 extends i589FormPage {
 		get pageState() {
-			return i589State.pageStates.find(ps => ps.FormPage === 2) as Page2
+			return i589State.currentFormSubject.Data.find(ps => ps.FormPage === 2) as Page2
 		}
 
 		get LastName() {

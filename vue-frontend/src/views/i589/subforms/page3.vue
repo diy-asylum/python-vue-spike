@@ -72,7 +72,7 @@
 	@Component
 	export default class page3 extends i589FormPage {
 		get pageState() {
-			return i589State.pageStates.find(ps => ps.FormPage === 3) as Page3
+			return i589State.currentFormSubject.Data.find(ps => ps.FormPage === 3) as Page3
 		}
 
 		get AptNum() {

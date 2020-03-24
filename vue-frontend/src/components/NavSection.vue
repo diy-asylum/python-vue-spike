@@ -1,7 +1,7 @@
 <template>
-	<li @click="gotoSection()" v-bind:class="{current: isCurrentSection(), unfinished: isUnfinished()}">
+	<div @click="gotoSection()" class="subitem" v-bind:class="{current: isCurrentSection(), unfinished: isUnfinished()}">
 		<slot></slot>
-	</li>
+	</div>
 
 </template>
 
@@ -52,9 +52,9 @@
 		isUnfinished() {
 			if (this.loaded) {
 				if (this.section > 0) {
-					return i589State.pageStates[this.section - 1].Completion !== FormCompletion.Completed;
+					return i589State.currentFormSubject.Data[this.section - 1].Completion !== FormCompletion.Completed;
 				}
-				return true;
+				return false;
 
 			} else {
 				return false;
@@ -64,5 +64,8 @@
 </script>
 
 <style lang="scss" scoped>
-
+	.subitem {
+		padding-left: 1em;
+		cursor: pointer;
+	}
 </style>
