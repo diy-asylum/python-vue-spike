@@ -30,7 +30,7 @@
 						{{$t('about-link')}}
 					</b-nav-item>
 
-					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/i589/1' }">
+					<b-nav-item class="text-light" tag="router-link" :to="{ path: '/i589/start' }">
 						{{$t('i589-link')}}
 					</b-nav-item>
 				</b-navbar-nav>
@@ -97,7 +97,7 @@
 
 <style lang="scss">
 	#app {
-		font-family: Avenir, Helvetica, Arial, sans-serif;
+		font-family: 'Open Sans', sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 

@@ -8,6 +8,7 @@ import page2 from "@/views/i589/subforms/page2.vue";
 import page3 from "@/views/i589/subforms/page3.vue";
 import page4 from "@/views/i589/subforms/page4.vue";
 import finalize from "@/views/i589/subforms/finalize.vue";
+import start from "@/views/i589/subforms/start.vue";
 
 Vue.use(VueRouter);
 
@@ -35,6 +36,7 @@ const routes = [
 			{ path: '3', component: page3 },
 			{ path: '4', component: page4 },
 			{ path: 'finalize', component: finalize },
+			{ path: 'start', component: start },
 		]
 	},
 ]

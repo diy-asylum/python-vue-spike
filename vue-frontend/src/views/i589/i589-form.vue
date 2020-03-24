@@ -1,9 +1,12 @@
 <template>
 	<form v-on:submit.prevent>
 		<router-view></router-view>
-		<div v-if="currentPage !== -1" class="btn-group ml-3" role="group">
-			<button class="btn btn-secondary" @click="previousClick">Previous</button>
-			<button class="btn btn-primary" @click="nextClick">Next</button>
+		<div v-if="currentPage !== -1">
+			<hr>
+			<div class="btn-group ml-3" role="group">
+				<button class="btn btn-secondary" @click="previousClick">Previous</button>
+				<button class="btn btn-primary" @click="nextClick">Next</button>
+			</div>
 		</div>
 	</form>
 
@@ -33,8 +36,7 @@
 				const newPage = this.currentPage + 1;
 				i589State.setPageNumberAction(newPage);
 				router.push(`/i589/${newPage}`);
-			}
-			else{
+			} else {
 				i589State.setPageNumberAction(-1);
 				router.push(`/i589/finalize`);
 			}

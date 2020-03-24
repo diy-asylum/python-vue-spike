@@ -13,13 +13,14 @@
 <template>
 	<div class="container card">
 		<div class="row card-header">
-			<h2 >{{$t("form-name")}}</h2>
+			<h2 class="mb-0">{{$t("form-name")}}</h2>
 		</div>
 		
 		<div class="row top-pad data-entry card-body">
 			<div class="progress-panel col-lg-3">
 				<h4 class="ml-4">{{$t("progress-title")}}</h4>
 				<ol v-if="loaded">
+					<NavSection :section="0">Start</NavSection>
 					<NavSection :section="1">Registration Numbers</NavSection>
 					<NavSection :section="2">Your Name</NavSection>
 					<NavSection :section="3">Residence in the U.S.</NavSection>

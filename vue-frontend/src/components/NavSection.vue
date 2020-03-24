@@ -28,25 +28,30 @@
 		}
 
 		gotoSection() {
-			if (this.section === -1) {
+			if (this.section === i589State.currentPageNumber) {
+				return;
+			} else if (this.section === -1) {
 				i589State.setPageNumber(this.section);
 				router.push(`/i589/finalize`);
-			} else if (this.section !== i589State.currentPageNumber) {
+			} else if (this.section === 0) {
+				i589State.setPageNumber(this.section);
+				router.push("/i589/start");
+			} else {
 				i589State.setPageNumber(this.section);
 				router.push(`/i589/${this.section}`);
 			}
 		}
 
 		isCurrentSection() {
-			if (this.section && this.loaded) {
+			if (this.loaded) {
 				return this.section === i589State.currentPageNumber;
 			}
 			return false;
 		}
 
 		isUnfinished() {
-			if (this.section && this.loaded) {
-				if (this.section !== -1) {
+			if (this.loaded) {
+				if (this.section > 0) {
 					return i589State.pageStates[this.section - 1].Completion !== FormCompletion.Completed;
 				}
 				return true;

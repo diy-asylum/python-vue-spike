@@ -8,7 +8,9 @@ import Vue from "vue";
 export default class I589State extends VuexModule {
 	loaded = false;
 	pageStates = new Array<FormPageState>();
-	currentPageNumber = 1;
+	currentPageNumber = 0;
+
+	applicantList = new Array<Array<FormPageState>>();
 
 	@Mutation
 	setPageNumber(pageNumber: number): void {
