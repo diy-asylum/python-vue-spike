@@ -34,10 +34,10 @@
 						</div>
 						<b-collapse :id="'accordion-' + subject.SubjectTypeString" accordion="my-accordion" role="tabpanel">
 							<div>
-								<NavSection :section="1">Registration Numbers</NavSection>
-								<NavSection :section="2">Your Name</NavSection>
-								<NavSection :section="3">Residence in the U.S.</NavSection>
-								<NavSection :section="4">Mailing Address in the U.S.</NavSection>
+								<NavSection :subject="subject.Subject" :section="1">Registration Numbers</NavSection>
+								<NavSection :subject="subject.Subject" :section="2">Name</NavSection>
+								<NavSection :subject="subject.Subject" :section="3">Residence in the U.S.</NavSection>
+								<NavSection :subject="subject.Subject" :section="4">Mailing Address in the U.S.</NavSection>
 							</div>
 						</b-collapse>
 					</div>

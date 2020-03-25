@@ -25,6 +25,11 @@ export default class i589FormPage extends Vue {
 	get loaded() {
 		return i589State.loaded;
 	}
+
+	get subjectString() {
+		return i589State.currentFormSubject.SubjectTypeString;
+	}
+
 	/* eslint-disable */
 	SetStateVal(value: any, name: string, pageState: any) {
 		const state = { ...pageState };

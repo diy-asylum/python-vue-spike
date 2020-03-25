@@ -15,6 +15,8 @@ export default class I589State extends VuexModule {
 
 	formSubjectList = new Array<FormSubject>();
 
+	// Mutations
+
 	@Mutation
 	setPageNumber(pageNumber: number): void {
 		this.currentPageNumber = pageNumber;
@@ -32,13 +34,18 @@ export default class I589State extends VuexModule {
 	}
 
 	@Mutation
+	setActiveSubject(subject: FormSubjectEnum): void {
+		const newSubject = this.formSubjectList.find(s => s.Subject === subject);
+		if (newSubject) {
+			this.currentFormSubject = newSubject;
+		}
+	}
+
+	@Mutation
 	setFormChildren(subject: FormSubjectEnum): void {
 		const newNumChildren = subject - 2; // Convert from enum
 		const currentSubject = this.numChildren + 2;
 		const childrenDiff = newNumChildren - this.numChildren;
-
-
-		console.log(subject, this.numChildren);
 
 		// Add / remove children as necessary
 		if (childrenDiff === 0) {
@@ -83,12 +90,19 @@ export default class I589State extends VuexModule {
 		}
 	}
 
+	// Actions
+
+	@Action({ commit: "setActiveSubject" })
+	async setActiveSubjectAction(subject: FormSubjectEnum) {
+		return subject;
+	}
+
 	/**
 	 * set form page number
 	 * @param pageNumber
 	 */
 	@Action({ commit: "setPageNumber" })
-	setPageNumberAction(pageNumber: number): number {
+	setPageNumberAction(pageNumber: number) {
 		return pageNumber;
 	}
 
@@ -97,6 +111,10 @@ export default class I589State extends VuexModule {
 		return;
 	}
 
+	/**
+	 * Set amount of children
+	 * @param subject 
+	 */
 	@Action({ commit: "setFormChildren" })
 	setFormChildrenAction(subject: FormSubjectEnum) {
 		return subject;

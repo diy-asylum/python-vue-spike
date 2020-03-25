@@ -18,7 +18,7 @@ export default class FormSubject {
 	get SubjectTypeString() {
 		switch (this.Subject) {
 			case FormSubjectEnum.Self:
-				return `Self`;
+				return `Myself`;
 
 			case FormSubjectEnum.Spouse:
 				return `Spouse`

@@ -22,12 +22,19 @@
 	@Component
 	export default class NavSection extends Vue {
 		@Prop(Number) readonly section!: number;
+		@Prop(Number) readonly subject!: number;
 
 		get loaded() {
 			return i589State.loaded;
 		}
 
-		gotoSection() {
+		async gotoSection() {
+
+			if (this.subject !== i589State.currentFormSubject.Subject)
+			{
+				await i589State.setActiveSubjectAction(this.subject);
+			}
+
 			if (this.section === i589State.currentPageNumber) {
 				return;
 			} else if (this.section === -1) {
@@ -44,7 +51,7 @@
 
 		isCurrentSection() {
 			if (this.loaded) {
-				return this.section === i589State.currentPageNumber;
+				return this.section === i589State.currentPageNumber && this.subject === i589State.currentFormSubject.Subject;
 			}
 			return false;
 		}

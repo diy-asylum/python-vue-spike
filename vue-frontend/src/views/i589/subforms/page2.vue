@@ -2,7 +2,7 @@
 	{
 	"en": {
 			"instructions": "Your complete name",
-	"form-name": "Your Name",
+	"form-name": "Name for",
 	"last-name": "Last Name",
 	"last-name-help": "Your complete last (family) name",
 	"first-name": "First Name",
@@ -14,7 +14,7 @@
 	},
 	"es": {
 			"instructions": "Tu nombre completo",
-	"form-name": "Tu Nombre",
+	"form-name": "Nombre para",
 	"last-name": "Apellido",
 	"last-name-help": "Su apellido completo (familia)",
 	"first-name": "Nombre de pila",
@@ -31,7 +31,7 @@
 		<div class="row">
 			<div class="center-form col-md-8">
 				<ValidationObserver>
-					<h4>{{$t("form-name")}}</h4>
+					<h4>{{$t("form-name")}} {{subjectString}}</h4>
 					<TextInput @focus="focused" v-model="LastName" form="last-name" type="text"
 						rules="required" />
 					<TextInput @focus="focused" v-model="FirstName" form="first-name" type="text"
