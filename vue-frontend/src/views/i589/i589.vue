@@ -25,47 +25,14 @@
 					<NavSection class="anchor-section" :section="0">Start
 					</NavSection>
 				</div>
-
-
-
 				<div role="tablist">
-					<div no-body class="mb-1 border-0">
+					<div v-for="subject in FormSubjects" :key="subject.Subject" no-body class="mb-1 border-0">
 						<div header-tag="header" role="tab">
-							<div class="accordion-header" v-b-toggle.accordion-1><i class="fa fa-caret-right"></i>Self
+							<div class="accordion-header" v-b-toggle="'accordion-' + subject.SubjectTypeString"><i
+									class="fa fa-caret-right"></i>{{subject.SubjectTypeString}}
 							</div>
 						</div>
-						<b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
-							<div>
-								<NavSection :section="1">Registration Numbers</NavSection>
-								<NavSection :section="2">Your Name</NavSection>
-								<NavSection :section="3">Residence in the U.S.</NavSection>
-								<NavSection :section="4">Mailing Address in the U.S.</NavSection>
-							</div>
-						</b-collapse>
-					</div>
-
-					<div no-body class="mb-1 border-0">
-						<div header-tag="header" role="tab">
-							<div class="accordion-header" v-b-toggle.accordion-2><i class="fa fa-caret-right"></i>Spouse
-							</div>
-						</div>
-						<b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
-							<div>
-								<NavSection :section="1">Registration Numbers</NavSection>
-								<NavSection :section="2">Your Name</NavSection>
-								<NavSection :section="3">Residence in the U.S.</NavSection>
-								<NavSection :section="4">Mailing Address in the U.S.</NavSection>
-							</div>
-						</b-collapse>
-					</div>
-
-					<div no-body class="mb-1 border-0">
-						<div header-tag="header" role="tab">
-							<div class="accordion-header" v-b-toggle.accordion-3><i class="fa fa-caret-right"></i>First
-								Child
-							</div>
-						</div>
-						<b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
+						<b-collapse :id="'accordion-' + subject.SubjectTypeString" accordion="my-accordion" role="tabpanel">
 							<div>
 								<NavSection :section="1">Registration Numbers</NavSection>
 								<NavSection :section="2">Your Name</NavSection>
@@ -75,14 +42,6 @@
 						</b-collapse>
 					</div>
 				</div>
-
-				<!-- <ol class="mb-0" v-if="loaded">
-					<NavSection :section="1">Registration Numbers</NavSection>
-					<NavSection :section="2">Your Name</NavSection>
-					<NavSection :section="3">Residence in the U.S.</NavSection>
-					<NavSection :section="4">Mailing Address in the U.S.</NavSection>
-					
-				</ol> -->
 				<!--<li @click="gotoSection(5)" class="unfinished">Demographic Information</li>
 					<li @click="gotoSection(6)" class="unfinished">Immigration Status</li>
 					<li @click="gotoSection(7)" class="unfinished">Travel Documents</li>
@@ -126,6 +85,10 @@
 			return i589State.loaded;
 		}
 
+		get FormSubjects()
+		{
+			return i589State.formSubjectList;
+		}
 
 	}
 </script>

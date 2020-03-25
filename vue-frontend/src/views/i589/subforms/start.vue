@@ -46,13 +46,32 @@ inputVal<i18n>
 	import {
 		i589State
 	} from "@/store/index";
+import { FormSubjectEnum } from '@/enums';
 
 	// Define the component in class-style
 	@Component
 	export default class Start extends Vue {
 
-		numChildren = 0;
-		hasSpouse = false;
+		get numChildren () {
+			return i589State.numChildren;
+		}
+		set numChildren(value: number){
+			i589State.setFormChildrenAction(value + 2);
+		}
+		
+		get hasSpouse() {
+			return i589State.hasSpouse;
+		}
+		set hasSpouse(value: boolean)
+		{
+			if (value)
+			{
+				i589State.addFormSubjectAction(FormSubjectEnum.Spouse);
+			}
+			else{
+				i589State.removeFormSubjectAction(FormSubjectEnum.Spouse);
+			}
+		}
 
 		get loaded() {
 			return i589State.loaded;

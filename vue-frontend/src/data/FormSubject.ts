@@ -14,4 +14,29 @@ export default class FormSubject {
 		this.Data.push(new Page4(Forms.i589, 4));
 		this.Subject = subject;
 	}
+
+	get SubjectTypeString() {
+		switch (this.Subject) {
+			case FormSubjectEnum.Self:
+				return `Self`;
+
+			case FormSubjectEnum.Spouse:
+				return `Spouse`
+
+			case FormSubjectEnum.FirstChild:
+				return `First Child`;
+
+			case FormSubjectEnum.SecondChild:
+				return `Second Child`;
+
+			case FormSubjectEnum.ThirdChild:
+				return `Third Child`;
+
+			case FormSubjectEnum.FourthChild:
+				return `Fourth Child`;
+
+			default:
+				return "";
+		}
+	}
 }
