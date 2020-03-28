@@ -19,6 +19,7 @@ immigration_court_fields = {
             True, (70, 270), "A.I.", "18"), ImmigrationCourtStatus.PAST: BooleanField(
                 True, (280, 270), "A.I.", "18"), }
 
+
 class Page_1(Page):
     def __init__(
             self,
@@ -70,9 +71,27 @@ class Page_1(Page):
     ):
         fields = []
         fields.append(BooleanField(apply_cat, (76, 672), "", ""))
-        fields.append(Field(a_number, (40, 625), 10, False, "A.I.", "1", "NONE"))
+        fields.append(
+            Field(
+                a_number,
+                (40,
+                 625),
+                10,
+                False,
+                "A.I.",
+                "1",
+                "NONE"))
         fields.append(Field(ssn, (237, 625), 10, False, "A.I.", "2", "NONE"))
-        fields.append(Field(uscis_number, (388, 625), 10, False, "A.I.", "3", "NONE"))
+        fields.append(
+            Field(
+                uscis_number,
+                (388,
+                 625),
+                10,
+                False,
+                "A.I.",
+                "3",
+                "NONE"))
         fields.append(Field(last_name, (40, 595), 10, False, "A.I.", "4"))
         fields.append(Field(first_name, (280, 595), 10, False, "A.I.", "5"))
         fields.append(Field(middle_name, (441, 595), 10, False, "A.I.", "6"))
@@ -112,12 +131,12 @@ class Page_1(Page):
             res_phone_number, (490, 487), 10, False, "A.I.", "8"))
         fields.append(Field(in_care_of, (40, 439), 10, False, "A.I.", "9"))
         if (mail_area_code == res_area_code and
-        mail_phone_number == res_phone_number and
-        mail_city == res_city and
-        mail_state == res_state and
-        mail_zipcode == res_zipcode and
-        mail_apt_number == res_apt_number and
-        mail_st_number_and_name == res_st_number_and_name):
+            mail_phone_number == res_phone_number and
+            mail_city == res_city and
+            mail_state == res_state and
+            mail_zipcode == res_zipcode and
+            mail_apt_number == res_apt_number and
+                mail_st_number_and_name == res_st_number_and_name):
             mail_area_code = ''
             mail_phone_number = 'SAME'
             mail_city = 'SAME'
@@ -195,9 +214,25 @@ class Page_1(Page):
                 "16"))
         fields.append(Field(religion, (477, 299), 10, False, "A.I.", "17"))
         fields.append(immigration_court_fields[immigration_court_status])
-        fields.append(Field(last_left_country, (260, 240), 10, False, "A.I.", "19"))
+        fields.append(
+            Field(
+                last_left_country,
+                (260,
+                 240),
+                10,
+                False,
+                "A.I.",
+                "19"))
         fields.append(Field(i_94, (493, 240), 10, False, "A.I.", "19"))
-        fields.append(Field(most_recent_us_entry.date, (72, 200), 10, False, "A.I.", "19"))
+        fields.append(
+            Field(
+                most_recent_us_entry.date,
+                (72,
+                 200),
+                10,
+                False,
+                "A.I.",
+                "19"))
         fields.append(
             Field(
                 most_recent_us_entry.place,
@@ -216,47 +251,71 @@ class Page_1(Page):
                 False,
                 "A.I.",
                 "19"))
-        fields.append(Field(most_recent_us_entry.expiration_date, (493, 200), 10, False, "A.I.", "19"))
+        fields.append(Field(most_recent_us_entry.expiration_date,
+                            (493, 200), 10, False, "A.I.", "19"))
         if us_entry_2:
-            fields.append(Field(us_entry_2.date, (72, 182), 10, False, "A.I.", "19"))
-            fields.append(
-                Field(
-                    us_entry_2.place,
-                    (180,
-                     182),
-                    10,
-                    False,
-                    "A.I.",
-                    "19"))
-            fields.append(
-                Field(
-                    us_entry_2.status,
-                    (325,
-                     182),
-                    10,
-                    False,
-                    "A.I.",
-                    "19"))
+            entry_2_place = us_entry_2.place
+            entry_2_status = us_entry_2.status
+            entry_2_date = us_entry_2.date
+        else:
+            entry_2_place = None
+            entry_2_status = None
+            entry_2_date = None
+
+        fields.append(Field(entry_2_date, (72, 182), 10, False, "A.I.", "19"))
+        fields.append(
+            Field(
+                entry_2_place,
+                (180,
+                 182),
+                10,
+                False,
+                "A.I.",
+                "19"))
+        fields.append(
+            Field(
+                entry_2_status,
+                (325,
+                 182),
+                10,
+                False,
+                "A.I.",
+                "19"))
         if us_entry_3:
-            fields.append(Field(us_entry_3.date, (72, 164), 10, False, "A.I.", "19"))
-            fields.append(
-                Field(
-                    us_entry_3.place,
-                    (180,
-                     164),
-                    10,
-                    False,
-                    "A.I.",
-                    "19"))
-            fields.append(
-                Field(
-                    us_entry_3.status,
-                    (325,
-                     164),
-                    10,
-                    False,
-                    "A.I.",
-                    "19"))
+            entry_3_place = us_entry_3.place
+            entry_3_status = us_entry_3.status
+            entry_3_date = us_entry_3.date
+        else:
+            entry_3_place = None
+            entry_3_status = None
+            entry_3_date = None
+        fields.append(
+            Field(
+                entry_3_date,
+                (72,
+                 164),
+                10,
+                False,
+                "A.I.",
+                "19"))
+        fields.append(
+            Field(
+                entry_3_place,
+                (180,
+                 164),
+                10,
+                False,
+                "A.I.",
+                "19"))
+        fields.append(
+            Field(
+                entry_3_status,
+                (325,
+                 164),
+                10,
+                False,
+                "A.I.",
+                "19"))
         fields.append(
             Field(
                 passport_country,
@@ -287,7 +346,15 @@ class Page_1(Page):
                 "A.I.",
                 "21",
                 "NONE"))
-        fields.append(Field(passport_expiration, (467, 125), 10, False, "A.I.", "22"))
+        fields.append(
+            Field(
+                passport_expiration,
+                (467,
+                 125),
+                10,
+                False,
+                "A.I.",
+                "22"))
         fields.append(
             Field(
                 native_language,
