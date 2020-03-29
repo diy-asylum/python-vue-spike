@@ -34,7 +34,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "1"))
+                "1",
+                "NONE"))
         fields.append(
             Field(
                 child_1.passport_number,
@@ -43,7 +44,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "2"))
+                "2",
+                "NONE"))
         if child_1.marital_status is not None:
             fields.append(
                 Field(
@@ -72,7 +74,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "4"))
+                "4",
+                "NONE"))
         fields.append(
             Field(
                 child_1.last_name,
@@ -267,7 +270,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "1"))
+                "1",
+                "NONE"))
         fields.append(
             Field(
                 child_2.passport_number,
@@ -276,7 +280,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "2"))
+                "2",
+                "NONE"))
         if child_2.marital_status is not None:
             fields.append(
                 Field(
@@ -305,7 +310,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "4"))
+                "4",
+                "NONE"))
         fields.append(
             Field(
                 child_2.last_name,
@@ -500,7 +506,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "1"))
+                "1",
+                "NONE"))
         fields.append(
             Field(
                 child_3.passport_number,
@@ -509,7 +516,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "2"))
+                "2",
+                "NONE"))
         if child_3.marital_status is not None:
             fields.append(
                 Field(
@@ -538,7 +546,8 @@ class Page_3(Page):
                 10,
                 False,
                 "A.II.",
-                "4"))
+                "4",
+                "NONE"))
         fields.append(
             Field(
                 child_3.last_name,

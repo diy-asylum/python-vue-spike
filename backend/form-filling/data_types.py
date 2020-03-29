@@ -249,10 +249,10 @@ class ChildFields():
         self.in_immigration_court = in_immigration_court
         self. included_in_application = included_in_application
 
-default_child = ChildFields(None,
+default_child = ChildFields("N/A",
+                          "N/A",
                           None,
-                          None,
-                          None,
+                          "N/A",
                           None,
                           None,
                           None,
