@@ -254,68 +254,61 @@ class Page_1(Page):
         fields.append(Field(most_recent_us_entry.expiration_date,
                             (493, 200), 10, False, "A.I.", "19"))
         if us_entry_2:
-            entry_2_place = us_entry_2.place
-            entry_2_status = us_entry_2.status
-            entry_2_date = us_entry_2.date
-        else:
-            entry_2_place = None
-            entry_2_status = None
-            entry_2_date = None
-
-        fields.append(Field(entry_2_date, (72, 182), 10, False, "A.I.", "19"))
-        fields.append(
-            Field(
-                entry_2_place,
-                (180,
-                 182),
-                10,
-                False,
-                "A.I.",
-                "19"))
-        fields.append(
-            Field(
-                entry_2_status,
-                (325,
-                 182),
-                10,
-                False,
-                "A.I.",
-                "19"))
+            fields.append(
+                Field(
+                    entry_2_date,
+                    (72,
+                     182),
+                    10,
+                    False,
+                    "A.I.",
+                    "19"))
+            fields.append(
+                Field(
+                    entry_2_place,
+                    (180,
+                     182),
+                    10,
+                    False,
+                    "A.I.",
+                    "19"))
+            fields.append(
+                Field(
+                    entry_2_status,
+                    (325,
+                     182),
+                    10,
+                    False,
+                    "A.I.",
+                    "19"))
         if us_entry_3:
-            entry_3_place = us_entry_3.place
-            entry_3_status = us_entry_3.status
-            entry_3_date = us_entry_3.date
-        else:
-            entry_3_place = None
-            entry_3_status = None
-            entry_3_date = None
-        fields.append(
-            Field(
-                entry_3_date,
-                (72,
-                 164),
-                10,
-                False,
-                "A.I.",
-                "19"))
-        fields.append(
-            Field(
-                entry_3_place,
-                (180,
-                 164),
-                10,
-                False,
-                "A.I.",
-                "19"))
-        fields.append(
-            Field(
-                entry_3_status,
-                (325,
-                 164),
-                10,
-                False,
-                "A.I.",
-                "19"))
+            fields.append(
+                Field(
+                    entry_3_date,
+                    (72,
+                     164),
+                    10,
+                    False,
+                    "A.I.",
+                    "19"))
+            fields.append(
+                Field(
+                    entry_3_place,
+                    (180,
+                     164),
+                    10,
+                    False,
+                    "A.I.",
+                    "19"))
+            fields.append(
+                Field(
+                    entry_3_status,
+                    (325,
+                     164),
+                    10,
+                    False,
+                    "A.I.",
+                    "19"))
         fields.append(
             Field(
                 passport_country,
