@@ -166,6 +166,7 @@ class Page_3(Page):
                  636),
                 "A.II.",
                 "13"))
+            child_1.included_in_application = False
         if child_1.last_entry is None:
             child_1.last_entry = default_entry
         fields.append(
@@ -402,6 +403,7 @@ class Page_3(Page):
                  403),
                 "A.II.",
                 "13"))
+            child_2.included_in_application = False
         if child_2.last_entry is None:
             child_2.last_entry = default_entry
         fields.append(
@@ -638,6 +640,7 @@ class Page_3(Page):
                  168),
                 "A.II.",
                 "13"))
+            child_3.included_in_application = False
         if child_3.last_entry is None:
             child_3.last_entry = default_entry
 

@@ -247,7 +247,7 @@ class ChildFields():
         self.i_94 = i_94
         self.current_status = current_status
         self.in_immigration_court = in_immigration_court
-        self. included_in_application = included_in_application
+        self.included_in_application = included_in_application
 
 default_child = ChildFields("N/A",
                           "N/A",

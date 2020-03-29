@@ -440,6 +440,7 @@ class Page_2(Page):
                  234),
                 "A.II.",
                 "13"))
+            child_1.included_in_application = False
         if child_1.last_entry is None:
             child_1.last_entry = default_entry
         fields.append(
