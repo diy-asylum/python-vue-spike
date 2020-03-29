@@ -39,6 +39,8 @@ class UsEntry():
         self.status = status
         self.expiration_date = expiration_date
 
+default_entry = UsEntry(None, None, None, None)
+
 class AddressFields():
     def __init__(self,
                  house_number: str,
@@ -245,4 +247,26 @@ class ChildFields():
         self.i_94 = i_94
         self.current_status = current_status
         self.in_immigration_court = in_immigration_court
-        self. included_in_application = included_in_application
+        self.included_in_application = included_in_application
+
+default_child = ChildFields("N/A",
+                          "N/A",
+                          None,
+                          "N/A",
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None,
+                          None
+                         )

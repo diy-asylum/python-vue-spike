@@ -48,7 +48,7 @@ def form_constructor(data):
             mailing_address['inCareOf'],
             mailing_address['areaCode'],
             mailing_address['phoneNumber'],
-            mailing_address['streetNumber'] + mailing_address['streetName'],
+            mailing_address['streetNumber'] + " " + mailing_address['streetName'],
             mailing_address['apartmentNumber'],
             mailing_address['city'],
             mailing_address['state'],
@@ -77,7 +77,11 @@ def form_constructor(data):
             third_event)
     spouse_info = data['spouseInfo']
     child_info = [child_data_to_fields(x) for x in data['childInfo']]
-    spouse_last_entry = UsEntry(spouse_info['dateOfLastEntry'], spouse_info['placeOfLastEntry'], spouse_info['immigrationStatusWhenLastAdmitted'], spouse_info['statusExpirationDate'])
+    if spouse_info is None:
+        spouse_last_entry = default_entry
+        spouse_info = {}
+    else:
+        spouse_last_entry = UsEntry(spouse_info['dateOfLastEntry'], spouse_info['placeOfLastEntry'], spouse_info['immigrationStatusWhenLastAdmitted'], spouse_info['statusExpirationDate'])
     if len(child_info) == 0:
         first_child = None
         num_children = None
@@ -87,29 +91,29 @@ def form_constructor(data):
         has_children = True
         first_child = child_info[0]
     page_2 = Page_2(data['isMarried'],
-                    spouse_info['alienRegistrationNumber'],
-                    spouse_info['passportNumber'],
-                    spouse_info['dateOfBirth'],
-                    spouse_info['socialSecurityNumber'],
-                    spouse_info['lastName'],
-                    spouse_info['firstName'],
-                    spouse_info['middleName'],
-                    spouse_info['aliases'],
-                    spouse_info['dateOfMarriage'],
-                    spouse_info['placeOfMarriage'],
-                    spouse_info['cityOfBirth'],
-                    spouse_info['countryOfBirth'],
-                    spouse_info['nationality'],
-                    spouse_info['raceEthnicOrTribalGroup'],
-                    Gender[spouse_info['gender']],
-                    spouse_info['inUS'],
-                    spouse_info['locationInUS'],
+                    spouse_info.get('alienRegistrationNumber'),
+                    spouse_info.get('passportNumber'),
+                    spouse_info.get('dateOfBirth'),
+                    spouse_info.get('socialSecurityNumber'),
+                    spouse_info.get('lastName'),
+                    spouse_info.get('firstName'),
+                    spouse_info.get('middleName'),
+                    spouse_info.get('aliases', []),
+                    spouse_info.get('dateOfMarriage'),
+                    spouse_info.get('placeOfMarriage'),
+                    spouse_info.get('cityOfBirth'),
+                    spouse_info.get('countryOfBirth'),
+                    spouse_info.get('nationality'),
+                    spouse_info.get('raceEthnicOrTribalGroup'),
+                    Gender[spouse_info['gender']] if ('gender' in spouse_info and spouse_info['gender'] is not None) else None,
+                    spouse_info.get('inUS'),
+                    spouse_info.get('locationInUS'),
                     spouse_last_entry,
-                    spouse_info['i94Number'],
-                    spouse_info['currentImmigrationStatus'],
-                    spouse_info['isInImmigrationCourt'],
-                    spouse_info['previousArrivalDate'],
-                    spouse_info['includeInApplication'],
+                    spouse_info.get('i94Number'),
+                    spouse_info.get('currentImmigrationStatus'),
+                    spouse_info.get('isInImmigrationCourt'),
+                    spouse_info.get('previousArrivalDate'),
+                    spouse_info.get('includeInApplication'),
                     has_children,
                     num_children,
                     first_child
