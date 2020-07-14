@@ -14,9 +14,8 @@ from data_conversion import *
 from child_supplement import construct_child_supplements
 from datetime import datetime
 
-def form_constructor(data):
+def construct_page_1(data):
     applicant_info = data['applicantInfo']
-    date = datetime.now().strftime("%m/%d/%y")
     residence = applicant_info['usResidence']
     mailing_address = applicant_info['usMailingAddress']
     travel_history = data['usTravelHistory']
@@ -30,7 +29,7 @@ def form_constructor(data):
         third_event = UsEntry(travel_events[2]['date'], travel_events[2]['place'], travel_events[2]['status'])
     else:
         third_event = None
-    page_1 = Page_1(applicant_info['alsoApplyingConventionAgainstTorture'],
+    return Page_1(applicant_info['alsoApplyingConventionAgainstTorture'],
             applicant_info['alienRegistrationNumber'],
             applicant_info['socialSecurityNumber'],
             applicant_info['uscisAccountNumber'],
@@ -75,6 +74,10 @@ def form_constructor(data):
             applicant_info['travelDocumentNumber'],
             second_event,
             third_event)
+
+def form_constructor(data):
+    date = datetime.now().strftime("%m/%d/%y")
+    page_1 = construct_page_1(data)
     spouse_info = data['spouseInfo']
     child_info = [child_data_to_fields(x) for x in data['childInfo']]
     if spouse_info is None:
@@ -261,6 +264,7 @@ def form_constructor(data):
     page_9 = Page_9()
     page_10 = Page_10()
 
+    applicant_info = data['applicantInfo']
     child_supplements = construct_child_supplements(child_info,
                                                     applicant_info['firstName'] + ' ' + applicant_info['lastName'],
                                                     applicant_info.get('alienRegistrationNumber'),

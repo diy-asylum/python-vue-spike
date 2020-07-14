@@ -9,8 +9,7 @@ with open(os.path.dirname(sys.path[0]) + '/tests/resources/dummy_example.json', 
     for line in f:
         data += line
     data = json.loads(data)
-    data['applicantInfo']['countryWhoLastIssuedPassport'] = None
-    data['childInfo'] = []
+    data['childInfo'] = data['childInfo'] * 2
 
 output = Form(form_constructor(data)).assemble()
 with open("i-589-test.pdf",'wb') as out:
