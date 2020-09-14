@@ -5144,9 +5144,9 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Main$Model = F6(
-	function (key, url, page, title, device, menuSelected) {
-		return {device: device, key: key, menuSelected: menuSelected, page: page, title: title, url: url};
+var $author$project$Main$Model = F5(
+	function (key, url, page, title, device) {
+		return {device: device, key: key, page: page, title: title, url: url};
 	});
 var $mdgriffith$elm_ui$Element$BigDesktop = {$: 'BigDesktop'};
 var $mdgriffith$elm_ui$Element$Desktop = {$: 'Desktop'};
@@ -5215,14 +5215,13 @@ var $author$project$Main$init = F3(
 	function (flags, url, key) {
 		var page = $author$project$Main$pathMatch(url.path);
 		return _Utils_Tuple2(
-			A6(
+			A5(
 				$author$project$Main$Model,
 				key,
 				url,
 				page,
 				$author$project$Main$pageToTitle(page),
-				$mdgriffith$elm_ui$Element$classifyDevice(flags),
-				false),
+				$mdgriffith$elm_ui$Element$classifyDevice(flags)),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -5655,7 +5654,6 @@ var $author$project$Main$subscriptions = function (model) {
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Ports$description = _Platform_outgoingPort('description', $elm$json$Json$Encode$string);
 var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$pageToDescription = function (page) {
 	var description = function () {
 		switch (page.$) {
@@ -5744,25 +5742,18 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							menuSelected: false,
 							page: page,
 							title: $author$project$Main$pageToTitle(page),
 							url: url
 						}),
 					$author$project$Ports$description(
 						$author$project$Main$pageToDescription(page)));
-			case 'DeviceClassified':
+			default:
 				var device = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{device: device}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{menuSelected: !model.menuSelected}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6085,6 +6076,7 @@ var $elm$core$Basics$composeL = F3(
 		return g(
 			f(x));
 	});
+var $elm$core$Basics$not = _Basics_not;
 var $elm$core$List$all = F2(
 	function (isOkay, list) {
 		return !A2(
@@ -8530,7 +8522,7 @@ var $author$project$Main$gridStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(
 		[
 			A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
-			A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 4fr 1fr')
+			A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 3fr 1fr')
 		]));
 var $rtfeldman$elm_css$Css$minHeight = $rtfeldman$elm_css$Css$prop1('min-height');
 var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
@@ -8609,6 +8601,90 @@ var $author$project$Main$footer = A2(
 					$rtfeldman$elm_css$Html$Styled$text('© 2020 DIY Asylum LLC')
 				]))
 		]));
+var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
+var $rtfeldman$elm_css$Css$VhUnits = {$: 'VhUnits'};
+var $rtfeldman$elm_css$Css$vh = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VhUnits, 'vh');
+var $author$project$Main$i589View = function (model) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$author$project$Main$gridStyles,
+						$author$project$Main$standardStyles,
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+						$rtfeldman$elm_css$Css$minHeight(
+						$rtfeldman$elm_css$Css$vh(95)),
+						$rtfeldman$elm_css$Css$color($author$project$Main$dark)
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								A2($rtfeldman$elm_css$Css$property, 'grid-column', '1')
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$rtfeldman$elm_css$Html$Styled$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('Progress')
+							]))
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								A2($rtfeldman$elm_css$Css$property, 'grid-column', '2')
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$rtfeldman$elm_css$Html$Styled$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('Form Entry')
+							]))
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								A2($rtfeldman$elm_css$Css$property, 'grid-column', '3')
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$rtfeldman$elm_css$Html$Styled$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('Help')
+							]))
+					]))
+			]));
+};
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
 var $author$project$Main$accent = $rtfeldman$elm_css$Css$hex('4F7CAC');
 var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
@@ -8652,13 +8728,11 @@ var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 };
 var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
 var $rtfeldman$elm_css$Css$start = $rtfeldman$elm_css$Css$prop1('start');
-var $rtfeldman$elm_css$Css$VhUnits = {$: 'VhUnits'};
-var $rtfeldman$elm_css$Css$vh = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VhUnits, 'vh');
 var $author$project$Main$navContainerStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(
 		[
 			$rtfeldman$elm_css$Css$minHeight(
-			$rtfeldman$elm_css$Css$em(2.5)),
+			$rtfeldman$elm_css$Css$vh(5)),
 			$rtfeldman$elm_css$Css$maxHeight(
 			$rtfeldman$elm_css$Css$vh(5)),
 			$rtfeldman$elm_css$Css$padding(
@@ -8679,9 +8753,7 @@ var $author$project$Main$webNav = A2(
 					$author$project$Main$gridStyles,
 					$author$project$Main$standardStyles,
 					$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$accent),
-					$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-					$rtfeldman$elm_css$Css$padding(
-					$rtfeldman$elm_css$Css$px(10))
+					$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
 				]))
 		]),
 	_List_fromArray(
@@ -8762,7 +8834,11 @@ var $author$project$Main$webView = function (model) {
 					[$author$project$Main$webNav, $author$project$Main$footer]);
 			case 'I589':
 				return _List_fromArray(
-					[$author$project$Main$webNav, $author$project$Main$footer]);
+					[
+						$author$project$Main$webNav,
+						$author$project$Main$i589View(model),
+						$author$project$Main$footer
+					]);
 			case 'AboutUs':
 				return _List_fromArray(
 					[$author$project$Main$webNav, $author$project$Main$footer]);

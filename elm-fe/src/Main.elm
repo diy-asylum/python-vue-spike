@@ -1,15 +1,17 @@
 module Main exposing (Model, Msg(..), main, subscriptions, update, view)
 
-import Browser 
+import Browser
+import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
+import Css exposing (..)
+import DataTypes exposing (..)
 import Element exposing (Device)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css, href, src)
+import Html.Styled.Events exposing (..)
 import Ports
 import Url
-import Html.Styled exposing (..)
-import Html.Styled.Events exposing (..)
-import Html.Styled.Attributes exposing (css, src, href)
-import Css exposing (..)
-import Browser.Events exposing (onResize)
+
 
 
 -- MAIN
@@ -45,7 +47,6 @@ type alias Model =
     , page : Page
     , title : String
     , device : Device
-    , menuSelected : Bool
     }
 
 
@@ -56,7 +57,7 @@ pathMatch path =
             case path of
                 "/" ->
                     Home
-                
+
                 "/src/Main.elm" ->
                     Home
 
@@ -65,7 +66,7 @@ pathMatch path =
 
                 "/contact" ->
                     Contact
-                
+
                 "/about" ->
                     AboutUs
 
@@ -74,10 +75,12 @@ pathMatch path =
     in
     page
 
+
 type alias Flags =
     { width : Int
     , height : Int
     }
+
 
 init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
@@ -85,7 +88,7 @@ init flags url key =
         page =
             pathMatch url.path
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) False, Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags), Cmd.none )
 
 
 
@@ -96,7 +99,6 @@ type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | DeviceClassified Device
-    | MenuToggled
 
 
 pageToTitle : Page -> String
@@ -138,7 +140,7 @@ pageToDescription page =
 
                 AboutUs ->
                     "Learn about the team at DIY Asylum."
-                    
+
                 Contact ->
                     "DIY Asylum helps you to complete you I-589 asylum application. Please contact us to learn more."
     in
@@ -161,15 +163,12 @@ update msg model =
                 page =
                     pathMatch url.path
             in
-            ( { model | url = url, page = page, title = pageToTitle page, menuSelected = False }
+            ( { model | url = url, page = page, title = pageToTitle page }
             , Ports.description (pageToDescription page)
             )
-        
+
         DeviceClassified device ->
-            ({model | device = device}, Cmd.none)
-        
-        MenuToggled ->
-            ({model | menuSelected = not model.menuSelected}, Cmd.none)
+            ( { model | device = device }, Cmd.none )
 
 
 
@@ -183,91 +182,130 @@ subscriptions model =
             DeviceClassified (Element.classifyDevice { width = width, height = height })
 
 
+
 -- COLOR PALETTE
+
+
 dark : Color
-dark = 
+dark =
     hex "162521"
 
+
 background : Color
-background = 
+background =
     hex "C0E0DE"
 
+
 accent : Color
-accent = 
+accent =
     hex "4F7CAC"
 
+
 bold : Color
-bold = 
+bold =
     hex "FF1654"
 
-neutral : Color 
-neutral = 
+
+neutral : Color
+neutral =
     hex "3C474B"
+
+
 
 -- VIEW
 
 
-view : Model -> Browser.Document Msg 
-view model = 
+view : Model -> Browser.Document Msg
+view model =
     let
-        html = webView model
+        html =
+            webView model
     in
-    
     { title = model.title, body = List.map toUnstyled html }
 
+
+
 -- WEB VIEW
-webView : Model -> List(Html Msg)
-webView model = 
+
+
+webView : Model -> List (Html Msg)
+webView model =
     let
-        content = case model.page of
-            Home -> 
-                [webNav, footer]
-            I589 -> 
-                [webNav, footer]
-            AboutUs ->
-                [webNav, footer]
-            Contact ->
-                [webNav, footer]
-            Error -> 
-                [webNav, footer]
+        content =
+            case model.page of
+                Home ->
+                    [ webNav, footer ]
+
+                I589 ->
+                    [ webNav, i589View model, footer ]
+
+                AboutUs ->
+                    [ webNav, footer ]
+
+                Contact ->
+                    [ webNav, footer ]
+
+                Error ->
+                    [ webNav, footer ]
     in
-        content
+    content
+
+
+i589View : Model -> Html Msg
+i589View model =
+    div [ css [ gridStyles, standardStyles, alignItems center, backgroundColor background, minHeight (vh 95), color dark ] ]
+        [ div [ css [ property "grid-column" "1" ] ]
+            [ h1 [] [ text "Progress" ]
+            ]
+        , div [ css [ property "grid-column" "2" ] ]
+            [ h1 [] [ text "Form Entry" ]
+            ]
+        , div [ css [ property "grid-column" "3" ] ]
+            [ h1 [] [ text "Help" ]
+            ]
+        ]
+
 
 webNav : Html msg
 webNav =
-    div [css [gridStyles, standardStyles, backgroundColor accent, alignItems center, padding (px 10)]]
-    [ 
-        div[css[navContainerStyles]]
-        [
-            a [href "/", css[linkStyles]][text "DIY Asylum"],
-            a [href "/i589", css[linkStyles, marginLeft auto]][text "Get Started"],
-            a [href "/about", css[linkStyles]][text "About Us"],
-            a [href "/contact", css[linkStyles]][text "Contact Us"]
-    ]]
-
-footer : Html msg 
-footer = 
-    div [css[gridStyles, standardStyles, alignItems center, backgroundColor dark, color background, minHeight (Css.em 2.5), padding (px 10)]] 
-    [
-        div [css [property "grid-column" "2"]] 
-        [
-            text "© 2020 DIY Asylum LLC"
+    div [ css [ gridStyles, standardStyles, backgroundColor accent, alignItems center ] ]
+        [ div [ css [ navContainerStyles ] ]
+            [ a [ href "/", css [ linkStyles ] ] [ text "DIY Asylum" ]
+            , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text "Get Started" ]
+            , a [ href "/about", css [ linkStyles ] ] [ text "About Us" ]
+            , a [ href "/contact", css [ linkStyles ] ] [ text "Contact Us" ]
+            ]
         ]
-    ]
-    
+
+
+footer : Html msg
+footer =
+    div [ css [ gridStyles, standardStyles, alignItems center, backgroundColor dark, color background, minHeight (Css.em 2.5), padding (px 10) ] ]
+        [ div [ css [ property "grid-column" "2" ] ]
+            [ text "© 2020 DIY Asylum LLC"
+            ]
+        ]
+
+
+
 -- STYLES
+
+
 standardStyles : Style
-standardStyles = 
-    batch [fontSize (vmin 2.15), fontFamilies ["Lato", "sans-serif"], color dark ]
+standardStyles =
+    batch [ fontSize (vmin 2.15), fontFamilies [ "Lato", "sans-serif" ], color dark ]
+
 
 gridStyles : Style
-gridStyles = 
-    batch [property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr"]
+gridStyles =
+    batch [ property "display" "grid", property "grid-template-columns" "1fr 3fr 1fr" ]
+
 
 linkStyles : Style
-linkStyles = 
-    batch [standardStyles, color dark, textDecoration none, padding (px 10)]
+linkStyles =
+    batch [ standardStyles, color dark, textDecoration none, padding (px 10) ]
 
-navContainerStyles : Style 
+
+navContainerStyles : Style
 navContainerStyles =
-    batch [minHeight (Css.em 2.5), maxHeight (vh 5), padding (Css.em 0.1), property "grid-column" "2", color dark, displayFlex, alignItems center, justifyContent start]
+    batch [ minHeight (vh 5), maxHeight (vh 5), padding (Css.em 0.1), property "grid-column" "2", color dark, displayFlex, alignItems center, justifyContent start ]

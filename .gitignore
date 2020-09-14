@@ -1,3 +1,4 @@
 ops/aws-terraform/.terraform/*
 ops/aws-terraform/*.tfstate
 ops/aws-terraform/*.tfstate.backup
+elm-fe/elm-stuff/*
