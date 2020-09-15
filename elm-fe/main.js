@@ -4313,6 +4313,359 @@ function _Browser_load(url)
 
 
 
+// SEND REQUEST
+
+var _Http_toTask = F3(function(router, toTask, request)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		function done(response) {
+			callback(toTask(request.expect.a(response)));
+		}
+
+		var xhr = new XMLHttpRequest();
+		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
+		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.expect.b, xhr)); });
+		$elm$core$Maybe$isJust(request.tracker) && _Http_track(router, xhr, request.tracker.a);
+
+		try {
+			xhr.open(request.method, request.url, true);
+		} catch (e) {
+			return done($elm$http$Http$BadUrl_(request.url));
+		}
+
+		_Http_configureRequest(xhr, request);
+
+		request.body.a && xhr.setRequestHeader('Content-Type', request.body.a);
+		xhr.send(request.body.b);
+
+		return function() { xhr.c = true; xhr.abort(); };
+	});
+});
+
+
+// CONFIGURE
+
+function _Http_configureRequest(xhr, request)
+{
+	for (var headers = request.headers; headers.b; headers = headers.b) // WHILE_CONS
+	{
+		xhr.setRequestHeader(headers.a.a, headers.a.b);
+	}
+	xhr.timeout = request.timeout.a || 0;
+	xhr.responseType = request.expect.d;
+	xhr.withCredentials = request.allowCookiesFromOtherDomains;
+}
+
+
+// RESPONSES
+
+function _Http_toResponse(toBody, xhr)
+{
+	return A2(
+		200 <= xhr.status && xhr.status < 300 ? $elm$http$Http$GoodStatus_ : $elm$http$Http$BadStatus_,
+		_Http_toMetadata(xhr),
+		toBody(xhr.response)
+	);
+}
+
+
+// METADATA
+
+function _Http_toMetadata(xhr)
+{
+	return {
+		url: xhr.responseURL,
+		statusCode: xhr.status,
+		statusText: xhr.statusText,
+		headers: _Http_parseHeaders(xhr.getAllResponseHeaders())
+	};
+}
+
+
+// HEADERS
+
+function _Http_parseHeaders(rawHeaders)
+{
+	if (!rawHeaders)
+	{
+		return $elm$core$Dict$empty;
+	}
+
+	var headers = $elm$core$Dict$empty;
+	var headerPairs = rawHeaders.split('\r\n');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf(': ');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3($elm$core$Dict$update, key, function(oldValue) {
+				return $elm$core$Maybe$Just($elm$core$Maybe$isJust(oldValue)
+					? value + ', ' + oldValue.a
+					: value
+				);
+			}, headers);
+		}
+	}
+	return headers;
+}
+
+
+// EXPECT
+
+var _Http_expect = F3(function(type, toBody, toValue)
+{
+	return {
+		$: 0,
+		d: type,
+		b: toBody,
+		a: toValue
+	};
+});
+
+var _Http_mapExpect = F2(function(func, expect)
+{
+	return {
+		$: 0,
+		d: expect.d,
+		b: expect.b,
+		a: function(x) { return func(expect.a(x)); }
+	};
+});
+
+function _Http_toDataView(arrayBuffer)
+{
+	return new DataView(arrayBuffer);
+}
+
+
+// BODY and PARTS
+
+var _Http_emptyBody = { $: 0 };
+var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
+
+function _Http_toFormData(parts)
+{
+	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
+	{
+		var part = parts.a;
+		formData.append(part.a, part.b);
+	}
+	return formData;
+}
+
+var _Http_bytesToBlob = F2(function(mime, bytes)
+{
+	return new Blob([bytes], { type: mime });
+});
+
+
+// PROGRESS
+
+function _Http_track(router, xhr, tracker)
+{
+	// TODO check out lengthComputable on loadstart event
+
+	xhr.upload.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
+			sent: event.loaded,
+			size: event.total
+		}))));
+	});
+	xhr.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
+			received: event.loaded,
+			size: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+		}))));
+	});
+}
+
+
+// DECODER
+
+var _File_decoder = _Json_decodePrim(function(value) {
+	// NOTE: checks if `File` exists in case this is run on node
+	return (typeof File !== 'undefined' && value instanceof File)
+		? $elm$core$Result$Ok(value)
+		: _Json_expecting('a FILE', value);
+});
+
+
+// METADATA
+
+function _File_name(file) { return file.name; }
+function _File_mime(file) { return file.type; }
+function _File_size(file) { return file.size; }
+
+function _File_lastModified(file)
+{
+	return $elm$time$Time$millisToPosix(file.lastModified);
+}
+
+
+// DOWNLOAD
+
+var _File_downloadNode;
+
+function _File_getDownloadNode()
+{
+	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
+}
+
+var _File_download = F3(function(name, mime, content)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var blob = new Blob([content], {type: mime});
+
+		// for IE10+
+		if (navigator.msSaveOrOpenBlob)
+		{
+			navigator.msSaveOrOpenBlob(blob, name);
+			return;
+		}
+
+		// for HTML5
+		var node = _File_getDownloadNode();
+		var objectUrl = URL.createObjectURL(blob);
+		node.href = objectUrl;
+		node.download = name;
+		_File_click(node);
+		URL.revokeObjectURL(objectUrl);
+	});
+});
+
+function _File_downloadUrl(href)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var node = _File_getDownloadNode();
+		node.href = href;
+		node.download = '';
+		node.origin === location.origin || (node.target = '_blank');
+		_File_click(node);
+	});
+}
+
+
+// IE COMPATIBILITY
+
+function _File_makeBytesSafeForInternetExplorer(bytes)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
+	// all other browsers can just run `new Blob([bytes])` directly with no problem
+	//
+	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+}
+
+function _File_click(node)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
+	// all other browsers have MouseEvent and do not need this conditional stuff
+	//
+	if (typeof MouseEvent === 'function')
+	{
+		node.dispatchEvent(new MouseEvent('click'));
+	}
+	else
+	{
+		var event = document.createEvent('MouseEvents');
+		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		document.body.appendChild(node);
+		node.dispatchEvent(event);
+		document.body.removeChild(node);
+	}
+}
+
+
+// UPLOAD
+
+var _File_node;
+
+function _File_uploadOne(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.accept = A2($elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			callback(_Scheduler_succeed(event.target.files[0]));
+		});
+		_File_click(_File_node);
+	});
+}
+
+function _File_uploadOneOrMore(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.multiple = true;
+		_File_node.accept = A2($elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			var elmFiles = _List_fromArray(event.target.files);
+			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
+		});
+		_File_click(_File_node);
+	});
+}
+
+
+// CONTENT
+
+function _File_toString(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsText(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toBytes(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(new DataView(reader.result)));
+		});
+		reader.readAsArrayBuffer(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toUrl(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsDataURL(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+
+
+
 var _Bitwise_and = F2(function(a, b)
 {
 	return a & b;
@@ -5653,6 +6006,1294 @@ var $author$project$Main$subscriptions = function (model) {
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Ports$description = _Platform_outgoingPort('description', $elm$json$Json$Encode$string);
+var $author$project$Main$FinishDownload = function (a) {
+	return {$: 'FinishDownload', a: a};
+};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var $author$project$DataTypes$encodeAddressWithDates = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'streetName',
+				$elm$json$Json$Encode$string(o.streetName)),
+				_Utils_Tuple2(
+				'streetNumber',
+				$elm$json$Json$Encode$string(o.streetNumber)),
+				_Utils_Tuple2(
+				'cityOrTown',
+				$elm$json$Json$Encode$string(o.cityOrTown)),
+				_Utils_Tuple2(
+				'departmentProvinceOrState',
+				$elm$json$Json$Encode$string(o.departmentProvinceOrState)),
+				_Utils_Tuple2(
+				'country',
+				$elm$json$Json$Encode$string(o.country)),
+				_Utils_Tuple2(
+				'fromDate',
+				$elm$json$Json$Encode$string(o.fromDate)),
+				_Utils_Tuple2(
+				'toDate',
+				$elm$json$Json$Encode$string(o.toDate))
+			]));
+};
+var $author$project$DataTypes$encodeGender = function (o) {
+	var encoding = function () {
+		if (o.$ === 'MALE') {
+			return $elm$json$Json$Encode$string('MALE');
+		} else {
+			return $elm$json$Json$Encode$string('FEMALE');
+		}
+	}();
+	return encoding;
+};
+var $author$project$DataTypes$encodeImmigrationCourtHistory = function (o) {
+	var encoding = function () {
+		switch (o.$) {
+			case 'NEVER':
+				return $elm$json$Json$Encode$string('NEVER');
+			case 'CURRENTLY':
+				return $elm$json$Json$Encode$string('CURRENTLY');
+			default:
+				return $elm$json$Json$Encode$string('NOT_NOW_BUT_IN_THE_PAST');
+		}
+	}();
+	return encoding;
+};
+var $author$project$DataTypes$encodeMailingAddress = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'inCareOf',
+				$elm$json$Json$Encode$string(o.inCareOf)),
+				_Utils_Tuple2(
+				'streetName',
+				$elm$json$Json$Encode$string(o.streetName)),
+				_Utils_Tuple2(
+				'streetNumber',
+				$elm$json$Json$Encode$string(o.streetNumber)),
+				_Utils_Tuple2(
+				'apartmentNumber',
+				$elm$json$Json$Encode$string(o.apartmentNumber)),
+				_Utils_Tuple2(
+				'city',
+				$elm$json$Json$Encode$string(o.city)),
+				_Utils_Tuple2(
+				'state',
+				$elm$json$Json$Encode$string(o.state)),
+				_Utils_Tuple2(
+				'zipCode',
+				$elm$json$Json$Encode$string(o.zipCode)),
+				_Utils_Tuple2(
+				'areaCode',
+				$elm$json$Json$Encode$string(o.areaCode)),
+				_Utils_Tuple2(
+				'phoneNumber',
+				$elm$json$Json$Encode$string(o.phoneNumber))
+			]));
+};
+var $author$project$DataTypes$encodeMaritalStatus = function (o) {
+	var encoding = function () {
+		switch (o.$) {
+			case 'SINGLE':
+				return $elm$json$Json$Encode$string('SINGLE');
+			case 'MARRIED':
+				return $elm$json$Json$Encode$string('MARRIED');
+			case 'DIVORCED':
+				return $elm$json$Json$Encode$string('DIVORCED');
+			default:
+				return $elm$json$Json$Encode$string('WIDOWED');
+		}
+	}();
+	return encoding;
+};
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var $author$project$DataTypes$encodeApplicantInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'lastName',
+				$elm$json$Json$Encode$string(o.lastName)),
+				_Utils_Tuple2(
+				'firstName',
+				$elm$json$Json$Encode$string(o.firstName)),
+				_Utils_Tuple2(
+				'middleName',
+				$elm$json$Json$Encode$string(o.middleName)),
+				_Utils_Tuple2(
+				'aliases',
+				A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, o.aliases)),
+				_Utils_Tuple2(
+				'usResidence',
+				$author$project$DataTypes$encodeMailingAddress(o.usResidence)),
+				_Utils_Tuple2(
+				'usMailingAddress',
+				$author$project$DataTypes$encodeMailingAddress(o.usMailingAddress)),
+				_Utils_Tuple2(
+				'gender',
+				$author$project$DataTypes$encodeGender(o.gender)),
+				_Utils_Tuple2(
+				'maritalStatus',
+				$author$project$DataTypes$encodeMaritalStatus(o.maritalStatus)),
+				_Utils_Tuple2(
+				'dateOfBirth',
+				$elm$json$Json$Encode$string(o.dateOfBirth)),
+				_Utils_Tuple2(
+				'cityOfBirth',
+				$elm$json$Json$Encode$string(o.cityOfBirth)),
+				_Utils_Tuple2(
+				'countryOfBirth',
+				$elm$json$Json$Encode$string(o.countryOfBirth)),
+				_Utils_Tuple2(
+				'presentNationality',
+				$elm$json$Json$Encode$string(o.presentNationality)),
+				_Utils_Tuple2(
+				'nationalityAtBirth',
+				$elm$json$Json$Encode$string(o.nationalityAtBirth)),
+				_Utils_Tuple2(
+				'raceEthnicOrTribalGroup',
+				$elm$json$Json$Encode$string(o.raceEthnicOrTribalGroup)),
+				_Utils_Tuple2(
+				'religion',
+				$elm$json$Json$Encode$string(o.religion)),
+				_Utils_Tuple2(
+				'nativeLanguage',
+				$elm$json$Json$Encode$string(o.nativeLanguage)),
+				_Utils_Tuple2(
+				'fluentInEnglish',
+				$elm$json$Json$Encode$bool(o.fluentInEnglish)),
+				_Utils_Tuple2(
+				'otherLanguages',
+				A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, o.otherLanguages)),
+				_Utils_Tuple2(
+				'alsoApplyingConventionAgainstTorture',
+				$elm$json$Json$Encode$bool(o.alsoApplyingConventionAgainstTorture)),
+				_Utils_Tuple2(
+				'alienRegistrationNumber',
+				$elm$json$Json$Encode$string(o.alienRegistrationNumber)),
+				_Utils_Tuple2(
+				'socialSecurityNumber',
+				$elm$json$Json$Encode$string(o.socialSecurityNumber)),
+				_Utils_Tuple2(
+				'uscisAccountNumber',
+				$elm$json$Json$Encode$string(o.uscisAccountNumber)),
+				_Utils_Tuple2(
+				'immigrationCourtHistory',
+				$author$project$DataTypes$encodeImmigrationCourtHistory(o.immigrationCourtHistory)),
+				_Utils_Tuple2(
+				'countryWhoLastIssuedPassport',
+				$elm$json$Json$Encode$string(o.countryWhoLastIssuedPassport)),
+				_Utils_Tuple2(
+				'passportNumber',
+				$elm$json$Json$Encode$string(o.passportNumber)),
+				_Utils_Tuple2(
+				'travelDocumentNumber',
+				$elm$json$Json$Encode$string(o.travelDocumentNumber)),
+				_Utils_Tuple2(
+				'travelDocumentExpirationDate',
+				$elm$json$Json$Encode$string(o.travelDocumentExpirationDate))
+			]));
+};
+var $author$project$DataTypes$encodeChildInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'lastName',
+				$elm$json$Json$Encode$string(o.lastName)),
+				_Utils_Tuple2(
+				'firstName',
+				$elm$json$Json$Encode$string(o.firstName)),
+				_Utils_Tuple2(
+				'middleName',
+				$elm$json$Json$Encode$string(o.middleName)),
+				_Utils_Tuple2(
+				'dateOfBirth',
+				$elm$json$Json$Encode$string(o.dateOfBirth)),
+				_Utils_Tuple2(
+				'alienRegistrationNumber',
+				$elm$json$Json$Encode$string(o.alienRegistrationNumber)),
+				_Utils_Tuple2(
+				'socialSecurityNumber',
+				$elm$json$Json$Encode$string(o.socialSecurityNumber)),
+				_Utils_Tuple2(
+				'passportNumber',
+				$elm$json$Json$Encode$string(o.passportNumber)),
+				_Utils_Tuple2(
+				'maritalStatus',
+				$author$project$DataTypes$encodeMaritalStatus(o.maritalStatus)),
+				_Utils_Tuple2(
+				'cityOfBirth',
+				$elm$json$Json$Encode$string(o.cityOfBirth)),
+				_Utils_Tuple2(
+				'countryOfBirth',
+				$elm$json$Json$Encode$string(o.countryOfBirth)),
+				_Utils_Tuple2(
+				'nationality',
+				$elm$json$Json$Encode$string(o.nationality)),
+				_Utils_Tuple2(
+				'raceEthnicOrTribalGroup',
+				$elm$json$Json$Encode$string(o.raceEthnicOrTribalGroup)),
+				_Utils_Tuple2(
+				'gender',
+				$author$project$DataTypes$encodeGender(o.gender)),
+				_Utils_Tuple2(
+				'inUS',
+				$elm$json$Json$Encode$bool(o.inUS)),
+				_Utils_Tuple2(
+				'location',
+				$elm$json$Json$Encode$string(o.location)),
+				_Utils_Tuple2(
+				'placeOfLastEntry',
+				$elm$json$Json$Encode$string(o.placeOfLastEntry)),
+				_Utils_Tuple2(
+				'dateOfLastEntry',
+				$elm$json$Json$Encode$string(o.dateOfLastEntry)),
+				_Utils_Tuple2(
+				'i94Number',
+				$elm$json$Json$Encode$string(o.i94Number)),
+				_Utils_Tuple2(
+				'immigrationStatusWhenLastAdmitted',
+				$elm$json$Json$Encode$string(o.immigrationStatusWhenLastAdmitted)),
+				_Utils_Tuple2(
+				'currentImmigrationStatus',
+				$elm$json$Json$Encode$string(o.currentImmigrationStatus)),
+				_Utils_Tuple2(
+				'statusExpirationDate',
+				$elm$json$Json$Encode$string(o.statusExpirationDate)),
+				_Utils_Tuple2(
+				'isInImmigrationCourt',
+				$elm$json$Json$Encode$bool(o.isInImmigrationCourt)),
+				_Utils_Tuple2(
+				'includeInApplication',
+				$elm$json$Json$Encode$bool(o.includeInApplication))
+			]));
+};
+var $author$project$DataTypes$encodeEmploymentInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'employerName',
+				$elm$json$Json$Encode$string(o.employerName)),
+				_Utils_Tuple2(
+				'employerAddress',
+				$elm$json$Json$Encode$string(o.employerAddress)),
+				_Utils_Tuple2(
+				'applicantOccupation',
+				$elm$json$Json$Encode$string(o.applicantOccupation)),
+				_Utils_Tuple2(
+				'fromDate',
+				$elm$json$Json$Encode$string(o.fromDate)),
+				_Utils_Tuple2(
+				'toDate',
+				$elm$json$Json$Encode$string(o.toDate))
+			]));
+};
+var $author$project$DataTypes$encodeYesNoAnswer = function (o) {
+	var encoding = function () {
+		if (o.$ === 'YES') {
+			return $elm$json$Json$Encode$string('YES');
+		} else {
+			return $elm$json$Json$Encode$string('NO');
+		}
+	}();
+	return encoding;
+};
+var $author$project$DataTypes$encodeQuestionWithExplanation = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'yesNoAnswer',
+				$author$project$DataTypes$encodeYesNoAnswer(o.yesNoAnswer)),
+				_Utils_Tuple2(
+				'explanation',
+				$elm$json$Json$Encode$string(o.explanation))
+			]));
+};
+var $author$project$DataTypes$encodeOrganizationInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'associatedWithOrganizations',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.associatedWithOrganizations)),
+				_Utils_Tuple2(
+				'continueToParticipate',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.continueToParticipate))
+			]));
+};
+var $author$project$DataTypes$encodeOtherCountryApplications = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'travelThroughOtherCountry',
+				$author$project$DataTypes$encodeYesNoAnswer(o.travelThroughOtherCountry)),
+				_Utils_Tuple2(
+				'applyOtherCountry',
+				$author$project$DataTypes$encodeYesNoAnswer(o.applyOtherCountry)),
+				_Utils_Tuple2(
+				'explanation',
+				$elm$json$Json$Encode$string(o.explanation))
+			]));
+};
+var $author$project$DataTypes$encodeRelative = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'name',
+				$elm$json$Json$Encode$string(o.name)),
+				_Utils_Tuple2(
+				'relationship',
+				$elm$json$Json$Encode$string(o.relationship))
+			]));
+};
+var $author$project$DataTypes$encodeRelativeHelpPrepare = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'didRelativeHelp',
+				$author$project$DataTypes$encodeYesNoAnswer(o.didRelativeHelp)),
+				_Utils_Tuple2(
+				'firstRelative',
+				$author$project$DataTypes$encodeRelative(o.firstRelative)),
+				_Utils_Tuple2(
+				'secondRelative',
+				$author$project$DataTypes$encodeRelative(o.secondRelative))
+			]));
+};
+var $author$project$DataTypes$encodeRelativeInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'fullName',
+				$elm$json$Json$Encode$string(o.fullName)),
+				_Utils_Tuple2(
+				'cityOrTownOfBirth',
+				$elm$json$Json$Encode$string(o.cityOrTownOfBirth)),
+				_Utils_Tuple2(
+				'countryOfBirth',
+				$elm$json$Json$Encode$string(o.countryOfBirth)),
+				_Utils_Tuple2(
+				'currentLocation',
+				$elm$json$Json$Encode$string(o.currentLocation)),
+				_Utils_Tuple2(
+				'isDeceased',
+				$elm$json$Json$Encode$bool(o.isDeceased))
+			]));
+};
+var $author$project$DataTypes$encodeSchoolInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'schoolName',
+				$elm$json$Json$Encode$string(o.schoolName)),
+				_Utils_Tuple2(
+				'typeOfSchool',
+				$elm$json$Json$Encode$string(o.typeOfSchool)),
+				_Utils_Tuple2(
+				'address',
+				$elm$json$Json$Encode$string(o.address)),
+				_Utils_Tuple2(
+				'fromDate',
+				$elm$json$Json$Encode$string(o.fromDate)),
+				_Utils_Tuple2(
+				'toDate',
+				$elm$json$Json$Encode$string(o.toDate))
+			]));
+};
+var $author$project$DataTypes$encodeSpouseInfo = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'lastName',
+				$elm$json$Json$Encode$string(o.lastName)),
+				_Utils_Tuple2(
+				'firstName',
+				$elm$json$Json$Encode$string(o.firstName)),
+				_Utils_Tuple2(
+				'middleName',
+				$elm$json$Json$Encode$string(o.middleName)),
+				_Utils_Tuple2(
+				'aliases',
+				A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, o.aliases)),
+				_Utils_Tuple2(
+				'dateOfBirth',
+				$elm$json$Json$Encode$string(o.dateOfBirth)),
+				_Utils_Tuple2(
+				'alienRegistrationNumber',
+				$elm$json$Json$Encode$string(o.alienRegistrationNumber)),
+				_Utils_Tuple2(
+				'socialSecurityNumber',
+				$elm$json$Json$Encode$string(o.socialSecurityNumber)),
+				_Utils_Tuple2(
+				'passportNumber',
+				$elm$json$Json$Encode$string(o.passportNumber)),
+				_Utils_Tuple2(
+				'dateOfMarriage',
+				$elm$json$Json$Encode$string(o.dateOfMarriage)),
+				_Utils_Tuple2(
+				'placeOfMarriage',
+				$elm$json$Json$Encode$string(o.placeOfMarriage)),
+				_Utils_Tuple2(
+				'cityOfBirth',
+				$elm$json$Json$Encode$string(o.cityOfBirth)),
+				_Utils_Tuple2(
+				'countryOfBirth',
+				$elm$json$Json$Encode$string(o.countryOfBirth)),
+				_Utils_Tuple2(
+				'nationality',
+				$elm$json$Json$Encode$string(o.nationality)),
+				_Utils_Tuple2(
+				'raceEthnicOrTribalGroup',
+				$elm$json$Json$Encode$string(o.raceEthnicOrTribalGroup)),
+				_Utils_Tuple2(
+				'gender',
+				$author$project$DataTypes$encodeGender(o.gender)),
+				_Utils_Tuple2(
+				'inUS',
+				$elm$json$Json$Encode$bool(o.inUS)),
+				_Utils_Tuple2(
+				'locationInUS',
+				$elm$json$Json$Encode$string(o.locationInUS)),
+				_Utils_Tuple2(
+				'placeOfLastEntry',
+				$elm$json$Json$Encode$string(o.placeOfLastEntry)),
+				_Utils_Tuple2(
+				'dateOfLastEntry',
+				$elm$json$Json$Encode$string(o.dateOfLastEntry)),
+				_Utils_Tuple2(
+				'i94Number',
+				$elm$json$Json$Encode$string(o.i94Number)),
+				_Utils_Tuple2(
+				'immigrationStatusWhenLastAdmitted',
+				$elm$json$Json$Encode$string(o.immigrationStatusWhenLastAdmitted)),
+				_Utils_Tuple2(
+				'currentImmigrationStatus',
+				$elm$json$Json$Encode$string(o.currentImmigrationStatus)),
+				_Utils_Tuple2(
+				'statusExpirationDate',
+				$elm$json$Json$Encode$string(o.statusExpirationDate)),
+				_Utils_Tuple2(
+				'isInImmigrationCourt',
+				$elm$json$Json$Encode$bool(o.isInImmigrationCourt)),
+				_Utils_Tuple2(
+				'previousArrivalDate',
+				$elm$json$Json$Encode$string(o.previousArrivalDate)),
+				_Utils_Tuple2(
+				'includeInApplication',
+				$elm$json$Json$Encode$bool(o.includeInApplication))
+			]));
+};
+var $author$project$DataTypes$encodeUSTravelEvent = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'date',
+				$elm$json$Json$Encode$string(o.date)),
+				_Utils_Tuple2(
+				'place',
+				$elm$json$Json$Encode$string(o.place)),
+				_Utils_Tuple2(
+				'status',
+				$elm$json$Json$Encode$string(o.status))
+			]));
+};
+var $author$project$DataTypes$encodeUSTravelHistory = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'travelEvents',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeUSTravelEvent, o.travelEvents)),
+				_Utils_Tuple2(
+				'lastLeftHomeCountry',
+				$elm$json$Json$Encode$string(o.lastLeftHomeCountry)),
+				_Utils_Tuple2(
+				'i94Number',
+				$elm$json$Json$Encode$string(o.i94Number)),
+				_Utils_Tuple2(
+				'dateStatusExpires',
+				$elm$json$Json$Encode$string(o.dateStatusExpires))
+			]));
+};
+var $author$project$DataTypes$encodeWhyApplying = function (o) {
+	var encoding = function () {
+		switch (o.$) {
+			case 'RACE':
+				return $elm$json$Json$Encode$string('RACE');
+			case 'RELIGION':
+				return $elm$json$Json$Encode$string('RELIGION');
+			case 'NATIONALITY':
+				return $elm$json$Json$Encode$string('NATIONALITY');
+			case 'POLITICAL_OPINION':
+				return $elm$json$Json$Encode$string('POLITICAL_OPINION');
+			case 'MEMBERSHIP_IN_SOCIAL_GROUP':
+				return $elm$json$Json$Encode$string('MEMBERSHIP_IN_SOCIAL_GROUP');
+			default:
+				return $elm$json$Json$Encode$string('TORTURE_CONVENTION');
+		}
+	}();
+	return encoding;
+};
+var $author$project$DataTypes$encode = function (o) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'applicantInfo',
+				$author$project$DataTypes$encodeApplicantInfo(o.applicantInfo)),
+				_Utils_Tuple2(
+				'usTravelHistory',
+				$author$project$DataTypes$encodeUSTravelHistory(o.usTravelHistory)),
+				_Utils_Tuple2(
+				'isMarried',
+				$elm$json$Json$Encode$bool(o.isMarried)),
+				_Utils_Tuple2(
+				'spouseInfo',
+				$author$project$DataTypes$encodeSpouseInfo(o.spouseInfo)),
+				_Utils_Tuple2(
+				'childInfo',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeChildInfo, o.childInfo)),
+				_Utils_Tuple2(
+				'lastAddressBeforeUS',
+				$author$project$DataTypes$encodeAddressWithDates(o.lastAddressBeforeUS)),
+				_Utils_Tuple2(
+				'lastAddressPersecuted',
+				$author$project$DataTypes$encodeAddressWithDates(o.lastAddressPersecuted)),
+				_Utils_Tuple2(
+				'residencesInLastFiveYears',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeAddressWithDates, o.residencesInLastFiveYears)),
+				_Utils_Tuple2(
+				'educationInfo',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeSchoolInfo, o.educationInfo)),
+				_Utils_Tuple2(
+				'employmentInfo',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeEmploymentInfo, o.employmentInfo)),
+				_Utils_Tuple2(
+				'motherInfo',
+				$author$project$DataTypes$encodeRelativeInfo(o.motherInfo)),
+				_Utils_Tuple2(
+				'fatherInfo',
+				$author$project$DataTypes$encodeRelativeInfo(o.fatherInfo)),
+				_Utils_Tuple2(
+				'siblingInfo',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeRelativeInfo, o.siblingInfo)),
+				_Utils_Tuple2(
+				'whyApplying',
+				A2($elm$json$Json$Encode$list, $author$project$DataTypes$encodeWhyApplying, o.whyApplying)),
+				_Utils_Tuple2(
+				'experiencedHarm',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.experiencedHarm)),
+				_Utils_Tuple2(
+				'fearsHarm',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.fearsHarm)),
+				_Utils_Tuple2(
+				'arrestedInOtherCountry',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.arrestedInOtherCountry)),
+				_Utils_Tuple2(
+				'organizationInfo',
+				$author$project$DataTypes$encodeOrganizationInfo(o.organizationInfo)),
+				_Utils_Tuple2(
+				'afraidOfTorture',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.afraidOfTorture)),
+				_Utils_Tuple2(
+				'relativeAppliedForAsylum',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.relativeAppliedForAsylum)),
+				_Utils_Tuple2(
+				'otherCountryApplications',
+				$author$project$DataTypes$encodeOtherCountryApplications(o.otherCountryApplications)),
+				_Utils_Tuple2(
+				'causedHarm',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.causedHarm)),
+				_Utils_Tuple2(
+				'returnCountry',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.returnCountry)),
+				_Utils_Tuple2(
+				'applyAfterOneYear',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.applyAfterOneYear)),
+				_Utils_Tuple2(
+				'crimeInUS',
+				$author$project$DataTypes$encodeQuestionWithExplanation(o.crimeInUS)),
+				_Utils_Tuple2(
+				'relativeHelpPrepare',
+				$author$project$DataTypes$encodeRelativeHelpPrepare(o.relativeHelpPrepare))
+			]));
+};
+var $elm$http$Http$BadStatus_ = F2(
+	function (a, b) {
+		return {$: 'BadStatus_', a: a, b: b};
+	});
+var $elm$http$Http$BadUrl_ = function (a) {
+	return {$: 'BadUrl_', a: a};
+};
+var $elm$http$Http$GoodStatus_ = F2(
+	function (a, b) {
+		return {$: 'GoodStatus_', a: a, b: b};
+	});
+var $elm$http$Http$NetworkError_ = {$: 'NetworkError_'};
+var $elm$http$Http$Receiving = function (a) {
+	return {$: 'Receiving', a: a};
+};
+var $elm$http$Http$Sending = function (a) {
+	return {$: 'Sending', a: a};
+};
+var $elm$http$Http$Timeout_ = {$: 'Timeout_'};
+var $elm$core$Maybe$isJust = function (maybe) {
+	if (maybe.$ === 'Just') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $elm$core$Dict$getMin = function (dict) {
+	getMin:
+	while (true) {
+		if ((dict.$ === 'RBNode_elm_builtin') && (dict.d.$ === 'RBNode_elm_builtin')) {
+			var left = dict.d;
+			var $temp$dict = left;
+			dict = $temp$dict;
+			continue getMin;
+		} else {
+			return dict;
+		}
+	}
+};
+var $elm$core$Dict$moveRedLeft = function (dict) {
+	if (((dict.$ === 'RBNode_elm_builtin') && (dict.d.$ === 'RBNode_elm_builtin')) && (dict.e.$ === 'RBNode_elm_builtin')) {
+		if ((dict.e.d.$ === 'RBNode_elm_builtin') && (dict.e.d.a.$ === 'Red')) {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v1 = dict.d;
+			var lClr = _v1.a;
+			var lK = _v1.b;
+			var lV = _v1.c;
+			var lLeft = _v1.d;
+			var lRight = _v1.e;
+			var _v2 = dict.e;
+			var rClr = _v2.a;
+			var rK = _v2.b;
+			var rV = _v2.c;
+			var rLeft = _v2.d;
+			var _v3 = rLeft.a;
+			var rlK = rLeft.b;
+			var rlV = rLeft.c;
+			var rlL = rLeft.d;
+			var rlR = rLeft.e;
+			var rRight = _v2.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				$elm$core$Dict$Red,
+				rlK,
+				rlV,
+				A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Black,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, lK, lV, lLeft, lRight),
+					rlL),
+				A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rlR, rRight));
+		} else {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v4 = dict.d;
+			var lClr = _v4.a;
+			var lK = _v4.b;
+			var lV = _v4.c;
+			var lLeft = _v4.d;
+			var lRight = _v4.e;
+			var _v5 = dict.e;
+			var rClr = _v5.a;
+			var rK = _v5.b;
+			var rV = _v5.c;
+			var rLeft = _v5.d;
+			var rRight = _v5.e;
+			if (clr.$ === 'Black') {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Black,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Black,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, rK, rV, rLeft, rRight));
+			}
+		}
+	} else {
+		return dict;
+	}
+};
+var $elm$core$Dict$moveRedRight = function (dict) {
+	if (((dict.$ === 'RBNode_elm_builtin') && (dict.d.$ === 'RBNode_elm_builtin')) && (dict.e.$ === 'RBNode_elm_builtin')) {
+		if ((dict.d.d.$ === 'RBNode_elm_builtin') && (dict.d.d.a.$ === 'Red')) {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v1 = dict.d;
+			var lClr = _v1.a;
+			var lK = _v1.b;
+			var lV = _v1.c;
+			var _v2 = _v1.d;
+			var _v3 = _v2.a;
+			var llK = _v2.b;
+			var llV = _v2.c;
+			var llLeft = _v2.d;
+			var llRight = _v2.e;
+			var lRight = _v1.e;
+			var _v4 = dict.e;
+			var rClr = _v4.a;
+			var rK = _v4.b;
+			var rV = _v4.c;
+			var rLeft = _v4.d;
+			var rRight = _v4.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				$elm$core$Dict$Red,
+				lK,
+				lV,
+				A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
+				A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Black,
+					k,
+					v,
+					lRight,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, rK, rV, rLeft, rRight)));
+		} else {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v5 = dict.d;
+			var lClr = _v5.a;
+			var lK = _v5.b;
+			var lV = _v5.c;
+			var lLeft = _v5.d;
+			var lRight = _v5.e;
+			var _v6 = dict.e;
+			var rClr = _v6.a;
+			var rK = _v6.b;
+			var rV = _v6.c;
+			var rLeft = _v6.d;
+			var rRight = _v6.e;
+			if (clr.$ === 'Black') {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Black,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Black,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, rK, rV, rLeft, rRight));
+			}
+		}
+	} else {
+		return dict;
+	}
+};
+var $elm$core$Dict$removeHelpPrepEQGT = F7(
+	function (targetKey, dict, color, key, value, left, right) {
+		if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+			var _v1 = left.a;
+			var lK = left.b;
+			var lV = left.c;
+			var lLeft = left.d;
+			var lRight = left.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				color,
+				lK,
+				lV,
+				lLeft,
+				A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, lRight, right));
+		} else {
+			_v2$2:
+			while (true) {
+				if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Black')) {
+					if (right.d.$ === 'RBNode_elm_builtin') {
+						if (right.d.a.$ === 'Black') {
+							var _v3 = right.a;
+							var _v4 = right.d;
+							var _v5 = _v4.a;
+							return $elm$core$Dict$moveRedRight(dict);
+						} else {
+							break _v2$2;
+						}
+					} else {
+						var _v6 = right.a;
+						var _v7 = right.d;
+						return $elm$core$Dict$moveRedRight(dict);
+					}
+				} else {
+					break _v2$2;
+				}
+			}
+			return dict;
+		}
+	});
+var $elm$core$Dict$removeMin = function (dict) {
+	if ((dict.$ === 'RBNode_elm_builtin') && (dict.d.$ === 'RBNode_elm_builtin')) {
+		var color = dict.a;
+		var key = dict.b;
+		var value = dict.c;
+		var left = dict.d;
+		var lColor = left.a;
+		var lLeft = left.d;
+		var right = dict.e;
+		if (lColor.$ === 'Black') {
+			if ((lLeft.$ === 'RBNode_elm_builtin') && (lLeft.a.$ === 'Red')) {
+				var _v3 = lLeft.a;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					key,
+					value,
+					$elm$core$Dict$removeMin(left),
+					right);
+			} else {
+				var _v4 = $elm$core$Dict$moveRedLeft(dict);
+				if (_v4.$ === 'RBNode_elm_builtin') {
+					var nColor = _v4.a;
+					var nKey = _v4.b;
+					var nValue = _v4.c;
+					var nLeft = _v4.d;
+					var nRight = _v4.e;
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						$elm$core$Dict$removeMin(nLeft),
+						nRight);
+				} else {
+					return $elm$core$Dict$RBEmpty_elm_builtin;
+				}
+			}
+		} else {
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				value,
+				$elm$core$Dict$removeMin(left),
+				right);
+		}
+	} else {
+		return $elm$core$Dict$RBEmpty_elm_builtin;
+	}
+};
+var $elm$core$Dict$removeHelp = F2(
+	function (targetKey, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return $elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			if (_Utils_cmp(targetKey, key) < 0) {
+				if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Black')) {
+					var _v4 = left.a;
+					var lLeft = left.d;
+					if ((lLeft.$ === 'RBNode_elm_builtin') && (lLeft.a.$ === 'Red')) {
+						var _v6 = lLeft.a;
+						return A5(
+							$elm$core$Dict$RBNode_elm_builtin,
+							color,
+							key,
+							value,
+							A2($elm$core$Dict$removeHelp, targetKey, left),
+							right);
+					} else {
+						var _v7 = $elm$core$Dict$moveRedLeft(dict);
+						if (_v7.$ === 'RBNode_elm_builtin') {
+							var nColor = _v7.a;
+							var nKey = _v7.b;
+							var nValue = _v7.c;
+							var nLeft = _v7.d;
+							var nRight = _v7.e;
+							return A5(
+								$elm$core$Dict$balance,
+								nColor,
+								nKey,
+								nValue,
+								A2($elm$core$Dict$removeHelp, targetKey, nLeft),
+								nRight);
+						} else {
+							return $elm$core$Dict$RBEmpty_elm_builtin;
+						}
+					}
+				} else {
+					return A5(
+						$elm$core$Dict$RBNode_elm_builtin,
+						color,
+						key,
+						value,
+						A2($elm$core$Dict$removeHelp, targetKey, left),
+						right);
+				}
+			} else {
+				return A2(
+					$elm$core$Dict$removeHelpEQGT,
+					targetKey,
+					A7($elm$core$Dict$removeHelpPrepEQGT, targetKey, dict, color, key, value, left, right));
+			}
+		}
+	});
+var $elm$core$Dict$removeHelpEQGT = F2(
+	function (targetKey, dict) {
+		if (dict.$ === 'RBNode_elm_builtin') {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			if (_Utils_eq(targetKey, key)) {
+				var _v1 = $elm$core$Dict$getMin(right);
+				if (_v1.$ === 'RBNode_elm_builtin') {
+					var minKey = _v1.b;
+					var minValue = _v1.c;
+					return A5(
+						$elm$core$Dict$balance,
+						color,
+						minKey,
+						minValue,
+						left,
+						$elm$core$Dict$removeMin(right));
+				} else {
+					return $elm$core$Dict$RBEmpty_elm_builtin;
+				}
+			} else {
+				return A5(
+					$elm$core$Dict$balance,
+					color,
+					key,
+					value,
+					left,
+					A2($elm$core$Dict$removeHelp, targetKey, right));
+			}
+		} else {
+			return $elm$core$Dict$RBEmpty_elm_builtin;
+		}
+	});
+var $elm$core$Dict$remove = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$removeHelp, key, dict);
+		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $elm$core$Dict$update = F3(
+	function (targetKey, alter, dictionary) {
+		var _v0 = alter(
+			A2($elm$core$Dict$get, targetKey, dictionary));
+		if (_v0.$ === 'Just') {
+			var value = _v0.a;
+			return A3($elm$core$Dict$insert, targetKey, value, dictionary);
+		} else {
+			return A2($elm$core$Dict$remove, targetKey, dictionary);
+		}
+	});
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2($elm$core$Basics$composeR, toResult, toMsg));
+	});
+var $elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2($elm$json$Json$Encode$encode, 0, value));
+};
+var $elm$http$Http$BadStatus = function (a) {
+	return {$: 'BadStatus', a: a};
+};
+var $elm$http$Http$BadUrl = function (a) {
+	return {$: 'BadUrl', a: a};
+};
+var $elm$http$Http$NetworkError = {$: 'NetworkError'};
+var $elm$http$Http$Timeout = {$: 'Timeout'};
+var $author$project$Main$parseBytes = function (response) {
+	var res = function () {
+		switch (response.$) {
+			case 'BadUrl_':
+				var url = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadUrl(url));
+			case 'Timeout_':
+				return $elm$core$Result$Err($elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return $elm$core$Result$Err($elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				var body = response.b;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var metadata = response.a;
+				var body = response.b;
+				return $elm$core$Result$Ok(body);
+		}
+	}();
+	return res;
+};
+var $elm$http$Http$Request = function (a) {
+	return {$: 'Request', a: a};
+};
+var $elm$http$Http$State = F2(
+	function (reqs, subs) {
+		return {reqs: reqs, subs: subs};
+	});
+var $elm$http$Http$init = $elm$core$Task$succeed(
+	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$http$Http$updateReqs = F3(
+	function (router, cmds, reqs) {
+		updateReqs:
+		while (true) {
+			if (!cmds.b) {
+				return $elm$core$Task$succeed(reqs);
+			} else {
+				var cmd = cmds.a;
+				var otherCmds = cmds.b;
+				if (cmd.$ === 'Cancel') {
+					var tracker = cmd.a;
+					var _v2 = A2($elm$core$Dict$get, tracker, reqs);
+					if (_v2.$ === 'Nothing') {
+						var $temp$router = router,
+							$temp$cmds = otherCmds,
+							$temp$reqs = reqs;
+						router = $temp$router;
+						cmds = $temp$cmds;
+						reqs = $temp$reqs;
+						continue updateReqs;
+					} else {
+						var pid = _v2.a;
+						return A2(
+							$elm$core$Task$andThen,
+							function (_v3) {
+								return A3(
+									$elm$http$Http$updateReqs,
+									router,
+									otherCmds,
+									A2($elm$core$Dict$remove, tracker, reqs));
+							},
+							$elm$core$Process$kill(pid));
+					}
+				} else {
+					var req = cmd.a;
+					return A2(
+						$elm$core$Task$andThen,
+						function (pid) {
+							var _v4 = req.tracker;
+							if (_v4.$ === 'Nothing') {
+								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
+							} else {
+								var tracker = _v4.a;
+								return A3(
+									$elm$http$Http$updateReqs,
+									router,
+									otherCmds,
+									A3($elm$core$Dict$insert, tracker, pid, reqs));
+							}
+						},
+						$elm$core$Process$spawn(
+							A3(
+								_Http_toTask,
+								router,
+								$elm$core$Platform$sendToApp(router),
+								req)));
+				}
+			}
+		}
+	});
+var $elm$http$Http$onEffects = F4(
+	function (router, cmds, subs, state) {
+		return A2(
+			$elm$core$Task$andThen,
+			function (reqs) {
+				return $elm$core$Task$succeed(
+					A2($elm$http$Http$State, reqs, subs));
+			},
+			A3($elm$http$Http$updateReqs, router, cmds, state.reqs));
+	});
+var $elm$http$Http$maybeSend = F4(
+	function (router, desiredTracker, progress, _v0) {
+		var actualTracker = _v0.a;
+		var toMsg = _v0.b;
+		return _Utils_eq(desiredTracker, actualTracker) ? $elm$core$Maybe$Just(
+			A2(
+				$elm$core$Platform$sendToApp,
+				router,
+				toMsg(progress))) : $elm$core$Maybe$Nothing;
+	});
+var $elm$http$Http$onSelfMsg = F3(
+	function (router, _v0, state) {
+		var tracker = _v0.a;
+		var progress = _v0.b;
+		return A2(
+			$elm$core$Task$andThen,
+			function (_v1) {
+				return $elm$core$Task$succeed(state);
+			},
+			$elm$core$Task$sequence(
+				A2(
+					$elm$core$List$filterMap,
+					A3($elm$http$Http$maybeSend, router, tracker, progress),
+					state.subs)));
+	});
+var $elm$http$Http$Cancel = function (a) {
+	return {$: 'Cancel', a: a};
+};
+var $elm$http$Http$cmdMap = F2(
+	function (func, cmd) {
+		if (cmd.$ === 'Cancel') {
+			var tracker = cmd.a;
+			return $elm$http$Http$Cancel(tracker);
+		} else {
+			var r = cmd.a;
+			return $elm$http$Http$Request(
+				{
+					allowCookiesFromOtherDomains: r.allowCookiesFromOtherDomains,
+					body: r.body,
+					expect: A2(_Http_mapExpect, func, r.expect),
+					headers: r.headers,
+					method: r.method,
+					timeout: r.timeout,
+					tracker: r.tracker,
+					url: r.url
+				});
+		}
+	});
+var $elm$http$Http$MySub = F2(
+	function (a, b) {
+		return {$: 'MySub', a: a, b: b};
+	});
+var $elm$http$Http$subMap = F2(
+	function (func, _v0) {
+		var tracker = _v0.a;
+		var toMsg = _v0.b;
+		return A2(
+			$elm$http$Http$MySub,
+			tracker,
+			A2($elm$core$Basics$composeR, toMsg, func));
+	});
+_Platform_effectManagers['Http'] = _Platform_createManager($elm$http$Http$init, $elm$http$Http$onEffects, $elm$http$Http$onSelfMsg, $elm$http$Http$cmdMap, $elm$http$Http$subMap);
+var $elm$http$Http$command = _Platform_leaf('Http');
+var $elm$http$Http$subscription = _Platform_leaf('Http');
+var $elm$http$Http$request = function (r) {
+	return $elm$http$Http$command(
+		$elm$http$Http$Request(
+			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
+};
+var $elm$http$Http$post = function (r) {
+	return $elm$http$Http$request(
+		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
+};
+var $author$project$Main$downloadFilledForm = function (data) {
+	return $elm$http$Http$post(
+		{
+			body: $elm$http$Http$jsonBody(
+				$author$project$DataTypes$encode(data)),
+			expect: A2($elm$http$Http$expectBytesResponse, $author$project$Main$FinishDownload, $author$project$Main$parseBytes),
+			url: 'http://localhost:12345/fill-i589'
+		});
+};
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $author$project$Main$pageToDescription = function (page) {
 	var description = function () {
@@ -5672,6 +7313,24 @@ var $author$project$Main$pageToDescription = function (page) {
 	return description;
 };
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$file$File$Download$bytes = F3(
+	function (name, mime, content) {
+		return A2(
+			$elm$core$Task$perform,
+			$elm$core$Basics$never,
+			A3(
+				_File_download,
+				name,
+				mime,
+				_File_makeBytesSafeForInternetExplorer(content)));
+	});
+var $author$project$Main$savePdf = function (bytes) {
+	return A3($elm$file$File$Download$bytes, 'completed-i589.pdf', 'application/pdf', bytes);
+};
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -5716,6 +7375,126 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $author$project$DataTypes$RACE = {$: 'RACE'};
+var $author$project$DataTypes$RELIGION = {$: 'RELIGION'};
+var $author$project$DataTypes$addressWithDatesMock = {cityOrTown: 'Boston', country: 'USA', departmentProvinceOrState: 'MA', fromDate: '03/12/1988', streetName: 'Mulberry St', streetNumber: '123', toDate: '03/15/1988'};
+var $author$project$DataTypes$MALE = {$: 'MALE'};
+var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
+var $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST = {$: 'NOT_NOW_BUT_IN_THE_PAST'};
+var $author$project$DataTypes$mailingAddressMock = {apartmentNumber: '1', areaCode: '202', city: 'Washington', inCareOf: 'Albert Einstein', phoneNumber: '123-4567', state: 'DC', streetName: 'Mulberry St', streetNumber: '456', zipCode: '20000'};
+var $author$project$DataTypes$applicantInfoMock = {
+	aliases: _List_fromArray(
+		['ABC']),
+	alienRegistrationNumber: '12345',
+	alsoApplyingConventionAgainstTorture: true,
+	cityOfBirth: 'Kansas City',
+	countryOfBirth: 'China',
+	countryWhoLastIssuedPassport: 'USA',
+	dateOfBirth: '01/01/2020',
+	firstName: 'M',
+	fluentInEnglish: true,
+	gender: $author$project$DataTypes$MALE,
+	immigrationCourtHistory: $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST,
+	lastName: 'K',
+	maritalStatus: $author$project$DataTypes$MARRIED,
+	middleName: 'C',
+	nationalityAtBirth: 'US',
+	nativeLanguage: 'Chinese',
+	otherLanguages: _List_fromArray(
+		['English']),
+	passportNumber: '1234',
+	presentNationality: 'Chinese',
+	raceEthnicOrTribalGroup: 'White',
+	religion: 'Christian',
+	socialSecurityNumber: '98245',
+	travelDocumentExpirationDate: '03/04/05',
+	travelDocumentNumber: '32122453521',
+	usMailingAddress: $author$project$DataTypes$mailingAddressMock,
+	usResidence: $author$project$DataTypes$mailingAddressMock,
+	uscisAccountNumber: '432525'
+};
+var $author$project$DataTypes$FEMALE = {$: 'FEMALE'};
+var $author$project$DataTypes$childInfoMock = {alienRegistrationNumber: '2145', cityOfBirth: 'Dallas', countryOfBirth: 'USA', currentImmigrationStatus: 'VISITOR', dateOfBirth: '03/04/05', dateOfLastEntry: '12/03/56', firstName: 'M', gender: $author$project$DataTypes$FEMALE, i94Number: '131352', immigrationStatusWhenLastAdmitted: 'STUDENT', inUS: true, includeInApplication: true, isInImmigrationCourt: true, lastName: 'J', location: 'Walla Walla, WA', maritalStatus: $author$project$DataTypes$MARRIED, middleName: 'F', nationality: 'US', passportNumber: '3141', placeOfLastEntry: 'Seattle', raceEthnicOrTribalGroup: 'White', socialSecurityNumber: '2145252521', statusExpirationDate: '05/09/20'};
+var $author$project$DataTypes$employmentInfoMock = {applicantOccupation: 'Welder', employerAddress: '123 A St', employerName: 'Wilson High School', fromDate: '10/12/13', toDate: '10/12/14'};
+var $author$project$DataTypes$YES = {$: 'YES'};
+var $author$project$DataTypes$questionWithExplanationMock = {explanation: 'Mock explanation.', yesNoAnswer: $author$project$DataTypes$YES};
+var $author$project$DataTypes$organizationInfoMock = {associatedWithOrganizations: $author$project$DataTypes$questionWithExplanationMock, continueToParticipate: $author$project$DataTypes$questionWithExplanationMock};
+var $author$project$DataTypes$otherCountryApplicationsMock = {applyOtherCountry: $author$project$DataTypes$YES, explanation: 'Mock explanation', travelThroughOtherCountry: $author$project$DataTypes$YES};
+var $author$project$DataTypes$relativeMock = {name: 'Albert Einstein', relationship: 'Brother'};
+var $author$project$DataTypes$relativeHelpPrepareMock = {didRelativeHelp: $author$project$DataTypes$YES, firstRelative: $author$project$DataTypes$relativeMock, secondRelative: $author$project$DataTypes$relativeMock};
+var $author$project$DataTypes$relativeInfoMock = {cityOrTownOfBirth: 'Privoz', countryOfBirth: 'Austria', currentLocation: 'Arlington, VA', fullName: 'Thomas Jefferson', isDeceased: false};
+var $author$project$DataTypes$schoolInfoMock = {address: '123 A St', fromDate: '10/12/13', schoolName: 'Wilson High School', toDate: '10/12/14', typeOfSchool: 'Secondary'};
+var $author$project$DataTypes$spouseInfoMock = {
+	aliases: _List_fromArray(
+		['bbbb']),
+	alienRegistrationNumber: '2145',
+	cityOfBirth: 'Dallas',
+	countryOfBirth: 'USA',
+	currentImmigrationStatus: 'VISITOR',
+	dateOfBirth: '02/03/04',
+	dateOfLastEntry: '02/06/09',
+	dateOfMarriage: '03/04/05',
+	firstName: 'M',
+	gender: $author$project$DataTypes$FEMALE,
+	i94Number: '131352',
+	immigrationStatusWhenLastAdmitted: 'STUDENT',
+	inUS: true,
+	includeInApplication: true,
+	isInImmigrationCourt: true,
+	lastName: 'J',
+	locationInUS: 'Walla Walla, WA',
+	middleName: 'F',
+	nationality: 'US',
+	passportNumber: '3141',
+	placeOfLastEntry: 'Seattle',
+	placeOfMarriage: 'Yosemite, CA',
+	previousArrivalDate: '04/02/09',
+	raceEthnicOrTribalGroup: 'White',
+	socialSecurityNumber: '2145252521',
+	statusExpirationDate: '05/09/20'
+};
+var $author$project$DataTypes$usTravelEventMock = {date: '02/02/02', place: 'Lexington', status: 'VISITOR'};
+var $author$project$DataTypes$usTravelHistoryMock = {
+	dateStatusExpires: '06/07/08',
+	i94Number: '092491',
+	lastLeftHomeCountry: '09/10/20',
+	travelEvents: _List_fromArray(
+		[$author$project$DataTypes$usTravelEventMock])
+};
+var $author$project$DataTypes$userDataMock = {
+	afraidOfTorture: $author$project$DataTypes$questionWithExplanationMock,
+	applicantInfo: $author$project$DataTypes$applicantInfoMock,
+	applyAfterOneYear: $author$project$DataTypes$questionWithExplanationMock,
+	arrestedInOtherCountry: $author$project$DataTypes$questionWithExplanationMock,
+	causedHarm: $author$project$DataTypes$questionWithExplanationMock,
+	childInfo: _List_fromArray(
+		[$author$project$DataTypes$childInfoMock]),
+	crimeInUS: $author$project$DataTypes$questionWithExplanationMock,
+	educationInfo: _List_fromArray(
+		[$author$project$DataTypes$schoolInfoMock]),
+	employmentInfo: _List_fromArray(
+		[$author$project$DataTypes$employmentInfoMock]),
+	experiencedHarm: $author$project$DataTypes$questionWithExplanationMock,
+	fatherInfo: $author$project$DataTypes$relativeInfoMock,
+	fearsHarm: $author$project$DataTypes$questionWithExplanationMock,
+	isMarried: true,
+	lastAddressBeforeUS: $author$project$DataTypes$addressWithDatesMock,
+	lastAddressPersecuted: $author$project$DataTypes$addressWithDatesMock,
+	motherInfo: $author$project$DataTypes$relativeInfoMock,
+	organizationInfo: $author$project$DataTypes$organizationInfoMock,
+	otherCountryApplications: $author$project$DataTypes$otherCountryApplicationsMock,
+	relativeAppliedForAsylum: $author$project$DataTypes$questionWithExplanationMock,
+	relativeHelpPrepare: $author$project$DataTypes$relativeHelpPrepareMock,
+	residencesInLastFiveYears: _List_fromArray(
+		[$author$project$DataTypes$addressWithDatesMock]),
+	returnCountry: $author$project$DataTypes$questionWithExplanationMock,
+	siblingInfo: _List_fromArray(
+		[$author$project$DataTypes$relativeInfoMock]),
+	spouseInfo: $author$project$DataTypes$spouseInfoMock,
+	usTravelHistory: $author$project$DataTypes$usTravelHistoryMock,
+	whyApplying: _List_fromArray(
+		[$author$project$DataTypes$RACE, $author$project$DataTypes$RELIGION])
+};
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -5748,13 +7527,30 @@ var $author$project$Main$update = F2(
 						}),
 					$author$project$Ports$description(
 						$author$project$Main$pageToDescription(page)));
-			default:
+			case 'DeviceClassified':
 				var device = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{device: device}),
 					$elm$core$Platform$Cmd$none);
+			case 'StartDownload':
+				return _Utils_Tuple2(
+					model,
+					$author$project$Main$downloadFilledForm($author$project$DataTypes$userDataMock));
+			default:
+				var result = msg.a;
+				var resp = function () {
+					if (result.$ === 'Ok') {
+						var bytes = result.a;
+						return _Utils_Tuple2(
+							model,
+							$author$project$Main$savePdf(bytes));
+					} else {
+						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					}
+				}();
+				return resp;
 		}
 	});
 var $elm$core$List$isEmpty = function (xs) {
@@ -8091,11 +9887,6 @@ var $elm$core$String$foldr = _String_foldr;
 var $elm$core$String$toList = function (string) {
 	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
 };
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var $elm$core$String$fromChar = function (_char) {
 	return A2($elm$core$String$cons, _char, '');
 };
@@ -8601,7 +10392,34 @@ var $author$project$Main$footer = A2(
 					$rtfeldman$elm_css$Html$Styled$text('© 2020 DIY Asylum LLC')
 				]))
 		]));
+var $author$project$Main$StartDownload = {$: 'StartDownload'};
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
+	function (eventName, handler) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $rtfeldman$elm_css$Css$VhUnits = {$: 'VhUnits'};
 var $rtfeldman$elm_css$Css$vh = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VhUnits, 'vh');
 var $author$project$Main$i589View = function (model) {
@@ -8644,9 +10462,10 @@ var $author$project$Main$i589View = function (model) {
 							]))
 					])),
 				A2(
-				$rtfeldman$elm_css$Html$Styled$div,
+				$rtfeldman$elm_css$Html$Styled$button,
 				_List_fromArray(
 					[
+						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$StartDownload),
 						$rtfeldman$elm_css$Html$Styled$Attributes$css(
 						_List_fromArray(
 							[

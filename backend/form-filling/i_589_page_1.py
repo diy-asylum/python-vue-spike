@@ -16,7 +16,7 @@ marital_status_fields = {
 immigration_court_fields = {
     ImmigrationCourtStatus.NEVER: BooleanField(
         True, (220, 285), "A.I.", "18"), ImmigrationCourtStatus.CURRENT: BooleanField(
-            True, (70, 270), "A.I.", "18"), ImmigrationCourtStatus.PAST: BooleanField(
+            True, (70, 270), "A.I.", "18"), ImmigrationCourtStatus.NOT_NOW_BUT_IN_THE_PAST: BooleanField(
                 True, (280, 270), "A.I.", "18"), }
 
 

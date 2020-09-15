@@ -1,6 +1,7 @@
 module DataTypes exposing (..)
 
 import Json.Encode as E
+import TypedSvg.Types exposing (YesNo(..))
 
 
 type alias UserData =
@@ -10,6 +11,7 @@ type alias UserData =
     , spouseInfo : SpouseInfo
     , childInfo : List ChildInfo
     , lastAddressBeforeUS : AddressWithDates
+    , lastAddressPersecuted : AddressWithDates
     , residencesInLastFiveYears : List AddressWithDates
     , educationInfo : List SchoolInfo
     , employmentInfo : List EmploymentInfo
@@ -32,6 +34,37 @@ type alias UserData =
     }
 
 
+userDataMock : UserData
+userDataMock =
+    { applicantInfo = applicantInfoMock
+    , usTravelHistory = usTravelHistoryMock
+    , isMarried = True
+    , spouseInfo = spouseInfoMock
+    , childInfo = [ childInfoMock ]
+    , lastAddressBeforeUS = addressWithDatesMock
+    , lastAddressPersecuted = addressWithDatesMock
+    , residencesInLastFiveYears = [ addressWithDatesMock ]
+    , educationInfo = [ schoolInfoMock ]
+    , employmentInfo = [ employmentInfoMock ]
+    , motherInfo = relativeInfoMock
+    , fatherInfo = relativeInfoMock
+    , siblingInfo = [ relativeInfoMock ]
+    , whyApplying = [ RACE, RELIGION ]
+    , experiencedHarm = questionWithExplanationMock
+    , fearsHarm = questionWithExplanationMock
+    , arrestedInOtherCountry = questionWithExplanationMock
+    , organizationInfo = organizationInfoMock
+    , afraidOfTorture = questionWithExplanationMock
+    , relativeAppliedForAsylum = questionWithExplanationMock
+    , otherCountryApplications = otherCountryApplicationsMock
+    , causedHarm = questionWithExplanationMock
+    , returnCountry = questionWithExplanationMock
+    , applyAfterOneYear = questionWithExplanationMock
+    , crimeInUS = questionWithExplanationMock
+    , relativeHelpPrepare = relativeHelpPrepareMock
+    }
+
+
 encode : UserData -> E.Value
 encode o =
     E.object
@@ -41,6 +74,7 @@ encode o =
         , ( "spouseInfo", encodeSpouseInfo o.spouseInfo )
         , ( "childInfo", E.list encodeChildInfo o.childInfo )
         , ( "lastAddressBeforeUS", encodeAddressWithDates o.lastAddressBeforeUS )
+        , ( "lastAddressPersecuted", encodeAddressWithDates o.lastAddressPersecuted )
         , ( "residencesInLastFiveYears", E.list encodeAddressWithDates o.residencesInLastFiveYears )
         , ( "educationInfo", E.list encodeSchoolInfo o.educationInfo )
         , ( "employmentInfo", E.list encodeEmploymentInfo o.employmentInfo )
@@ -104,6 +138,13 @@ type alias QuestionWithExplanation =
     }
 
 
+questionWithExplanationMock : QuestionWithExplanation
+questionWithExplanationMock =
+    { yesNoAnswer = YES
+    , explanation = "Mock explanation."
+    }
+
+
 encodeQuestionWithExplanation : QuestionWithExplanation -> E.Value
 encodeQuestionWithExplanation o =
     E.object
@@ -142,6 +183,18 @@ type alias AddressWithDates =
     }
 
 
+addressWithDatesMock : AddressWithDates
+addressWithDatesMock =
+    { streetName = "Mulberry St"
+    , streetNumber = "123"
+    , cityOrTown = "Boston"
+    , departmentProvinceOrState = "MA"
+    , country = "USA"
+    , fromDate = "03/12/1988"
+    , toDate = "03/15/1988"
+    }
+
+
 encodeAddressWithDates : AddressWithDates -> E.Value
 encodeAddressWithDates o =
     E.object
@@ -164,6 +217,16 @@ type alias RelativeInfo =
     }
 
 
+relativeInfoMock : RelativeInfo
+relativeInfoMock =
+    { fullName = "Thomas Jefferson"
+    , cityOrTownOfBirth = "Privoz"
+    , countryOfBirth = "Austria"
+    , currentLocation = "Arlington, VA"
+    , isDeceased = False
+    }
+
+
 encodeRelativeInfo : RelativeInfo -> E.Value
 encodeRelativeInfo o =
     E.object
@@ -182,6 +245,14 @@ type alias RelativeHelpPrepare =
     }
 
 
+relativeHelpPrepareMock : RelativeHelpPrepare
+relativeHelpPrepareMock =
+    { didRelativeHelp = YES
+    , firstRelative = relativeMock
+    , secondRelative = relativeMock
+    }
+
+
 encodeRelativeHelpPrepare : RelativeHelpPrepare -> E.Value
 encodeRelativeHelpPrepare o =
     E.object
@@ -197,6 +268,13 @@ type alias Relative =
     }
 
 
+relativeMock : Relative
+relativeMock =
+    { name = "Albert Einstein"
+    , relationship = "Brother"
+    }
+
+
 encodeRelative : Relative -> E.Value
 encodeRelative o =
     E.object
@@ -209,6 +287,14 @@ type alias OtherCountryApplications =
     { travelThroughOtherCountry : YesNoAnswer
     , applyOtherCountry : YesNoAnswer
     , explanation : String
+    }
+
+
+otherCountryApplicationsMock : OtherCountryApplications
+otherCountryApplicationsMock =
+    { travelThroughOtherCountry = YES
+    , applyOtherCountry = YES
+    , explanation = "Mock explanation"
     }
 
 
@@ -231,6 +317,20 @@ type alias MailingAddress =
     , zipCode : String
     , areaCode : String
     , phoneNumber : String
+    }
+
+
+mailingAddressMock : MailingAddress
+mailingAddressMock =
+    { inCareOf = "Albert Einstein"
+    , streetName = "Mulberry St"
+    , streetNumber = "456"
+    , apartmentNumber = "1"
+    , city = "Washington"
+    , state = "DC"
+    , zipCode = "20000"
+    , areaCode = "202"
+    , phoneNumber = "123-4567"
     }
 
 
@@ -277,6 +377,38 @@ type alias ApplicantInfo =
     , passportNumber : String
     , travelDocumentNumber : String
     , travelDocumentExpirationDate : String
+    }
+
+
+applicantInfoMock : ApplicantInfo
+applicantInfoMock =
+    { lastName = "K"
+    , firstName = "M"
+    , middleName = "C"
+    , aliases = [ "ABC" ]
+    , usResidence = mailingAddressMock
+    , usMailingAddress = mailingAddressMock
+    , gender = MALE
+    , maritalStatus = MARRIED
+    , dateOfBirth = "01/01/2020"
+    , cityOfBirth = "Kansas City"
+    , countryOfBirth = "China"
+    , presentNationality = "Chinese"
+    , nationalityAtBirth = "US"
+    , raceEthnicOrTribalGroup = "White"
+    , religion = "Christian"
+    , nativeLanguage = "Chinese"
+    , fluentInEnglish = True
+    , otherLanguages = [ "English" ]
+    , alsoApplyingConventionAgainstTorture = True
+    , alienRegistrationNumber = "12345"
+    , socialSecurityNumber = "98245"
+    , uscisAccountNumber = "432525"
+    , immigrationCourtHistory = NOT_NOW_BUT_IN_THE_PAST
+    , countryWhoLastIssuedPassport = "USA"
+    , passportNumber = "1234"
+    , travelDocumentNumber = "32122453521"
+    , travelDocumentExpirationDate = "03/04/05"
     }
 
 
@@ -412,6 +544,37 @@ type alias SpouseInfo =
     }
 
 
+spouseInfoMock : SpouseInfo
+spouseInfoMock =
+    { lastName = "J"
+    , firstName = "M"
+    , middleName = "F"
+    , aliases = [ "bbbb" ]
+    , dateOfBirth = "02/03/04"
+    , alienRegistrationNumber = "2145"
+    , socialSecurityNumber = "2145252521"
+    , passportNumber = "3141"
+    , dateOfMarriage = "03/04/05"
+    , placeOfMarriage = "Yosemite, CA"
+    , cityOfBirth = "Dallas"
+    , countryOfBirth = "USA"
+    , nationality = "US"
+    , raceEthnicOrTribalGroup = "White"
+    , gender = FEMALE
+    , inUS = True
+    , locationInUS = "Walla Walla, WA"
+    , placeOfLastEntry = "Seattle"
+    , dateOfLastEntry = "02/06/09"
+    , i94Number = "131352"
+    , immigrationStatusWhenLastAdmitted = "STUDENT"
+    , currentImmigrationStatus = "VISITOR"
+    , statusExpirationDate = "05/09/20"
+    , isInImmigrationCourt = True
+    , previousArrivalDate = "04/02/09"
+    , includeInApplication = True
+    }
+
+
 encodeSpouseInfo : SpouseInfo -> E.Value
 encodeSpouseInfo o =
     E.object
@@ -452,6 +615,15 @@ type alias USTravelHistory =
     }
 
 
+usTravelHistoryMock : USTravelHistory
+usTravelHistoryMock =
+    { travelEvents = [ usTravelEventMock ]
+    , lastLeftHomeCountry = "09/10/20"
+    , i94Number = "092491"
+    , dateStatusExpires = "06/07/08"
+    }
+
+
 encodeUSTravelHistory : USTravelHistory -> E.Value
 encodeUSTravelHistory o =
     E.object
@@ -466,6 +638,14 @@ type alias USTravelEvent =
     { date : String
     , place : String
     , status : String
+    }
+
+
+usTravelEventMock : USTravelEvent
+usTravelEventMock =
+    { date = "02/02/02"
+    , place = "Lexington"
+    , status = "VISITOR"
     }
 
 
@@ -495,12 +675,41 @@ type alias ChildInfo =
     , inUS : Bool
     , location : String
     , placeOfLastEntry : String
+    , dateOfLastEntry : String
     , i94Number : String
     , immigrationStatusWhenLastAdmitted : String
     , currentImmigrationStatus : String
     , statusExpirationDate : String
     , isInImmigrationCourt : Bool
     , includeInApplication : Bool
+    }
+
+
+childInfoMock : ChildInfo
+childInfoMock =
+    { lastName = "J"
+    , firstName = "M"
+    , middleName = "F"
+    , dateOfBirth = "03/04/05"
+    , alienRegistrationNumber = "2145"
+    , socialSecurityNumber = "2145252521"
+    , passportNumber = "3141"
+    , maritalStatus = MARRIED
+    , cityOfBirth = "Dallas"
+    , countryOfBirth = "USA"
+    , nationality = "US"
+    , raceEthnicOrTribalGroup = "White"
+    , gender = FEMALE
+    , inUS = True
+    , location = "Walla Walla, WA"
+    , placeOfLastEntry = "Seattle"
+    , dateOfLastEntry = "12/03/56"
+    , i94Number = "131352"
+    , immigrationStatusWhenLastAdmitted = "STUDENT"
+    , currentImmigrationStatus = "VISITOR"
+    , statusExpirationDate = "05/09/20"
+    , isInImmigrationCourt = True
+    , includeInApplication = True
     }
 
 
@@ -523,6 +732,7 @@ encodeChildInfo o =
         , ( "inUS", E.bool o.inUS )
         , ( "location", E.string o.location )
         , ( "placeOfLastEntry", E.string o.placeOfLastEntry )
+        , ( "dateOfLastEntry", E.string o.dateOfLastEntry )
         , ( "i94Number", E.string o.i94Number )
         , ( "immigrationStatusWhenLastAdmitted", E.string o.immigrationStatusWhenLastAdmitted )
         , ( "currentImmigrationStatus", E.string o.currentImmigrationStatus )
@@ -535,6 +745,13 @@ encodeChildInfo o =
 type alias OrganizationInfo =
     { associatedWithOrganizations : QuestionWithExplanation
     , continueToParticipate : QuestionWithExplanation
+    }
+
+
+organizationInfoMock : OrganizationInfo
+organizationInfoMock =
+    { associatedWithOrganizations = questionWithExplanationMock
+    , continueToParticipate = questionWithExplanationMock
     }
 
 
@@ -555,6 +772,16 @@ type alias SchoolInfo =
     }
 
 
+schoolInfoMock : SchoolInfo
+schoolInfoMock =
+    { schoolName = "Wilson High School"
+    , typeOfSchool = "Secondary"
+    , address = "123 A St"
+    , fromDate = "10/12/13"
+    , toDate = "10/12/14"
+    }
+
+
 encodeSchoolInfo : SchoolInfo -> E.Value
 encodeSchoolInfo o =
     E.object
@@ -572,6 +799,16 @@ type alias EmploymentInfo =
     , applicantOccupation : String
     , fromDate : String
     , toDate : String
+    }
+
+
+employmentInfoMock : EmploymentInfo
+employmentInfoMock =
+    { employerName = "Wilson High School"
+    , applicantOccupation = "Welder"
+    , employerAddress = "123 A St"
+    , fromDate = "10/12/13"
+    , toDate = "10/12/14"
     }
 
 

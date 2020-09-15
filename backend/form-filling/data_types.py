@@ -28,7 +28,7 @@ class MaritalStatus(Enum):
 class ImmigrationCourtStatus(Enum):
     NEVER = "NEVER"
     CURRENT = "CURRENT"
-    PAST = "NOT_NOW_BUT_IN_THE_PAST"
+    NOT_NOW_BUT_IN_THE_PAST = "NOT_NOW_BUT_IN_THE_PAST"
 
 
 class UsEntry():

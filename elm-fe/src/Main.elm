@@ -3,14 +3,50 @@ module Main exposing (Model, Msg(..), main, subscriptions, update, view)
 import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
+import Bytes exposing (Bytes)
+import Bytes.Decode as Decode
 import Css exposing (..)
 import DataTypes exposing (..)
 import Element exposing (Device)
+import File.Download as Download
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, src)
 import Html.Styled.Events exposing (..)
+import Http
 import Ports
 import Url
+
+
+parseBytes : Http.Response Bytes -> Result Http.Error Bytes
+parseBytes response =
+    let
+        res =
+            case response of
+                Http.BadUrl_ url ->
+                    Err (Http.BadUrl url)
+
+                Http.Timeout_ ->
+                    Err Http.Timeout
+
+                Http.NetworkError_ ->
+                    Err Http.NetworkError
+
+                Http.BadStatus_ metadata body ->
+                    Err (Http.BadStatus metadata.statusCode)
+
+                Http.GoodStatus_ metadata body ->
+                    Ok body
+    in
+    res
+
+
+downloadFilledForm : UserData -> Cmd Msg
+downloadFilledForm data =
+    Http.post
+        { url = "http://localhost:12345/fill-i589"
+        , body = Http.jsonBody (encode data)
+        , expect = Http.expectBytesResponse FinishDownload parseBytes
+        }
 
 
 
@@ -95,10 +131,17 @@ init flags url key =
 -- UPDATE
 
 
+savePdf : Bytes -> Cmd msg
+savePdf bytes =
+    Download.bytes "completed-i589.pdf" "application/pdf" bytes
+
+
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | DeviceClassified Device
+    | StartDownload
+    | FinishDownload (Result Http.Error Bytes)
 
 
 pageToTitle : Page -> String
@@ -169,6 +212,21 @@ update msg model =
 
         DeviceClassified device ->
             ( { model | device = device }, Cmd.none )
+
+        StartDownload ->
+            ( model, downloadFilledForm userDataMock )
+
+        FinishDownload result ->
+            let
+                resp =
+                    case result of
+                        Ok bytes ->
+                            ( model, savePdf bytes )
+
+                        Err _ ->
+                            ( model, Cmd.none )
+            in
+            resp
 
 
 
@@ -257,7 +315,7 @@ i589View model =
         [ div [ css [ property "grid-column" "1" ] ]
             [ h1 [] [ text "Progress" ]
             ]
-        , div [ css [ property "grid-column" "2" ] ]
+        , button [ onClick StartDownload, css [ property "grid-column" "2" ] ]
             [ h1 [] [ text "Form Entry" ]
             ]
         , div [ css [ property "grid-column" "3" ] ]
