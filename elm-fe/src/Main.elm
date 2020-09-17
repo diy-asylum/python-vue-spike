@@ -17,38 +17,6 @@ import Ports
 import Url
 
 
-parseBytes : Http.Response Bytes -> Result Http.Error Bytes
-parseBytes response =
-    let
-        res =
-            case response of
-                Http.BadUrl_ url ->
-                    Err (Http.BadUrl url)
-
-                Http.Timeout_ ->
-                    Err Http.Timeout
-
-                Http.NetworkError_ ->
-                    Err Http.NetworkError
-
-                Http.BadStatus_ metadata body ->
-                    Err (Http.BadStatus metadata.statusCode)
-
-                Http.GoodStatus_ metadata body ->
-                    Ok body
-    in
-    res
-
-
-downloadFilledForm : UserData -> Cmd Msg
-downloadFilledForm data =
-    Http.post
-        { url = "http://localhost:12345/fill-i589"
-        , body = Http.jsonBody (encode data)
-        , expect = Http.expectBytesResponse FinishDownload parseBytes
-        }
-
-
 
 -- MAIN
 
@@ -83,7 +51,49 @@ type alias Model =
     , page : Page
     , title : String
     , device : Device
+    , state : FormState
+    , focusedSectionIndex : Int
+    , focusedEntryIndex : Int
+    , directory : List FormSection
     }
+
+
+type alias FormState =
+    { eligibility : EligibilityData
+    }
+
+
+defaultFormState : FormState
+defaultFormState =
+    { eligibility = defaultEligibilityData
+    }
+
+
+type alias EligibilityData =
+    { currentlyInUS : Maybe Bool
+    , lessThanOneYear : Maybe Bool
+    }
+
+
+defaultEligibilityData : EligibilityData
+defaultEligibilityData =
+    { currentlyInUS = Nothing
+    , lessThanOneYear = Nothing
+    }
+
+
+type FormEntryElement
+    = CurrentlyInUS
+    | InUSLessThanOneYear
+
+
+type FormSection
+    = Eligibility (List FormEntryElement)
+
+
+defaultDirectory : List FormSection
+defaultDirectory =
+    [ Eligibility [ CurrentlyInUS, InUSLessThanOneYear ] ]
 
 
 pathMatch : String -> Page
@@ -124,16 +134,11 @@ init flags url key =
         page =
             pathMatch url.path
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags), Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState 0 0 defaultDirectory, Cmd.none )
 
 
 
 -- UPDATE
-
-
-savePdf : Bytes -> Cmd msg
-savePdf bytes =
-    Download.bytes "completed-i589.pdf" "application/pdf" bytes
 
 
 type Msg
@@ -142,6 +147,8 @@ type Msg
     | DeviceClassified Device
     | StartDownload
     | FinishDownload (Result Http.Error Bytes)
+    | Next
+    | Back
 
 
 pageToTitle : Page -> String
@@ -217,16 +224,18 @@ update msg model =
             ( model, downloadFilledForm userDataMock )
 
         FinishDownload result ->
-            let
-                resp =
-                    case result of
-                        Ok bytes ->
-                            ( model, savePdf bytes )
+            case result of
+                Ok bytes ->
+                    ( model, savePdf bytes )
 
-                        Err _ ->
-                            ( model, Cmd.none )
-            in
-            resp
+                Err _ ->
+                    ( model, Cmd.none )
+
+        Next ->
+            ( model, Cmd.none )
+
+        Back ->
+            ( model, Cmd.none )
 
 
 
@@ -238,35 +247,6 @@ subscriptions model =
     onResize <|
         \width height ->
             DeviceClassified (Element.classifyDevice { width = width, height = height })
-
-
-
--- COLOR PALETTE
-
-
-dark : Color
-dark =
-    hex "162521"
-
-
-background : Color
-background =
-    hex "C0E0DE"
-
-
-accent : Color
-accent =
-    hex "4F7CAC"
-
-
-bold : Color
-bold =
-    hex "FF1654"
-
-
-neutral : Color
-neutral =
-    hex "3C474B"
 
 
 
@@ -367,3 +347,86 @@ linkStyles =
 navContainerStyles : Style
 navContainerStyles =
     batch [ minHeight (vh 5), maxHeight (vh 5), padding (Css.em 0.1), property "grid-column" "2", color dark, displayFlex, alignItems center, justifyContent start ]
+
+
+
+-- REQUESTS
+
+
+parseBytes : Http.Response Bytes -> Result Http.Error Bytes
+parseBytes response =
+    case response of
+        Http.BadUrl_ url ->
+            Err (Http.BadUrl url)
+
+        Http.Timeout_ ->
+            Err Http.Timeout
+
+        Http.NetworkError_ ->
+            Err Http.NetworkError
+
+        Http.BadStatus_ metadata body ->
+            Err (Http.BadStatus metadata.statusCode)
+
+        Http.GoodStatus_ metadata body ->
+            Ok body
+
+
+downloadFilledForm : UserData -> Cmd Msg
+downloadFilledForm data =
+    Http.post
+        { url = "http://localhost:12345/fill-i589"
+        , body = Http.jsonBody (encode data)
+        , expect = Http.expectBytesResponse FinishDownload parseBytes
+        }
+
+
+savePdf : Bytes -> Cmd msg
+savePdf bytes =
+    Download.bytes "completed-i589.pdf" "application/pdf" bytes
+
+
+
+-- COLOR PALETTE
+
+
+dark : Color
+dark =
+    hex "162521"
+
+
+background : Color
+background =
+    hex "C0E0DE"
+
+
+accent : Color
+accent =
+    hex "4F7CAC"
+
+
+bold : Color
+bold =
+    hex "FF1654"
+
+
+neutral : Color
+neutral =
+    hex "3C474B"
+
+
+
+-- Headers and "Next" need to know about what data has been entered and what entries are valid.
+-- Headers only appear if you are working on a section or have completed it.
+-- "Next" must be dynamic, not just going through a list, since control flow is needed
+-- State should include a "focused element", which is the content being worked on
+-- Next can only be initiated if the data entered in the focused element is valid
+-- If valid, all next needs to know is how to move from one focused element to the next
+-- Focused elements are organized under sections
+-- Once a focused element has been selected, it is included in the headings and clicking refocuses that element
+-- Re-validation is needed at the end of the process in case things get messed with out of order
+-- Rendering applies a function taking focused element name -> content (rendering function)
+-- Each focused element has its own help section as well
+-- "Next" and "Back" both just change the focused element and may add to the list of headings, headings are stored separately
+-- headings are keyed off of the name of the focused element (or section)
+--

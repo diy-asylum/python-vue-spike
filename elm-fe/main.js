@@ -5497,9 +5497,9 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Main$Model = F5(
-	function (key, url, page, title, device) {
-		return {device: device, key: key, page: page, title: title, url: url};
+var $author$project$Main$Model = F9(
+	function (key, url, page, title, device, state, focusedSectionIndex, focusedEntryIndex, directory) {
+		return {device: device, directory: directory, focusedEntryIndex: focusedEntryIndex, focusedSectionIndex: focusedSectionIndex, key: key, page: page, state: state, title: title, url: url};
 	});
 var $mdgriffith$elm_ui$Element$BigDesktop = {$: 'BigDesktop'};
 var $mdgriffith$elm_ui$Element$Desktop = {$: 'Desktop'};
@@ -5521,6 +5521,19 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 		orientation: (_Utils_cmp(window.width, window.height) < 0) ? $mdgriffith$elm_ui$Element$Portrait : $mdgriffith$elm_ui$Element$Landscape
 	};
 };
+var $author$project$Main$CurrentlyInUS = {$: 'CurrentlyInUS'};
+var $author$project$Main$Eligibility = function (a) {
+	return {$: 'Eligibility', a: a};
+};
+var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
+var $author$project$Main$defaultDirectory = _List_fromArray(
+	[
+		$author$project$Main$Eligibility(
+		_List_fromArray(
+			[$author$project$Main$CurrentlyInUS, $author$project$Main$InUSLessThanOneYear]))
+	]);
+var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
+var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$pageToTitle = function (page) {
@@ -5568,13 +5581,17 @@ var $author$project$Main$init = F3(
 	function (flags, url, key) {
 		var page = $author$project$Main$pathMatch(url.path);
 		return _Utils_Tuple2(
-			A5(
+			A9(
 				$author$project$Main$Model,
 				key,
 				url,
 				page,
 				$author$project$Main$pageToTitle(page),
-				$mdgriffith$elm_ui$Element$classifyDevice(flags)),
+				$mdgriffith$elm_ui$Element$classifyDevice(flags),
+				$author$project$Main$defaultFormState,
+				0,
+				0,
+				$author$project$Main$defaultDirectory),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -7109,28 +7126,25 @@ var $elm$http$Http$BadUrl = function (a) {
 var $elm$http$Http$NetworkError = {$: 'NetworkError'};
 var $elm$http$Http$Timeout = {$: 'Timeout'};
 var $author$project$Main$parseBytes = function (response) {
-	var res = function () {
-		switch (response.$) {
-			case 'BadUrl_':
-				var url = response.a;
-				return $elm$core$Result$Err(
-					$elm$http$Http$BadUrl(url));
-			case 'Timeout_':
-				return $elm$core$Result$Err($elm$http$Http$Timeout);
-			case 'NetworkError_':
-				return $elm$core$Result$Err($elm$http$Http$NetworkError);
-			case 'BadStatus_':
-				var metadata = response.a;
-				var body = response.b;
-				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.statusCode));
-			default:
-				var metadata = response.a;
-				var body = response.b;
-				return $elm$core$Result$Ok(body);
-		}
-	}();
-	return res;
+	switch (response.$) {
+		case 'BadUrl_':
+			var url = response.a;
+			return $elm$core$Result$Err(
+				$elm$http$Http$BadUrl(url));
+		case 'Timeout_':
+			return $elm$core$Result$Err($elm$http$Http$Timeout);
+		case 'NetworkError_':
+			return $elm$core$Result$Err($elm$http$Http$NetworkError);
+		case 'BadStatus_':
+			var metadata = response.a;
+			var body = response.b;
+			return $elm$core$Result$Err(
+				$elm$http$Http$BadStatus(metadata.statusCode));
+		default:
+			var metadata = response.a;
+			var body = response.b;
+			return $elm$core$Result$Ok(body);
+	}
 };
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
@@ -7538,19 +7552,20 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					model,
 					$author$project$Main$downloadFilledForm($author$project$DataTypes$userDataMock));
-			default:
+			case 'FinishDownload':
 				var result = msg.a;
-				var resp = function () {
-					if (result.$ === 'Ok') {
-						var bytes = result.a;
-						return _Utils_Tuple2(
-							model,
-							$author$project$Main$savePdf(bytes));
-					} else {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-					}
-				}();
-				return resp;
+				if (result.$ === 'Ok') {
+					var bytes = result.a;
+					return _Utils_Tuple2(
+						model,
+						$author$project$Main$savePdf(bytes));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'Next':
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$core$List$isEmpty = function (xs) {
