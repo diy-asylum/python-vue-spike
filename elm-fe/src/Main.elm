@@ -1,16 +1,16 @@
 module Main exposing (Model, Msg(..), main, subscriptions, update, view)
 
+import Array exposing (Array)
 import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Bytes exposing (Bytes)
-import Bytes.Decode as Decode
 import Css exposing (..)
 import DataTypes exposing (..)
 import Element exposing (Device)
 import File.Download as Download
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, href, src)
+import Html.Styled.Attributes exposing (css, href, type_)
 import Html.Styled.Events exposing (..)
 import Http
 import Ports
@@ -54,7 +54,7 @@ type alias Model =
     , state : FormState
     , focusedSectionIndex : Int
     , focusedEntryIndex : Int
-    , directory : List FormSection
+    , directory : Array FormSection
     }
 
 
@@ -87,13 +87,19 @@ type FormEntryElement
     | InUSLessThanOneYear
 
 
-type FormSection
-    = Eligibility (List FormEntryElement)
+type SectionTitle
+    = Eligibility
 
 
-defaultDirectory : List FormSection
+type alias FormSection =
+    { title : SectionTitle
+    , formElements : Array FormEntryElement
+    }
+
+
+defaultDirectory : Array FormSection
 defaultDirectory =
-    [ Eligibility [ CurrentlyInUS, InUSLessThanOneYear ] ]
+    Array.fromList [ { title = Eligibility, formElements = Array.fromList [ CurrentlyInUS, InUSLessThanOneYear ] } ]
 
 
 pathMatch : String -> Page
@@ -292,15 +298,79 @@ webView model =
 i589View : Model -> Html Msg
 i589View model =
     div [ css [ gridStyles, standardStyles, alignItems center, backgroundColor background, minHeight (vh 95), color dark ] ]
-        [ div [ css [ property "grid-column" "1" ] ]
-            [ h1 [] [ text "Progress" ]
-            ]
-        , button [ onClick StartDownload, css [ property "grid-column" "2" ] ]
-            [ h1 [] [ text "Form Entry" ]
-            ]
-        , div [ css [ property "grid-column" "3" ] ]
-            [ h1 [] [ text "Help" ]
-            ]
+        [ headerView model
+        , formEntryView model
+        , helpView model
+        ]
+
+
+getCurrentSection : Model -> ( Maybe SectionTitle, Maybe FormEntryElement )
+getCurrentSection model =
+    let
+        section =
+            Array.get model.focusedSectionIndex model.directory
+
+        title =
+            Maybe.map (\r -> r.title) section
+
+        element =
+            Maybe.andThen (\r -> Array.get model.focusedEntryIndex r.formElements) section
+    in
+    ( title, element )
+
+
+formEntryView : Model -> Html Msg
+formEntryView model =
+    let
+        section =
+            getCurrentSection model
+
+        element =
+            Tuple.second section
+
+        html =
+            case element of
+                Just e ->
+                    render e
+
+                Nothing ->
+                    text "Error"
+    in
+    html
+
+
+render : FormEntryElement -> Html Msg
+render e =
+    case e of
+        CurrentlyInUS ->
+            div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center, alignItems center ] ]
+                [ div
+                    [ css [ displayFlex, flexDirection column, backgroundColor accent, padding (px 10) ] ]
+                    [ text "Do you currently reside in the US?"
+                    , div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
+                        [ label [] [ input [ type_ "checkbox" ] [], text "Yes" ]
+                        , label [] [ input [ type_ "checkbox" ] [], text "No" ]
+                        ]
+                    ]
+                ]
+
+        InUSLessThanOneYear ->
+            div [ css [ property "grid-column" "2" ] ]
+                [ h1 [] [ text "Entry" ]
+                ]
+
+
+headerView : Model -> Html Msg
+headerView model =
+    div [ css [ property "grid-column" "1" ] ]
+        [ h1 [] [ text "Progress" ]
+        ]
+
+
+helpView : Model -> Html Msg
+helpView model =
+    div [ css [ property "grid-column" "3" ] ]
+        [ h1 [] [ text "Help" ]
         ]
 
 
