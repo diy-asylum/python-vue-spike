@@ -4488,6 +4488,43 @@ function _Http_track(router, xhr, tracker)
 }
 
 
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
 // DECODER
 
 var _File_decoder = _Json_decodePrim(function(value) {
@@ -4663,43 +4700,6 @@ function _File_toUrl(blob)
 	});
 }
 
-
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
 var $author$project$Main$LinkClicked = function (a) {
 	return {$: 'LinkClicked', a: a};
 };
@@ -5497,10 +5497,27 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Main$Model = F9(
-	function (key, url, page, title, device, state, focusedSectionIndex, focusedEntryIndex, directory) {
-		return {device: device, directory: directory, focusedEntryIndex: focusedEntryIndex, focusedSectionIndex: focusedSectionIndex, key: key, page: page, state: state, title: title, url: url};
-	});
+var $author$project$Main$Model = function (key) {
+	return function (url) {
+		return function (page) {
+			return function (title) {
+				return function (device) {
+					return function (state) {
+						return function (focusedSectionIndex) {
+							return function (focusedEntryIndex) {
+								return function (directory) {
+									return function (language) {
+										return {device: device, directory: directory, focusedEntryIndex: focusedEntryIndex, focusedSectionIndex: focusedSectionIndex, key: key, language: language, page: page, state: state, title: title, url: url};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var $mdgriffith$elm_ui$Element$BigDesktop = {$: 'BigDesktop'};
 var $mdgriffith$elm_ui$Element$Desktop = {$: 'Desktop'};
 var $mdgriffith$elm_ui$Element$Landscape = {$: 'Landscape'};
@@ -5571,99 +5588,41 @@ var $author$project$Main$defaultDirectory = $elm$core$Array$fromList(
 		]));
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData};
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$pageToTitle = function (page) {
-	var title = function () {
-		switch (page.$) {
-			case 'Home':
-				return 'DIY Asylum | US Asylum Application';
-			case 'I589':
-				return 'DIY Asylum | I-589 Form Completion App';
-			case 'Error':
-				return 'DIY Aslyum | 404 Error';
-			case 'AboutUs':
-				return 'DIY Asylum | About Us';
-			default:
-				return 'DIY Asylum | Contact Us';
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
 		}
-	}();
-	return title;
-};
-var $author$project$Main$AboutUs = {$: 'AboutUs'};
-var $author$project$Main$Contact = {$: 'Contact'};
-var $author$project$Main$Error = {$: 'Error'};
-var $author$project$Main$Home = {$: 'Home'};
-var $author$project$Main$I589 = {$: 'I589'};
-var $author$project$Main$pathMatch = function (path) {
-	var page = function () {
-		switch (path) {
-			case '/':
-				return $author$project$Main$Home;
-			case '/src/Main.elm':
-				return $author$project$Main$Home;
-			case '/i589':
-				return $author$project$Main$I589;
-			case '/contact':
-				return $author$project$Main$Contact;
-			case '/about':
-				return $author$project$Main$AboutUs;
-			default:
-				return $author$project$Main$Error;
-		}
-	}();
-	return page;
-};
-var $author$project$Main$init = F3(
-	function (flags, url, key) {
-		var page = $author$project$Main$pathMatch(url.path);
-		return _Utils_Tuple2(
-			A9(
-				$author$project$Main$Model,
-				key,
-				url,
-				page,
-				$author$project$Main$pageToTitle(page),
-				$mdgriffith$elm_ui$Element$classifyDevice(flags),
-				$author$project$Main$defaultFormState,
-				0,
-				0,
-				$author$project$Main$defaultDirectory),
-			$elm$core$Platform$Cmd$none);
 	});
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $author$project$Main$DeviceClassified = function (a) {
-	return {$: 'DeviceClassified', a: a};
-};
-var $elm$browser$Browser$Events$Window = {$: 'Window'};
-var $elm$browser$Browser$Events$MySub = F3(
-	function (a, b, c) {
-		return {$: 'MySub', a: a, b: b, c: c};
-	});
-var $elm$browser$Browser$Events$State = F2(
-	function (subs, pids) {
-		return {pids: pids, subs: subs};
-	});
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
-	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
-var $elm$browser$Browser$Events$nodeToKey = function (node) {
-	if (node.$ === 'Document') {
-		return 'd_';
-	} else {
-		return 'w_';
-	}
-};
-var $elm$browser$Browser$Events$addKey = function (sub) {
-	var node = sub.a;
-	var name = sub.b;
-	return _Utils_Tuple2(
-		_Utils_ap(
-			$elm$browser$Browser$Events$nodeToKey(node),
-			name),
-		sub);
-};
 var $elm$core$Dict$Black = {$: 'Black'};
 var $elm$core$Dict$RBNode_elm_builtin = F5(
 	function (a, b, c, d, e) {
@@ -5724,7 +5683,6 @@ var $elm$core$Dict$balance = F5(
 			}
 		}
 	});
-var $elm$core$Basics$compare = _Utils_compare;
 var $elm$core$Dict$insertHelp = F3(
 	function (key, value, dict) {
 		if (dict.$ === 'RBEmpty_elm_builtin') {
@@ -5784,6 +5742,151 @@ var $elm$core$Dict$fromList = function (assocs) {
 			}),
 		$elm$core$Dict$empty,
 		assocs);
+};
+var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var $elm$json$Json$Decode$dict = function (decoder) {
+	return A2(
+		$elm$json$Json$Decode$map,
+		$elm$core$Dict$fromList,
+		$elm$json$Json$Decode$keyValuePairs(decoder));
+};
+var $author$project$I18n$rawLanguageDict = '{ \"back\": { \"en\": \"Back\", \"es\": \"Previo\"}, \"next\": { \"en\": \"Next\", \"es\": \"Siguiente\"},    \"currently-in-us\": { \"en\": \"Do you currently reside in the US?\", \"es\": \"¿Reside actualmente en los EE. UU.?\"}, \n    \"yes\": { \"en\": \"Yes\", \"es\": \"Sí\"},\n    \"no\":{ \"en\": \"No\", \"es\": \"No\"}}';
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$I18n$languageDict = function () {
+	var _v0 = A2(
+		$elm$json$Json$Decode$decodeString,
+		$elm$json$Json$Decode$dict(
+			$elm$json$Json$Decode$dict($elm$json$Json$Decode$string)),
+		$author$project$I18n$rawLanguageDict);
+	if (_v0.$ === 'Ok') {
+		var x = _v0.a;
+		return x;
+	} else {
+		return $elm$core$Dict$empty;
+	}
+}();
+var $author$project$I18n$languages = function () {
+	var _v0 = A2($elm$core$Dict$get, 'yes', $author$project$I18n$languageDict);
+	if (_v0.$ === 'Just') {
+		var k = _v0.a;
+		return $elm$core$Dict$keys(k);
+	} else {
+		return _List_Nil;
+	}
+}();
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Main$pageToTitle = function (page) {
+	var title = function () {
+		switch (page.$) {
+			case 'Home':
+				return 'DIY Asylum | US Asylum Application';
+			case 'I589':
+				return 'DIY Asylum | I-589 Form Completion App';
+			case 'Error':
+				return 'DIY Aslyum | 404 Error';
+			case 'AboutUs':
+				return 'DIY Asylum | About Us';
+			default:
+				return 'DIY Asylum | Contact Us';
+		}
+	}();
+	return title;
+};
+var $author$project$Main$AboutUs = {$: 'AboutUs'};
+var $author$project$Main$Contact = {$: 'Contact'};
+var $author$project$Main$Error = {$: 'Error'};
+var $author$project$Main$Home = {$: 'Home'};
+var $author$project$Main$I589 = {$: 'I589'};
+var $author$project$Main$pathMatch = function (path) {
+	var page = function () {
+		switch (path) {
+			case '/':
+				return $author$project$Main$Home;
+			case '/src/Main.elm':
+				return $author$project$Main$Home;
+			case '/i589':
+				return $author$project$Main$I589;
+			case '/contact':
+				return $author$project$Main$Contact;
+			case '/about':
+				return $author$project$Main$AboutUs;
+			default:
+				return $author$project$Main$Error;
+		}
+	}();
+	return page;
+};
+var $author$project$Main$init = F3(
+	function (flags, url, key) {
+		var page = $author$project$Main$pathMatch(url.path);
+		var lang = A2($elm$core$List$member, flags.language, $author$project$I18n$languages) ? flags.language : 'en';
+		return _Utils_Tuple2(
+			$author$project$Main$Model(key)(url)(page)(
+				$author$project$Main$pageToTitle(page))(
+				$mdgriffith$elm_ui$Element$classifyDevice(flags))($author$project$Main$defaultFormState)(0)(0)($author$project$Main$defaultDirectory)(lang),
+			$elm$core$Platform$Cmd$none);
+	});
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $author$project$Main$DeviceClassified = function (a) {
+	return {$: 'DeviceClassified', a: a};
+};
+var $elm$browser$Browser$Events$Window = {$: 'Window'};
+var $elm$browser$Browser$Events$MySub = F3(
+	function (a, b, c) {
+		return {$: 'MySub', a: a, b: b, c: c};
+	});
+var $elm$browser$Browser$Events$State = F2(
+	function (subs, pids) {
+		return {pids: pids, subs: subs};
+	});
+var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
+	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
+var $elm$browser$Browser$Events$nodeToKey = function (node) {
+	if (node.$ === 'Document') {
+		return 'd_';
+	} else {
+		return 'w_';
+	}
+};
+var $elm$browser$Browser$Events$addKey = function (sub) {
+	var node = sub.a;
+	var name = sub.b;
+	return _Utils_Tuple2(
+		_Utils_ap(
+			$elm$browser$Browser$Events$nodeToKey(node),
+			name),
+		sub);
 };
 var $elm$core$Process$kill = _Scheduler_kill;
 var $elm$core$Dict$foldl = F3(
@@ -6731,37 +6834,6 @@ var $elm$core$Maybe$isJust = function (maybe) {
 		return false;
 	}
 };
-var $elm$core$Dict$get = F2(
-	function (targetKey, dict) {
-		get:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
-				switch (_v1.$) {
-					case 'LT':
-						var $temp$targetKey = targetKey,
-							$temp$dict = left;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-					case 'EQ':
-						return $elm$core$Maybe$Just(value);
-					default:
-						var $temp$targetKey = targetKey,
-							$temp$dict = right;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-				}
-			}
-		}
-	});
 var $elm$core$Dict$getMin = function (dict) {
 	getMin:
 	while (true) {
@@ -7345,6 +7417,52 @@ var $author$project$Main$downloadFilledForm = function (data) {
 			url: 'http://localhost:12345/fill-i589'
 		});
 };
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
+var $elm$core$Basics$ge = _Utils_ge;
+var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
+var $elm$core$Array$getHelp = F3(
+	function (shift, index, tree) {
+		getHelp:
+		while (true) {
+			var pos = $elm$core$Array$bitMask & (index >>> shift);
+			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (_v0.$ === 'SubTree') {
+				var subTree = _v0.a;
+				var $temp$shift = shift - $elm$core$Array$shiftStep,
+					$temp$index = index,
+					$temp$tree = subTree;
+				shift = $temp$shift;
+				index = $temp$index;
+				tree = $temp$tree;
+				continue getHelp;
+			} else {
+				var values = _v0.a;
+				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
+			}
+		}
+	});
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $elm$core$Array$tailIndex = function (len) {
+	return (len >>> 5) << 5;
+};
+var $elm$core$Array$get = F2(
+	function (index, _v0) {
+		var len = _v0.a;
+		var startShift = _v0.b;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
+			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
+			A3($elm$core$Array$getHelp, startShift, index, tree)));
+	});
+var $elm$core$Array$length = function (_v0) {
+	var len = _v0.a;
+	return len;
+};
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $author$project$Main$pageToDescription = function (page) {
 	var description = function () {
@@ -7599,10 +7717,69 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			case 'SetLanguage':
+				var l = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{language: l}),
+					$elm$core$Platform$Cmd$none);
 			case 'Next':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				var section = A2($elm$core$Array$get, model.focusedSectionIndex, model.directory);
+				var elements = function () {
+					if (section.$ === 'Just') {
+						var e = section.a;
+						return e.formElements;
+					} else {
+						return $elm$core$Array$fromList(_List_Nil);
+					}
+				}();
+				var length = $elm$core$Array$length(elements);
+				var nextEntryIndex = (_Utils_cmp(model.focusedEntryIndex + 1, length) < 0) ? (model.focusedEntryIndex + 1) : 0;
+				var nextSectionIndex = (_Utils_cmp(model.focusedEntryIndex + 1, length) < 0) ? model.focusedSectionIndex : (model.focusedSectionIndex + 1);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{focusedEntryIndex: nextEntryIndex, focusedSectionIndex: nextSectionIndex}),
+					$elm$core$Platform$Cmd$none);
+			case 'Back':
+				var nextSectionIndex = (!model.focusedEntryIndex) ? (model.focusedSectionIndex - 1) : model.focusedSectionIndex;
+				var nextEntryIndex = function () {
+					if (!model.focusedEntryIndex) {
+						var nextSection = A2($elm$core$Array$get, nextSectionIndex, model.directory);
+						var elements = function () {
+							if (nextSection.$ === 'Just') {
+								var e = nextSection.a;
+								return e.formElements;
+							} else {
+								return $elm$core$Array$fromList(_List_Nil);
+							}
+						}();
+						return $elm$core$Array$length(elements) - 1;
+					} else {
+						return 0;
+					}
+				}();
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{focusedEntryIndex: nextEntryIndex, focusedSectionIndex: nextSectionIndex}),
+					$elm$core$Platform$Cmd$none);
 			default:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				var toggle = msg.a;
+				var s = model.state;
+				var e = model.state.eligibility;
+				var newE = _Utils_update(
+					e,
+					{currentlyInUS: toggle});
+				var newS = _Utils_update(
+					s,
+					{eligibility: newE});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$core$List$isEmpty = function (xs) {
@@ -7898,27 +8075,6 @@ var $elm$core$List$singleton = function (value) {
 		[value]);
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
 var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
@@ -8770,9 +8926,6 @@ var $Skinney$murmur3$Murmur3$HashData = F4(
 	});
 var $Skinney$murmur3$Murmur3$c1 = 3432918353;
 var $Skinney$murmur3$Murmur3$c2 = 461845907;
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var $Skinney$murmur3$Murmur3$multiplyBy = F2(
 	function (b, a) {
 		return ((a & 65535) * b) + ((((a >>> 16) * b) & 65535) << 16);
@@ -10453,45 +10606,6 @@ var $elm$core$Maybe$andThen = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
-var $elm$core$Basics$ge = _Utils_ge;
-var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
-var $elm$core$Array$getHelp = F3(
-	function (shift, index, tree) {
-		getHelp:
-		while (true) {
-			var pos = $elm$core$Array$bitMask & (index >>> shift);
-			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-			if (_v0.$ === 'SubTree') {
-				var subTree = _v0.a;
-				var $temp$shift = shift - $elm$core$Array$shiftStep,
-					$temp$index = index,
-					$temp$tree = subTree;
-				shift = $temp$shift;
-				index = $temp$index;
-				tree = $temp$tree;
-				continue getHelp;
-			} else {
-				var values = _v0.a;
-				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
-			}
-		}
-	});
-var $elm$core$Array$tailIndex = function (len) {
-	return (len >>> 5) << 5;
-};
-var $elm$core$Array$get = F2(
-	function (index, _v0) {
-		var len = _v0.a;
-		var startShift = _v0.b;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
-			index,
-			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
-			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
-			A3($elm$core$Array$getHelp, startShift, index, tree)));
-	});
 var $author$project$Main$getCurrentSection = function (model) {
 	var section = A2($elm$core$Array$get, model.focusedSectionIndex, model.directory);
 	var title = A2(
@@ -10508,6 +10622,81 @@ var $author$project$Main$getCurrentSection = function (model) {
 		section);
 	return _Utils_Tuple2(title, element);
 };
+var $author$project$Main$Back = {$: 'Back'};
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $author$project$I18n$i18n = F2(
+	function (key, language) {
+		var errorValue = 'No translation available.';
+		var entry = A2($elm$core$Dict$get, key, $author$project$I18n$languageDict);
+		var value = function () {
+			if (entry.$ === 'Just') {
+				var d = entry.a;
+				var _v1 = A2($elm$core$Dict$get, language, d);
+				if (_v1.$ === 'Just') {
+					var s = _v1.a;
+					return s;
+				} else {
+					var _v2 = A2($elm$core$Dict$get, 'en', d);
+					if (_v2.$ === 'Just') {
+						var s = _v2.a;
+						return s;
+					} else {
+						return errorValue;
+					}
+				}
+			} else {
+				return errorValue;
+			}
+		}();
+		return value;
+	});
+var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
+	function (eventName, handler) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$Main$backButton = function (model) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$button,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+						$rtfeldman$elm_css$Css$color($author$project$Main$dark),
+						$rtfeldman$elm_css$Css$margin(
+						$rtfeldman$elm_css$Css$px(10))
+					])),
+				$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Back)
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$text(
+				A2($author$project$I18n$i18n, 'back', model.language))
+			]));
+};
 var $author$project$Main$accent = $rtfeldman$elm_css$Css$hex('4F7CAC');
 var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
 var $rtfeldman$elm_css$Css$column = _Utils_update(
@@ -10515,8 +10704,6 @@ var $rtfeldman$elm_css$Css$column = _Utils_update(
 	{value: 'column'});
 var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
 var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
-var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
-var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 	return A3(
 		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
@@ -10524,7 +10711,42 @@ var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 		'justify-content',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
-var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
+var $author$project$Main$centerWrap = function (list) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						A2($rtfeldman$elm_css$Css$property, 'grid-column', '2'),
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+								$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$accent),
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+								$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+								$rtfeldman$elm_css$Css$padding(
+								$rtfeldman$elm_css$Css$px(10))
+							]))
+					]),
+				list)
+			]));
+};
 var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
 	function (key, value) {
 		return A3(
@@ -10532,6 +10754,80 @@ var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
 			A2($elm$virtual_dom$VirtualDom$property, key, value),
 			_List_Nil,
 			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
+var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
+var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
+var $author$project$Main$Next = {$: 'Next'};
+var $author$project$Main$nextButton = F2(
+	function (model, isValid) {
+		return isValid ? A2(
+			$rtfeldman$elm_css$Html$Styled$button,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+							$rtfeldman$elm_css$Css$color($author$project$Main$dark),
+							$rtfeldman$elm_css$Css$margin(
+							$rtfeldman$elm_css$Css$px(10))
+						])),
+					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Next)
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(
+					A2($author$project$I18n$i18n, 'next', model.language))
+				])) : A2(
+			$rtfeldman$elm_css$Html$Styled$button,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark),
+							$rtfeldman$elm_css$Css$color($author$project$Main$background),
+							$rtfeldman$elm_css$Css$margin(
+							$rtfeldman$elm_css$Css$px(10))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(
+					A2($author$project$I18n$i18n, 'next', model.language))
+				]));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $rtfeldman$elm_css$Html$Styled$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
+};
+var $author$project$Main$SetCurrentlyInUS = function (a) {
+	return {$: 'SetCurrentlyInUS', a: a};
+};
+var $author$project$Main$setMaybeCheckBox = F2(
+	function (isAlreadyChecked, isNowChecked) {
+		return isAlreadyChecked ? $author$project$Main$SetCurrentlyInUS($elm$core$Maybe$Nothing) : $author$project$Main$SetCurrentlyInUS(
+			$elm$core$Maybe$Just(isNowChecked));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -10541,110 +10837,104 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
-var $author$project$Main$render = function (e) {
-	if (e.$ === 'CurrentlyInUS') {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$div,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							A2($rtfeldman$elm_css$Css$property, 'grid-column', '2'),
-							$rtfeldman$elm_css$Css$displayFlex,
-							$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-							$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-							$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
-						]))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$div,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Css$displayFlex,
-									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-									$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$accent),
-									$rtfeldman$elm_css$Css$padding(
-									$rtfeldman$elm_css$Css$px(10))
-								]))
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('Do you currently reside in the US?'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-										]))
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$rtfeldman$elm_css$Html$Styled$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$rtfeldman$elm_css$Html$Styled$input,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox')
-												]),
-											_List_Nil),
-											$rtfeldman$elm_css$Html$Styled$text('Yes')
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$rtfeldman$elm_css$Html$Styled$input,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox')
-												]),
-											_List_Nil),
-											$rtfeldman$elm_css$Html$Styled$text('No')
-										]))
-								]))
-						]))
-				]));
-	} else {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$div,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							A2($rtfeldman$elm_css$Css$property, 'grid-column', '2')
-						]))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$h1,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('Entry')
-						]))
-				]));
-	}
-};
+var $author$project$Main$render = F2(
+	function (e, model) {
+		if (e.$ === 'CurrentlyInUS') {
+			var elig = model.state.eligibility;
+			var noChecked = function () {
+				var _v1 = elig.currentlyInUS;
+				if (_v1.$ === 'Just') {
+					var b = _v1.a;
+					return !b;
+				} else {
+					return false;
+				}
+			}();
+			var yesChecked = A2($elm$core$Maybe$withDefault, false, elig.currentlyInUS);
+			return $author$project$Main$centerWrap(
+				_List_fromArray(
+					[
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$margin(
+										$rtfeldman$elm_css$Css$px(10))
+									]))
+							]),
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text(
+								A2($author$project$I18n$i18n, 'currently-in-us', model.language))
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+										$rtfeldman$elm_css$Css$margin(
+										$rtfeldman$elm_css$Css$px(10))
+									]))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$rtfeldman$elm_css$Html$Styled$label,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$rtfeldman$elm_css$Html$Styled$input,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+												$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
+												$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+												$author$project$Main$setMaybeCheckBox(yesChecked))
+											]),
+										_List_Nil),
+										$rtfeldman$elm_css$Html$Styled$text(
+										A2($author$project$I18n$i18n, 'yes', model.language))
+									])),
+								A2(
+								$rtfeldman$elm_css$Html$Styled$label,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$rtfeldman$elm_css$Html$Styled$input,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+												$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
+												$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+												function (r) {
+													return A2($author$project$Main$setMaybeCheckBox, noChecked, !r);
+												})
+											]),
+										_List_Nil),
+										$rtfeldman$elm_css$Html$Styled$text(
+										A2($author$project$I18n$i18n, 'no', model.language))
+									]))
+							])),
+						A2($author$project$Main$nextButton, model, yesChecked || noChecked)
+					]));
+		} else {
+			return $author$project$Main$centerWrap(
+				_List_fromArray(
+					[
+						$author$project$Main$backButton(model)
+					]));
+		}
+	});
 var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
 	return y;
@@ -10655,13 +10945,14 @@ var $author$project$Main$formEntryView = function (model) {
 	var html = function () {
 		if (element.$ === 'Just') {
 			var e = element.a;
-			return $author$project$Main$render(e);
+			return A2($author$project$Main$render, e, model);
 		} else {
 			return $rtfeldman$elm_css$Html$Styled$text('Error');
 		}
 	}();
 	return html;
 };
+var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
 var $author$project$Main$headerView = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10732,6 +11023,9 @@ var $author$project$Main$i589View = function (model) {
 				$author$project$Main$helpView(model)
 			]));
 };
+var $author$project$Main$SetLanguage = function (a) {
+	return {$: 'SetLanguage', a: a};
+};
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
 var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
 var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
@@ -10766,111 +11060,177 @@ var $author$project$Main$navContainerStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
 			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$start)
 		]));
-var $author$project$Main$webNav = A2(
-	$rtfeldman$elm_css$Html$Styled$div,
+var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
 	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Html$Styled$Attributes$css(
-			_List_fromArray(
-				[
-					$author$project$Main$gridStyles,
-					$author$project$Main$standardStyles,
-					$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$accent),
-					$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
-				]))
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$rtfeldman$elm_css$Html$Styled$div,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[$author$project$Main$navContainerStyles]))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$a,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('/'),
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[$author$project$Main$linkStyles]))
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('DIY Asylum')
-						])),
-					A2(
-					$rtfeldman$elm_css$Html$Styled$a,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('/i589'),
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[
-									$author$project$Main$linkStyles,
-									$rtfeldman$elm_css$Css$marginLeft($rtfeldman$elm_css$Css$auto)
-								]))
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('Get Started')
-						])),
-					A2(
-					$rtfeldman$elm_css$Html$Styled$a,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('/about'),
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[$author$project$Main$linkStyles]))
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('About Us')
-						])),
-					A2(
-					$rtfeldman$elm_css$Html$Styled$a,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href('/contact'),
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[$author$project$Main$linkStyles]))
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text('Contact Us')
-						]))
-				]))
-		]));
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
+};
+var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
+var $rtfeldman$elm_css$Html$Styled$select = $rtfeldman$elm_css$Html$Styled$node('select');
+var $rtfeldman$elm_css$Html$Styled$Attributes$selected = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('selected');
+var $author$project$Main$webNav = function (model) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$author$project$Main$gridStyles,
+						$author$project$Main$standardStyles,
+						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$accent),
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[$author$project$Main$navContainerStyles]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$rtfeldman$elm_css$Html$Styled$a,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$href('/'),
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[$author$project$Main$linkStyles]))
+							]),
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('DIY Asylum')
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$a,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$href('/i589'),
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$author$project$Main$linkStyles,
+										$rtfeldman$elm_css$Css$marginLeft($rtfeldman$elm_css$Css$auto)
+									]))
+							]),
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('Get Started')
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$a,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$href('/about'),
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[$author$project$Main$linkStyles]))
+							]),
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('About Us')
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$a,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$href('/contact'),
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[$author$project$Main$linkStyles]))
+							]),
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$text('Contact Us')
+							])),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$select,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$SetLanguage)
+							]),
+						A2(
+							$elm$core$List$map,
+							function (r) {
+								return A2(
+									$rtfeldman$elm_css$Html$Styled$option,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+											_Utils_eq(r, model.language))
+										]),
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(r)
+										]));
+							},
+							$author$project$I18n$languages))
+					]))
+			]));
+};
 var $author$project$Main$webView = function (model) {
 	var content = function () {
 		var _v0 = model.page;
 		switch (_v0.$) {
 			case 'Home':
 				return _List_fromArray(
-					[$author$project$Main$webNav, $author$project$Main$footer]);
+					[
+						$author$project$Main$webNav(model),
+						$author$project$Main$footer
+					]);
 			case 'I589':
 				return _List_fromArray(
 					[
-						$author$project$Main$webNav,
+						$author$project$Main$webNav(model),
 						$author$project$Main$i589View(model),
 						$author$project$Main$footer
 					]);
 			case 'AboutUs':
 				return _List_fromArray(
-					[$author$project$Main$webNav, $author$project$Main$footer]);
+					[
+						$author$project$Main$webNav(model),
+						$author$project$Main$footer
+					]);
 			case 'Contact':
 				return _List_fromArray(
-					[$author$project$Main$webNav, $author$project$Main$footer]);
+					[
+						$author$project$Main$webNav(model),
+						$author$project$Main$footer
+					]);
 			default:
 				return _List_fromArray(
-					[$author$project$Main$webNav, $author$project$Main$footer]);
+					[
+						$author$project$Main$webNav(model),
+						$author$project$Main$footer
+					]);
 		}
 	}();
 	return content;
@@ -10890,10 +11250,15 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 		function (width) {
 			return A2(
 				$elm$json$Json$Decode$andThen,
-				function (height) {
-					return $elm$json$Json$Decode$succeed(
-						{height: height, width: width});
+				function (language) {
+					return A2(
+						$elm$json$Json$Decode$andThen,
+						function (height) {
+							return $elm$json$Json$Decode$succeed(
+								{height: height, language: language, width: width});
+						},
+						A2($elm$json$Json$Decode$field, 'height', $elm$json$Json$Decode$int));
 				},
-				A2($elm$json$Json$Decode$field, 'height', $elm$json$Json$Decode$int));
+				A2($elm$json$Json$Decode$field, 'language', $elm$json$Json$Decode$string));
 		},
 		A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$int)))(0)}});}(this));

@@ -13,6 +13,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, type_)
 import Html.Styled.Events exposing (..)
 import Http
+import I18n exposing (i18n, languages)
 import Ports
 import Url
 
@@ -55,6 +56,7 @@ type alias Model =
     , focusedSectionIndex : Int
     , focusedEntryIndex : Int
     , directory : Array FormSection
+    , language : String
     }
 
 
@@ -131,6 +133,7 @@ pathMatch path =
 type alias Flags =
     { width : Int
     , height : Int
+    , language : String
     }
 
 
@@ -139,8 +142,15 @@ init flags url key =
     let
         page =
             pathMatch url.path
+
+        lang =
+            if List.member flags.language languages then
+                flags.language
+
+            else
+                "en"
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState 0 0 defaultDirectory, Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState 0 0 defaultDirectory lang, Cmd.none )
 
 
 
@@ -155,6 +165,8 @@ type Msg
     | FinishDownload (Result Http.Error Bytes)
     | Next
     | Back
+    | SetCurrentlyInUS (Maybe Bool)
+    | SetLanguage String
 
 
 pageToTitle : Page -> String
@@ -237,11 +249,86 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
+        SetLanguage l ->
+            ( { model | language = l }, Cmd.none )
+
         Next ->
-            ( model, Cmd.none )
+            let
+                section =
+                    Array.get model.focusedSectionIndex model.directory
+
+                elements =
+                    case section of
+                        Just e ->
+                            e.formElements
+
+                        Nothing ->
+                            Array.fromList []
+
+                length =
+                    Array.length elements
+
+                nextSectionIndex =
+                    if model.focusedEntryIndex + 1 < length then
+                        model.focusedSectionIndex
+
+                    else
+                        model.focusedSectionIndex + 1
+
+                nextEntryIndex =
+                    if model.focusedEntryIndex + 1 < length then
+                        model.focusedEntryIndex + 1
+
+                    else
+                        0
+            in
+            ( { model | focusedEntryIndex = nextEntryIndex, focusedSectionIndex = nextSectionIndex }, Cmd.none )
 
         Back ->
-            ( model, Cmd.none )
+            let
+                nextSectionIndex =
+                    if model.focusedEntryIndex == 0 then
+                        model.focusedSectionIndex - 1
+
+                    else
+                        model.focusedSectionIndex
+
+                nextEntryIndex =
+                    if model.focusedEntryIndex == 0 then
+                        let
+                            nextSection =
+                                Array.get nextSectionIndex model.directory
+
+                            elements =
+                                case nextSection of
+                                    Just e ->
+                                        e.formElements
+
+                                    Nothing ->
+                                        Array.fromList []
+                        in
+                        Array.length elements - 1
+
+                    else
+                        0
+            in
+            ( { model | focusedEntryIndex = nextEntryIndex, focusedSectionIndex = nextSectionIndex }, Cmd.none )
+
+        SetCurrentlyInUS toggle ->
+            let
+                e =
+                    model.state.eligibility
+
+                newE =
+                    { e | currentlyInUS = toggle }
+
+                s =
+                    model.state
+
+                newS =
+                    { s | eligibility = newE }
+            in
+            ( { model | state = newS }, Cmd.none )
 
 
 
@@ -278,19 +365,19 @@ webView model =
         content =
             case model.page of
                 Home ->
-                    [ webNav, footer ]
+                    [ webNav model, footer ]
 
                 I589 ->
-                    [ webNav, i589View model, footer ]
+                    [ webNav model, i589View model, footer ]
 
                 AboutUs ->
-                    [ webNav, footer ]
+                    [ webNav model, footer ]
 
                 Contact ->
-                    [ webNav, footer ]
+                    [ webNav model, footer ]
 
                 Error ->
-                    [ webNav, footer ]
+                    [ webNav model, footer ]
     in
     content
 
@@ -331,7 +418,7 @@ formEntryView model =
         html =
             case element of
                 Just e ->
-                    render e
+                    render e model
 
                 Nothing ->
                     text "Error"
@@ -339,25 +426,68 @@ formEntryView model =
     html
 
 
-render : FormEntryElement -> Html Msg
-render e =
+setMaybeCheckBox : Bool -> Bool -> Msg
+setMaybeCheckBox isAlreadyChecked isNowChecked =
+    if isAlreadyChecked then
+        SetCurrentlyInUS Nothing
+
+    else
+        SetCurrentlyInUS (Just isNowChecked)
+
+
+backButton : Model -> Html Msg
+backButton model =
+    button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Back ] [ text (i18n "back" model.language) ]
+
+
+nextButton : Model -> Bool -> Html Msg
+nextButton model isValid =
+    if isValid then
+        button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Next ] [ text (i18n "next" model.language) ]
+
+    else
+        button [ css [ backgroundColor dark, color background, margin (px 10) ] ] [ text (i18n "next" model.language) ]
+
+
+centerWrap : List (Html Msg) -> Html Msg
+centerWrap list =
+    div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center ] ]
+        [ div
+            [ css [ displayFlex, flexDirection column, backgroundColor accent, justifyContent center, alignItems center, padding (px 10) ] ]
+            list
+        ]
+
+
+render : FormEntryElement -> Model -> Html Msg
+render e model =
     case e of
         CurrentlyInUS ->
-            div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center, alignItems center ] ]
-                [ div
-                    [ css [ displayFlex, flexDirection column, backgroundColor accent, padding (px 10) ] ]
-                    [ text "Do you currently reside in the US?"
-                    , div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
-                        [ label [] [ input [ type_ "checkbox" ] [], text "Yes" ]
-                        , label [] [ input [ type_ "checkbox" ] [], text "No" ]
-                        ]
+            let
+                elig =
+                    model.state.eligibility
+
+                yesChecked =
+                    Maybe.withDefault False elig.currentlyInUS
+
+                noChecked =
+                    case elig.currentlyInUS of
+                        Just b ->
+                            not b
+
+                        Nothing ->
+                            False
+            in
+            centerWrap
+                [ div [ css [ margin (px 10) ] ] [ text (i18n "currently-in-us" model.language) ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
+                    [ label [] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (setMaybeCheckBox yesChecked) ] [], text (i18n "yes" model.language) ]
+                    , label [] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> setMaybeCheckBox noChecked (not r)) ] [], text (i18n "no" model.language) ]
                     ]
+                , nextButton model (yesChecked || noChecked)
                 ]
 
         InUSLessThanOneYear ->
-            div [ css [ property "grid-column" "2" ] ]
-                [ h1 [] [ text "Entry" ]
-                ]
+            centerWrap [ backButton model ]
 
 
 headerView : Model -> Html Msg
@@ -374,14 +504,15 @@ helpView model =
         ]
 
 
-webNav : Html msg
-webNav =
+webNav : Model -> Html Msg
+webNav model =
     div [ css [ gridStyles, standardStyles, backgroundColor accent, alignItems center ] ]
         [ div [ css [ navContainerStyles ] ]
             [ a [ href "/", css [ linkStyles ] ] [ text "DIY Asylum" ]
             , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text "Get Started" ]
             , a [ href "/about", css [ linkStyles ] ] [ text "About Us" ]
             , a [ href "/contact", css [ linkStyles ] ] [ text "Contact Us" ]
+            , select [ onInput SetLanguage ] (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) languages)
             ]
         ]
 
