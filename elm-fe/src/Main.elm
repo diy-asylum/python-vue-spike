@@ -53,9 +53,9 @@ type alias Model =
     , title : String
     , device : Device
     , state : FormState
-    , focusedSectionIndex : Int
-    , focusedEntryIndex : Int
-    , directory : Array FormSection
+    , focusedSection : SectionTitle
+    , focusedEntry : FormEntryElement
+    , visitedElements : List FormEntryElement
     , language : String
     }
 
@@ -87,21 +87,17 @@ defaultEligibilityData =
 type FormEntryElement
     = CurrentlyInUS
     | InUSLessThanOneYear
+    | NotEligible
 
 
 type SectionTitle
     = Eligibility
 
 
-type alias FormSection =
+type alias ElementWithSection =
     { title : SectionTitle
-    , formElements : Array FormEntryElement
+    , element : FormEntryElement
     }
-
-
-defaultDirectory : Array FormSection
-defaultDirectory =
-    Array.fromList [ { title = Eligibility, formElements = Array.fromList [ CurrentlyInUS, InUSLessThanOneYear ] } ]
 
 
 pathMatch : String -> Page
@@ -150,7 +146,7 @@ init flags url key =
             else
                 "en"
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState 0 0 defaultDirectory lang, Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang, Cmd.none )
 
 
 
@@ -167,6 +163,7 @@ type Msg
     | Back
     | SetCurrentlyInUS (Maybe Bool)
     | SetLanguage String
+    | SetFormEntryElement FormEntryElement
 
 
 pageToTitle : Page -> String
@@ -254,65 +251,42 @@ update msg model =
 
         Next ->
             let
-                section =
-                    Array.get model.focusedSectionIndex model.directory
+                next =
+                    getNext model.focusedEntry model
 
-                elements =
-                    case section of
-                        Just e ->
-                            e.formElements
-
-                        Nothing ->
-                            Array.fromList []
-
-                length =
-                    Array.length elements
-
-                nextSectionIndex =
-                    if model.focusedEntryIndex + 1 < length then
-                        model.focusedSectionIndex
+                visitedElements =
+                    if not (List.member next.element model.visitedElements) then
+                        next.element :: model.visitedElements
 
                     else
-                        model.focusedSectionIndex + 1
-
-                nextEntryIndex =
-                    if model.focusedEntryIndex + 1 < length then
-                        model.focusedEntryIndex + 1
-
-                    else
-                        0
+                        model.visitedElements
             in
-            ( { model | focusedEntryIndex = nextEntryIndex, focusedSectionIndex = nextSectionIndex }, Cmd.none )
+            ( { model | focusedEntry = next.element, focusedSection = next.title, visitedElements = visitedElements }, Cmd.none )
 
         Back ->
             let
-                nextSectionIndex =
-                    if model.focusedEntryIndex == 0 then
-                        model.focusedSectionIndex - 1
+                next =
+                    getBack model.focusedEntry model
+
+                visitedElements =
+                    if not (List.member next.element model.visitedElements) then
+                        next.element :: model.visitedElements
 
                     else
-                        model.focusedSectionIndex
-
-                nextEntryIndex =
-                    if model.focusedEntryIndex == 0 then
-                        let
-                            nextSection =
-                                Array.get nextSectionIndex model.directory
-
-                            elements =
-                                case nextSection of
-                                    Just e ->
-                                        e.formElements
-
-                                    Nothing ->
-                                        Array.fromList []
-                        in
-                        Array.length elements - 1
-
-                    else
-                        0
+                        model.visitedElements
             in
-            ( { model | focusedEntryIndex = nextEntryIndex, focusedSectionIndex = nextSectionIndex }, Cmd.none )
+            ( { model | focusedEntry = next.element, focusedSection = next.title, visitedElements = visitedElements }, Cmd.none )
+
+        SetFormEntryElement element ->
+            let
+                visitedElements =
+                    if not (List.member element model.visitedElements) then
+                        element :: model.visitedElements
+
+                    else
+                        model.visitedElements
+            in
+            ( { model | focusedEntry = element, focusedSection = getSectionFromElement element, visitedElements = visitedElements }, Cmd.none )
 
         SetCurrentlyInUS toggle ->
             let
@@ -329,6 +303,53 @@ update msg model =
                     { s | eligibility = newE }
             in
             ( { model | state = newS }, Cmd.none )
+
+
+getNext : FormEntryElement -> Model -> ElementWithSection
+getNext entry model =
+    case entry of
+        CurrentlyInUS ->
+            case model.state.eligibility.currentlyInUS of
+                Just False ->
+                    { title = Eligibility, element = NotEligible }
+
+                Just True ->
+                    { title = Eligibility, element = InUSLessThanOneYear }
+
+                Nothing ->
+                    { title = Eligibility, element = CurrentlyInUS }
+
+        InUSLessThanOneYear ->
+            { title = Eligibility, element = InUSLessThanOneYear }
+
+        NotEligible ->
+            { title = Eligibility, element = NotEligible }
+
+
+getBack : FormEntryElement -> Model -> ElementWithSection
+getBack entry model =
+    case entry of
+        CurrentlyInUS ->
+            { title = Eligibility, element = CurrentlyInUS }
+
+        InUSLessThanOneYear ->
+            { title = Eligibility, element = CurrentlyInUS }
+
+        NotEligible ->
+            { title = Eligibility, element = CurrentlyInUS }
+
+
+getSectionFromElement : FormEntryElement -> SectionTitle
+getSectionFromElement element =
+    case element of
+        CurrentlyInUS ->
+            Eligibility
+
+        InUSLessThanOneYear ->
+            Eligibility
+
+        NotEligible ->
+            Eligibility
 
 
 
@@ -384,46 +405,16 @@ webView model =
 
 i589View : Model -> Html Msg
 i589View model =
-    div [ css [ gridStyles, standardStyles, alignItems center, backgroundColor background, minHeight (vh 95), color dark ] ]
-        [ headerView model
+    div [ css [ gridStyles, standardStyles, backgroundColor background, minHeight (vh 95), color dark ] ]
+        [ progressView model
         , formEntryView model
         , helpView model
         ]
 
 
-getCurrentSection : Model -> ( Maybe SectionTitle, Maybe FormEntryElement )
-getCurrentSection model =
-    let
-        section =
-            Array.get model.focusedSectionIndex model.directory
-
-        title =
-            Maybe.map (\r -> r.title) section
-
-        element =
-            Maybe.andThen (\r -> Array.get model.focusedEntryIndex r.formElements) section
-    in
-    ( title, element )
-
-
 formEntryView : Model -> Html Msg
 formEntryView model =
-    let
-        section =
-            getCurrentSection model
-
-        element =
-            Tuple.second section
-
-        html =
-            case element of
-                Just e ->
-                    render e model
-
-                Nothing ->
-                    text "Error"
-    in
-    html
+    render model.focusedEntry model
 
 
 setMaybeCheckBox : Bool -> Bool -> Msg
@@ -480,8 +471,8 @@ render e model =
             centerWrap
                 [ div [ css [ margin (px 10) ] ] [ text (i18n "currently-in-us" model.language) ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
-                    [ label [] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (setMaybeCheckBox yesChecked) ] [], text (i18n "yes" model.language) ]
-                    , label [] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> setMaybeCheckBox noChecked (not r)) ] [], text (i18n "no" model.language) ]
+                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (setMaybeCheckBox yesChecked) ] [], text (i18n "yes" model.language) ]
+                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> setMaybeCheckBox noChecked (not r)) ] [], text (i18n "no" model.language) ]
                     ]
                 , nextButton model (yesChecked || noChecked)
                 ]
@@ -489,18 +480,117 @@ render e model =
         InUSLessThanOneYear ->
             centerWrap [ backButton model ]
 
+        NotEligible ->
+            centerWrap [ text "You are not eligible to apply for asylum if you are not currently in the US.", backButton model ]
 
-headerView : Model -> Html Msg
-headerView model =
-    div [ css [ property "grid-column" "1" ] ]
-        [ h1 [] [ text "Progress" ]
-        ]
+
+progressView : Model -> Html Msg
+progressView model =
+    div [ css [ property "grid-column" "1", displayFlex, flexDirection column, alignItems top, margin (Css.em 1) ] ]
+        (List.append
+            [ h2 [ css [ textAlign center ] ] [ text "Progress" ] ]
+            (getProgressList model)
+        )
+
+
+getProgressList : Model -> List (Html Msg)
+getProgressList model =
+    getProgressListHelper Eligibility CurrentlyInUS True model []
+
+
+
+-- TODO: only show form elements contained in the focused section
+
+
+getProgressListHelper : SectionTitle -> FormEntryElement -> Bool -> Model -> List (Html Msg) -> List (Html Msg)
+getProgressListHelper title element printSection model currentList =
+    let
+        next =
+            getNext element model
+
+        clickable =
+            List.member element model.visitedElements
+
+        toBeAdded =
+            if printSection then
+                [ titleHtml title element clickable, elementNameHtml element clickable ]
+
+            else
+                [ elementNameHtml element clickable ]
+
+        appendedList =
+            List.append currentList toBeAdded
+
+        printNextSection =
+            title /= next.title
+
+        nextList =
+            if element == next.element then
+                appendedList
+
+            else
+                getProgressListHelper next.title next.element printNextSection model appendedList
+    in
+    nextList
+
+
+titleHtml : SectionTitle -> FormEntryElement -> Bool -> Html Msg
+titleHtml title elementLink clickable =
+    let
+        description =
+            sectionToDescription title
+
+        html =
+            if clickable then
+                h3 [ onClick (SetFormEntryElement elementLink) ] [ text description ]
+
+            else
+                h3 [ css [ color gray ] ] [ text description ]
+    in
+    html
+
+
+elementNameHtml : FormEntryElement -> Bool -> Html Msg
+elementNameHtml element clickable =
+    let
+        description =
+            formElementToDescription element
+
+        html =
+            if clickable then
+                div [ onClick (SetFormEntryElement element) ] [ text description ]
+
+            else
+                div [ css [ color gray ] ] [ text description ]
+    in
+    html
+
+
+sectionToDescription : SectionTitle -> String
+sectionToDescription title =
+    case title of
+        Eligibility ->
+            "Eligibility"
+
+
+formElementToDescription : FormEntryElement -> String
+formElementToDescription element =
+    case element of
+        CurrentlyInUS ->
+            "US Residency"
+
+        InUSLessThanOneYear ->
+            "Length of Stay"
+
+        NotEligible ->
+            "Not Eligible"
 
 
 helpView : Model -> Html Msg
 helpView model =
-    div [ css [ property "grid-column" "3" ] ]
-        [ h1 [] [ text "Help" ]
+    div [ css [ property "grid-column" "3", displayFlex, flexDirection column, alignItems top, margin (Css.em 1) ] ]
+        [ h2 [ css [ textAlign center ] ] [ text "Help" ]
+        , text "This area will be used to present help to the user."
         ]
 
 
@@ -537,7 +627,7 @@ standardStyles =
 
 gridStyles : Style
 gridStyles =
-    batch [ property "display" "grid", property "grid-template-columns" "1fr 3fr 1fr" ]
+    batch [ property "display" "grid", property "grid-template-columns" "1fr 2fr 1fr" ]
 
 
 linkStyles : Style
@@ -614,6 +704,11 @@ bold =
 neutral : Color
 neutral =
     hex "3C474B"
+
+
+gray : Color
+gray =
+    hex "717878"
 
 
 

@@ -4488,43 +4488,6 @@ function _Http_track(router, xhr, tracker)
 }
 
 
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-
-
-
 // DECODER
 
 var _File_decoder = _Json_decodePrim(function(value) {
@@ -4700,6 +4663,43 @@ function _File_toUrl(blob)
 	});
 }
 
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
 var $author$project$Main$LinkClicked = function (a) {
 	return {$: 'LinkClicked', a: a};
 };
@@ -5497,17 +5497,19 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $elm$json$Json$Decode$field = _Json_decodeField;
+var $author$project$Main$CurrentlyInUS = {$: 'CurrentlyInUS'};
+var $author$project$Main$Eligibility = {$: 'Eligibility'};
 var $author$project$Main$Model = function (key) {
 	return function (url) {
 		return function (page) {
 			return function (title) {
 				return function (device) {
 					return function (state) {
-						return function (focusedSectionIndex) {
-							return function (focusedEntryIndex) {
-								return function (directory) {
+						return function (focusedSection) {
+							return function (focusedEntry) {
+								return function (visitedElements) {
 									return function (language) {
-										return {device: device, directory: directory, focusedEntryIndex: focusedEntryIndex, focusedSectionIndex: focusedSectionIndex, key: key, language: language, page: page, state: state, title: title, url: url};
+										return {device: device, focusedEntry: focusedEntry, focusedSection: focusedSection, key: key, language: language, page: page, state: state, title: title, url: url, visitedElements: visitedElements};
 									};
 								};
 							};
@@ -5538,54 +5540,6 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 		orientation: (_Utils_cmp(window.width, window.height) < 0) ? $mdgriffith$elm_ui$Element$Portrait : $mdgriffith$elm_ui$Element$Landscape
 	};
 };
-var $author$project$Main$CurrentlyInUS = {$: 'CurrentlyInUS'};
-var $author$project$Main$Eligibility = {$: 'Eligibility'};
-var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
-var $elm$core$Array$fromListHelp = F3(
-	function (list, nodeList, nodeListSize) {
-		fromListHelp:
-		while (true) {
-			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
-			var jsArray = _v0.a;
-			var remainingItems = _v0.b;
-			if (_Utils_cmp(
-				$elm$core$Elm$JsArray$length(jsArray),
-				$elm$core$Array$branchFactor) < 0) {
-				return A2(
-					$elm$core$Array$builderToArray,
-					true,
-					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
-			} else {
-				var $temp$list = remainingItems,
-					$temp$nodeList = A2(
-					$elm$core$List$cons,
-					$elm$core$Array$Leaf(jsArray),
-					nodeList),
-					$temp$nodeListSize = nodeListSize + 1;
-				list = $temp$list;
-				nodeList = $temp$nodeList;
-				nodeListSize = $temp$nodeListSize;
-				continue fromListHelp;
-			}
-		}
-	});
-var $elm$core$Array$fromList = function (list) {
-	if (!list.b) {
-		return $elm$core$Array$empty;
-	} else {
-		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
-	}
-};
-var $author$project$Main$defaultDirectory = $elm$core$Array$fromList(
-	_List_fromArray(
-		[
-			{
-			formElements: $elm$core$Array$fromList(
-				_List_fromArray(
-					[$author$project$Main$CurrentlyInUS, $author$project$Main$InUSLessThanOneYear])),
-			title: $author$project$Main$Eligibility
-		}
-		]));
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData};
 var $elm$core$Basics$compare = _Utils_compare;
@@ -5854,7 +5808,9 @@ var $author$project$Main$init = F3(
 		return _Utils_Tuple2(
 			$author$project$Main$Model(key)(url)(page)(
 				$author$project$Main$pageToTitle(page))(
-				$mdgriffith$elm_ui$Element$classifyDevice(flags))($author$project$Main$defaultFormState)(0)(0)($author$project$Main$defaultDirectory)(lang),
+				$mdgriffith$elm_ui$Element$classifyDevice(flags))($author$project$Main$defaultFormState)($author$project$Main$Eligibility)($author$project$Main$CurrentlyInUS)(
+				_List_fromArray(
+					[$author$project$Main$CurrentlyInUS]))(lang),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -7417,53 +7373,51 @@ var $author$project$Main$downloadFilledForm = function (data) {
 			url: 'http://localhost:12345/fill-i589'
 		});
 };
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
-var $elm$core$Basics$ge = _Utils_ge;
-var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
-var $elm$core$Array$getHelp = F3(
-	function (shift, index, tree) {
-		getHelp:
-		while (true) {
-			var pos = $elm$core$Array$bitMask & (index >>> shift);
-			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-			if (_v0.$ === 'SubTree') {
-				var subTree = _v0.a;
-				var $temp$shift = shift - $elm$core$Array$shiftStep,
-					$temp$index = index,
-					$temp$tree = subTree;
-				shift = $temp$shift;
-				index = $temp$index;
-				tree = $temp$tree;
-				continue getHelp;
-			} else {
-				var values = _v0.a;
-				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
-			}
+var $author$project$Main$getBack = F2(
+	function (entry, model) {
+		switch (entry.$) {
+			case 'CurrentlyInUS':
+				return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+			case 'InUSLessThanOneYear':
+				return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+			default:
+				return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
 		}
 	});
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Array$tailIndex = function (len) {
-	return (len >>> 5) << 5;
-};
-var $elm$core$Array$get = F2(
-	function (index, _v0) {
-		var len = _v0.a;
-		var startShift = _v0.b;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
-			index,
-			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
-			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
-			A3($elm$core$Array$getHelp, startShift, index, tree)));
+var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
+var $author$project$Main$NotEligible = {$: 'NotEligible'};
+var $author$project$Main$getNext = F2(
+	function (entry, model) {
+		switch (entry.$) {
+			case 'CurrentlyInUS':
+				var _v1 = model.state.eligibility.currentlyInUS;
+				if (_v1.$ === 'Just') {
+					if (!_v1.a) {
+						return {element: $author$project$Main$NotEligible, title: $author$project$Main$Eligibility};
+					} else {
+						return {element: $author$project$Main$InUSLessThanOneYear, title: $author$project$Main$Eligibility};
+					}
+				} else {
+					return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+				}
+			case 'InUSLessThanOneYear':
+				return {element: $author$project$Main$InUSLessThanOneYear, title: $author$project$Main$Eligibility};
+			default:
+				return {element: $author$project$Main$NotEligible, title: $author$project$Main$Eligibility};
+		}
 	});
-var $elm$core$Array$length = function (_v0) {
-	var len = _v0.a;
-	return len;
+var $author$project$Main$getSectionFromElement = function (element) {
+	switch (element.$) {
+		case 'CurrentlyInUS':
+			return $author$project$Main$Eligibility;
+		case 'InUSLessThanOneYear':
+			return $author$project$Main$Eligibility;
+		default:
+			return $author$project$Main$Eligibility;
+	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$pageToDescription = function (page) {
 	var description = function () {
 		switch (page.$) {
@@ -7725,45 +7679,32 @@ var $author$project$Main$update = F2(
 						{language: l}),
 					$elm$core$Platform$Cmd$none);
 			case 'Next':
-				var section = A2($elm$core$Array$get, model.focusedSectionIndex, model.directory);
-				var elements = function () {
-					if (section.$ === 'Just') {
-						var e = section.a;
-						return e.formElements;
-					} else {
-						return $elm$core$Array$fromList(_List_Nil);
-					}
-				}();
-				var length = $elm$core$Array$length(elements);
-				var nextEntryIndex = (_Utils_cmp(model.focusedEntryIndex + 1, length) < 0) ? (model.focusedEntryIndex + 1) : 0;
-				var nextSectionIndex = (_Utils_cmp(model.focusedEntryIndex + 1, length) < 0) ? model.focusedSectionIndex : (model.focusedSectionIndex + 1);
+				var next = A2($author$project$Main$getNext, model.focusedEntry, model);
+				var visitedElements = (!A2($elm$core$List$member, next.element, model.visitedElements)) ? A2($elm$core$List$cons, next.element, model.visitedElements) : model.visitedElements;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{focusedEntryIndex: nextEntryIndex, focusedSectionIndex: nextSectionIndex}),
+						{focusedEntry: next.element, focusedSection: next.title, visitedElements: visitedElements}),
 					$elm$core$Platform$Cmd$none);
 			case 'Back':
-				var nextSectionIndex = (!model.focusedEntryIndex) ? (model.focusedSectionIndex - 1) : model.focusedSectionIndex;
-				var nextEntryIndex = function () {
-					if (!model.focusedEntryIndex) {
-						var nextSection = A2($elm$core$Array$get, nextSectionIndex, model.directory);
-						var elements = function () {
-							if (nextSection.$ === 'Just') {
-								var e = nextSection.a;
-								return e.formElements;
-							} else {
-								return $elm$core$Array$fromList(_List_Nil);
-							}
-						}();
-						return $elm$core$Array$length(elements) - 1;
-					} else {
-						return 0;
-					}
-				}();
+				var next = A2($author$project$Main$getBack, model.focusedEntry, model);
+				var visitedElements = (!A2($elm$core$List$member, next.element, model.visitedElements)) ? A2($elm$core$List$cons, next.element, model.visitedElements) : model.visitedElements;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{focusedEntryIndex: nextEntryIndex, focusedSectionIndex: nextSectionIndex}),
+						{focusedEntry: next.element, focusedSection: next.title, visitedElements: visitedElements}),
+					$elm$core$Platform$Cmd$none);
+			case 'SetFormEntryElement':
+				var element = msg.a;
+				var visitedElements = (!A2($elm$core$List$member, element, model.visitedElements)) ? A2($elm$core$List$cons, element, model.visitedElements) : model.visitedElements;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							focusedEntry: element,
+							focusedSection: $author$project$Main$getSectionFromElement(element),
+							visitedElements: visitedElements
+						}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				var toggle = msg.a;
@@ -8080,7 +8021,6 @@ var $elm$core$Basics$composeL = F3(
 		return g(
 			f(x));
 	});
-var $elm$core$Basics$not = _Basics_not;
 var $elm$core$List$all = F2(
 	function (isOkay, list) {
 		return !A2(
@@ -8926,6 +8866,9 @@ var $Skinney$murmur3$Murmur3$HashData = F4(
 	});
 var $Skinney$murmur3$Murmur3$c1 = 3432918353;
 var $Skinney$murmur3$Murmur3$c2 = 461845907;
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var $Skinney$murmur3$Murmur3$multiplyBy = F2(
 	function (b, a) {
 		return ((a & 65535) * b) + ((((a >>> 16) * b) & 65535) << 16);
@@ -10518,7 +10461,7 @@ var $author$project$Main$gridStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(
 		[
 			A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
-			A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 3fr 1fr')
+			A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 2fr 1fr')
 		]));
 var $rtfeldman$elm_css$Css$minHeight = $rtfeldman$elm_css$Css$prop1('min-height');
 var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
@@ -10597,31 +10540,6 @@ var $author$project$Main$footer = A2(
 					$rtfeldman$elm_css$Html$Styled$text('© 2020 DIY Asylum LLC')
 				]))
 		]));
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $author$project$Main$getCurrentSection = function (model) {
-	var section = A2($elm$core$Array$get, model.focusedSectionIndex, model.directory);
-	var title = A2(
-		$elm$core$Maybe$map,
-		function (r) {
-			return r.title;
-		},
-		section);
-	var element = A2(
-		$elm$core$Maybe$andThen,
-		function (r) {
-			return A2($elm$core$Array$get, model.focusedEntryIndex, r.formElements);
-		},
-		section);
-	return _Utils_Tuple2(title, element);
-};
 var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $author$project$I18n$i18n = F2(
@@ -10839,142 +10757,138 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
 var $author$project$Main$render = F2(
 	function (e, model) {
-		if (e.$ === 'CurrentlyInUS') {
-			var elig = model.state.eligibility;
-			var noChecked = function () {
-				var _v1 = elig.currentlyInUS;
-				if (_v1.$ === 'Just') {
-					var b = _v1.a;
-					return !b;
-				} else {
-					return false;
-				}
-			}();
-			var yesChecked = A2($elm$core$Maybe$withDefault, false, elig.currentlyInUS);
-			return $author$project$Main$centerWrap(
-				_List_fromArray(
-					[
-						A2(
-						$rtfeldman$elm_css$Html$Styled$div,
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Html$Styled$Attributes$css(
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Css$margin(
-										$rtfeldman$elm_css$Css$px(10))
-									]))
-							]),
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Html$Styled$text(
-								A2($author$project$I18n$i18n, 'currently-in-us', model.language))
-							])),
-						A2(
-						$rtfeldman$elm_css$Html$Styled$div,
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Html$Styled$Attributes$css(
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Css$displayFlex,
-										$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-										$rtfeldman$elm_css$Css$margin(
-										$rtfeldman$elm_css$Css$px(10))
-									]))
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$rtfeldman$elm_css$Html$Styled$label,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$rtfeldman$elm_css$Html$Styled$input,
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-												$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
-												$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-												$author$project$Main$setMaybeCheckBox(yesChecked))
-											]),
-										_List_Nil),
-										$rtfeldman$elm_css$Html$Styled$text(
-										A2($author$project$I18n$i18n, 'yes', model.language))
-									])),
-								A2(
-								$rtfeldman$elm_css$Html$Styled$label,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$rtfeldman$elm_css$Html$Styled$input,
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-												$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
-												$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-												function (r) {
-													return A2($author$project$Main$setMaybeCheckBox, noChecked, !r);
-												})
-											]),
-										_List_Nil),
-										$rtfeldman$elm_css$Html$Styled$text(
-										A2($author$project$I18n$i18n, 'no', model.language))
-									]))
-							])),
-						A2($author$project$Main$nextButton, model, yesChecked || noChecked)
-					]));
-		} else {
-			return $author$project$Main$centerWrap(
-				_List_fromArray(
-					[
-						$author$project$Main$backButton(model)
-					]));
+		switch (e.$) {
+			case 'CurrentlyInUS':
+				var elig = model.state.eligibility;
+				var noChecked = function () {
+					var _v1 = elig.currentlyInUS;
+					if (_v1.$ === 'Just') {
+						var b = _v1.a;
+						return !b;
+					} else {
+						return false;
+					}
+				}();
+				var yesChecked = A2($elm$core$Maybe$withDefault, false, elig.currentlyInUS);
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$margin(
+											$rtfeldman$elm_css$Css$px(10))
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$I18n$i18n, 'currently-in-us', model.language))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$rtfeldman$elm_css$Css$margin(
+											$rtfeldman$elm_css$Css$px(10))
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$label,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$padding(
+													$rtfeldman$elm_css$Css$em(1))
+												]))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$rtfeldman$elm_css$Html$Styled$input,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+													$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
+													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+													$author$project$Main$setMaybeCheckBox(yesChecked))
+												]),
+											_List_Nil),
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$I18n$i18n, 'yes', model.language))
+										])),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$label,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$padding(
+													$rtfeldman$elm_css$Css$em(1))
+												]))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$rtfeldman$elm_css$Html$Styled$input,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+													$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
+													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+													function (r) {
+														return A2($author$project$Main$setMaybeCheckBox, noChecked, !r);
+													})
+												]),
+											_List_Nil),
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$I18n$i18n, 'no', model.language))
+										]))
+								])),
+							A2($author$project$Main$nextButton, model, yesChecked || noChecked)
+						]));
+			case 'InUSLessThanOneYear':
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model)
+						]));
+			default:
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('You are not eligible to apply for asylum if you are not currently in the US.'),
+							$author$project$Main$backButton(model)
+						]));
 		}
 	});
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
 var $author$project$Main$formEntryView = function (model) {
-	var section = $author$project$Main$getCurrentSection(model);
-	var element = section.b;
-	var html = function () {
-		if (element.$ === 'Just') {
-			var e = element.a;
-			return A2($author$project$Main$render, e, model);
-		} else {
-			return $rtfeldman$elm_css$Html$Styled$text('Error');
-		}
-	}();
-	return html;
+	return A2($author$project$Main$render, model.focusedEntry, model);
 };
-var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
-var $author$project$Main$headerView = function (model) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$div,
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Html$Styled$Attributes$css(
-				_List_fromArray(
-					[
-						A2($rtfeldman$elm_css$Css$property, 'grid-column', '1')
-					]))
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$rtfeldman$elm_css$Html$Styled$h1,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('Progress')
-					]))
-			]));
+var $rtfeldman$elm_css$Html$Styled$h2 = $rtfeldman$elm_css$Html$Styled$node('h2');
+var $rtfeldman$elm_css$Css$textAlign = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'textAlign',
+		'text-align',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
+var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
 var $author$project$Main$helpView = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10983,19 +10897,165 @@ var $author$project$Main$helpView = function (model) {
 				$rtfeldman$elm_css$Html$Styled$Attributes$css(
 				_List_fromArray(
 					[
-						A2($rtfeldman$elm_css$Css$property, 'grid-column', '3')
+						A2($rtfeldman$elm_css$Css$property, 'grid-column', '3'),
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$top),
+						$rtfeldman$elm_css$Css$margin(
+						$rtfeldman$elm_css$Css$em(1))
 					]))
 			]),
 		_List_fromArray(
 			[
 				A2(
-				$rtfeldman$elm_css$Html$Styled$h1,
-				_List_Nil,
+				$rtfeldman$elm_css$Html$Styled$h2,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+							]))
+					]),
 				_List_fromArray(
 					[
 						$rtfeldman$elm_css$Html$Styled$text('Help')
-					]))
+					])),
+				$rtfeldman$elm_css$Html$Styled$text('This area will be used to present help to the user.')
 			]));
+};
+var $author$project$Main$SetFormEntryElement = function (a) {
+	return {$: 'SetFormEntryElement', a: a};
+};
+var $author$project$Main$formElementToDescription = function (element) {
+	switch (element.$) {
+		case 'CurrentlyInUS':
+			return 'US Residency';
+		case 'InUSLessThanOneYear':
+			return 'Length of Stay';
+		default:
+			return 'Not Eligible';
+	}
+};
+var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
+var $author$project$Main$elementNameHtml = F2(
+	function (element, clickable) {
+		var description = $author$project$Main$formElementToDescription(element);
+		var html = clickable ? A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Events$onClick(
+					$author$project$Main$SetFormEntryElement(element))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(description)
+				])) : A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$color($author$project$Main$gray)
+						]))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(description)
+				]));
+		return html;
+	});
+var $rtfeldman$elm_css$Html$Styled$h3 = $rtfeldman$elm_css$Html$Styled$node('h3');
+var $author$project$Main$sectionToDescription = function (title) {
+	return 'Eligibility';
+};
+var $author$project$Main$titleHtml = F3(
+	function (title, elementLink, clickable) {
+		var description = $author$project$Main$sectionToDescription(title);
+		var html = clickable ? A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Events$onClick(
+					$author$project$Main$SetFormEntryElement(elementLink))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(description)
+				])) : A2(
+			$rtfeldman$elm_css$Html$Styled$h3,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$color($author$project$Main$gray)
+						]))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(description)
+				]));
+		return html;
+	});
+var $author$project$Main$getProgressListHelper = F5(
+	function (title, element, printSection, model, currentList) {
+		var next = A2($author$project$Main$getNext, element, model);
+		var printNextSection = !_Utils_eq(title, next.title);
+		var clickable = A2($elm$core$List$member, element, model.visitedElements);
+		var toBeAdded = printSection ? _List_fromArray(
+			[
+				A3($author$project$Main$titleHtml, title, element, clickable),
+				A2($author$project$Main$elementNameHtml, element, clickable)
+			]) : _List_fromArray(
+			[
+				A2($author$project$Main$elementNameHtml, element, clickable)
+			]);
+		var appendedList = A2($elm$core$List$append, currentList, toBeAdded);
+		var nextList = _Utils_eq(element, next.element) ? appendedList : A5($author$project$Main$getProgressListHelper, next.title, next.element, printNextSection, model, appendedList);
+		return nextList;
+	});
+var $author$project$Main$getProgressList = function (model) {
+	return A5($author$project$Main$getProgressListHelper, $author$project$Main$Eligibility, $author$project$Main$CurrentlyInUS, true, model, _List_Nil);
+};
+var $author$project$Main$progressView = function (model) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						A2($rtfeldman$elm_css$Css$property, 'grid-column', '1'),
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$top),
+						$rtfeldman$elm_css$Css$margin(
+						$rtfeldman$elm_css$Css$em(1))
+					]))
+			]),
+		A2(
+			$elm$core$List$append,
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$h2,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('Progress')
+						]))
+				]),
+			$author$project$Main$getProgressList(model)));
 };
 var $rtfeldman$elm_css$Css$VhUnits = {$: 'VhUnits'};
 var $rtfeldman$elm_css$Css$vh = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VhUnits, 'vh');
@@ -11009,7 +11069,6 @@ var $author$project$Main$i589View = function (model) {
 					[
 						$author$project$Main$gridStyles,
 						$author$project$Main$standardStyles,
-						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
 						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
 						$rtfeldman$elm_css$Css$minHeight(
 						$rtfeldman$elm_css$Css$vh(95)),
@@ -11018,7 +11077,7 @@ var $author$project$Main$i589View = function (model) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$headerView(model),
+				$author$project$Main$progressView(model),
 				$author$project$Main$formEntryView(model),
 				$author$project$Main$helpView(model)
 			]));
