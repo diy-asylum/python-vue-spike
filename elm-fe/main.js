@@ -10881,7 +10881,8 @@ var $author$project$Main$render = F2(
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$text('You are not eligible to apply for asylum if you are not currently in the US.'),
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'not-eligible-explanation')),
 							$author$project$Main$backButton(model)
 						]));
 		}
@@ -10928,28 +10929,31 @@ var $author$project$Main$helpView = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$text('Help')
+						$rtfeldman$elm_css$Html$Styled$text(
+						A2($author$project$Main$i18n, model, 'help'))
 					])),
-				$rtfeldman$elm_css$Html$Styled$text('This area will be used to present help to the user.')
+				$rtfeldman$elm_css$Html$Styled$text(
+				A2($author$project$Main$i18n, model, 'help-description'))
 			]));
 };
 var $author$project$Main$SetFormEntryElement = function (a) {
 	return {$: 'SetFormEntryElement', a: a};
 };
-var $author$project$Main$formElementToDescription = function (element) {
-	switch (element.$) {
-		case 'CurrentlyInUS':
-			return 'US Residency';
-		case 'InUSLessThanOneYear':
-			return 'Length of Stay';
-		default:
-			return 'Not Eligible';
-	}
-};
+var $author$project$Main$formElementToDescription = F2(
+	function (element, model) {
+		switch (element.$) {
+			case 'CurrentlyInUS':
+				return A2($author$project$Main$i18n, model, 'us-residency');
+			case 'InUSLessThanOneYear':
+				return A2($author$project$Main$i18n, model, 'length-of-stay');
+			default:
+				return A2($author$project$Main$i18n, model, 'not-eligible');
+		}
+	});
 var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
-var $author$project$Main$elementNameHtml = F2(
-	function (element, clickable) {
-		var description = $author$project$Main$formElementToDescription(element);
+var $author$project$Main$elementNameHtml = F3(
+	function (element, clickable, model) {
+		var description = A2($author$project$Main$formElementToDescription, element, model);
 		var html = clickable ? A2(
 			$rtfeldman$elm_css$Html$Styled$div,
 			_List_fromArray(
@@ -10977,12 +10981,13 @@ var $author$project$Main$elementNameHtml = F2(
 		return html;
 	});
 var $rtfeldman$elm_css$Html$Styled$h3 = $rtfeldman$elm_css$Html$Styled$node('h3');
-var $author$project$Main$sectionToDescription = function (title) {
-	return 'Eligibility';
-};
-var $author$project$Main$titleHtml = F3(
-	function (title, elementLink, clickable) {
-		var description = $author$project$Main$sectionToDescription(title);
+var $author$project$Main$sectionToDescription = F2(
+	function (title, model) {
+		return A2($author$project$Main$i18n, model, 'eligibility');
+	});
+var $author$project$Main$titleHtml = F4(
+	function (title, elementLink, clickable, model) {
+		var description = A2($author$project$Main$sectionToDescription, title, model);
 		var html = clickable ? A2(
 			$rtfeldman$elm_css$Html$Styled$h3,
 			_List_fromArray(
@@ -11016,11 +11021,11 @@ var $author$project$Main$getProgressListHelper = F5(
 		var clickable = A2($elm$core$List$member, element, model.visitedElements);
 		var toBeAdded = (printSection && _Utils_eq(title, model.focusedSection)) ? _List_fromArray(
 			[
-				A3($author$project$Main$titleHtml, title, element, clickable),
-				A2($author$project$Main$elementNameHtml, element, clickable)
+				A4($author$project$Main$titleHtml, title, element, clickable, model),
+				A3($author$project$Main$elementNameHtml, element, clickable, model)
 			]) : _List_fromArray(
 			[
-				A2($author$project$Main$elementNameHtml, element, clickable)
+				A3($author$project$Main$elementNameHtml, element, clickable, model)
 			]);
 		var appendedList = A2($elm$core$List$append, currentList, toBeAdded);
 		var nextList = _Utils_eq(element, next.element) ? appendedList : A5($author$project$Main$getProgressListHelper, next.title, next.element, printNextSection, model, appendedList);
@@ -11061,7 +11066,8 @@ var $author$project$Main$progressView = function (model) {
 						]),
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$text('Progress')
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'progress'))
 						]))
 				]),
 			$author$project$Main$getProgressList(model)));
@@ -11211,7 +11217,8 @@ var $author$project$Main$webNav = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$text('Get Started')
+								$rtfeldman$elm_css$Html$Styled$text(
+								A2($author$project$Main$i18n, model, 'get-started'))
 							])),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$a,
@@ -11224,7 +11231,8 @@ var $author$project$Main$webNav = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$text('About Us')
+								$rtfeldman$elm_css$Html$Styled$text(
+								A2($author$project$Main$i18n, model, 'about-us'))
 							])),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$a,
@@ -11237,7 +11245,8 @@ var $author$project$Main$webNav = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$text('Contact Us')
+								$rtfeldman$elm_css$Html$Styled$text(
+								A2($author$project$Main$i18n, model, 'contact-us'))
 							])),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$select,

@@ -63,6 +63,11 @@ type alias Model =
     }
 
 
+i18n : Model -> String -> String
+i18n model key =
+    i18nHelper model.languageDict key model.language
+
+
 type alias FormState =
     { eligibility : EligibilityData
     }
@@ -159,11 +164,6 @@ init flags url key =
                 "en"
     in
     ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict, Cmd.none )
-
-
-i18n : Model -> String -> String
-i18n model key =
-    i18nHelper model.languageDict key model.language
 
 
 
@@ -498,14 +498,14 @@ render e model =
             centerWrap [ backButton model ]
 
         NotEligible ->
-            centerWrap [ text "You are not eligible to apply for asylum if you are not currently in the US.", backButton model ]
+            centerWrap [ text (i18n model "not-eligible-explanation"), backButton model ]
 
 
 progressView : Model -> Html Msg
 progressView model =
     div [ css [ property "grid-column" "1", displayFlex, flexDirection column, alignItems top, margin (Css.em 1) ] ]
         (List.append
-            [ h2 [ css [ textAlign center ] ] [ text "Progress" ] ]
+            [ h2 [ css [ textAlign center ] ] [ text (i18n model "progress") ] ]
             (getProgressList model)
         )
 
@@ -526,10 +526,10 @@ getProgressListHelper title element printSection model currentList =
 
         toBeAdded =
             if printSection && title == model.focusedSection then
-                [ titleHtml title element clickable, elementNameHtml element clickable ]
+                [ titleHtml title element clickable model, elementNameHtml element clickable model ]
 
             else
-                [ elementNameHtml element clickable ]
+                [ elementNameHtml element clickable model ]
 
         appendedList =
             List.append currentList toBeAdded
@@ -547,11 +547,11 @@ getProgressListHelper title element printSection model currentList =
     nextList
 
 
-titleHtml : SectionTitle -> FormEntryElement -> Bool -> Html Msg
-titleHtml title elementLink clickable =
+titleHtml : SectionTitle -> FormEntryElement -> Bool -> Model -> Html Msg
+titleHtml title elementLink clickable model =
     let
         description =
-            sectionToDescription title
+            sectionToDescription title model
 
         html =
             if clickable then
@@ -563,11 +563,11 @@ titleHtml title elementLink clickable =
     html
 
 
-elementNameHtml : FormEntryElement -> Bool -> Html Msg
-elementNameHtml element clickable =
+elementNameHtml : FormEntryElement -> Bool -> Model -> Html Msg
+elementNameHtml element clickable model =
     let
         description =
-            formElementToDescription element
+            formElementToDescription element model
 
         html =
             if clickable then
@@ -579,31 +579,31 @@ elementNameHtml element clickable =
     html
 
 
-sectionToDescription : SectionTitle -> String
-sectionToDescription title =
+sectionToDescription : SectionTitle -> Model -> String
+sectionToDescription title model =
     case title of
         Eligibility ->
-            "Eligibility"
+            i18n model "eligibility"
 
 
-formElementToDescription : FormEntryElement -> String
-formElementToDescription element =
+formElementToDescription : FormEntryElement -> Model -> String
+formElementToDescription element model =
     case element of
         CurrentlyInUS ->
-            "US Residency"
+            i18n model "us-residency"
 
         InUSLessThanOneYear ->
-            "Length of Stay"
+            i18n model "length-of-stay"
 
         NotEligible ->
-            "Not Eligible"
+            i18n model "not-eligible"
 
 
 helpView : Model -> Html Msg
 helpView model =
     div [ css [ property "grid-column" "3", displayFlex, flexDirection column, alignItems top, margin (Css.em 1) ] ]
-        [ h2 [ css [ textAlign center ] ] [ text "Help" ]
-        , text "This area will be used to present help to the user."
+        [ h2 [ css [ textAlign center ] ] [ text (i18n model "help") ]
+        , text (i18n model "help-description")
         ]
 
 
@@ -612,9 +612,9 @@ webNav model =
     div [ css [ gridStyles, standardStyles, backgroundColor accent, alignItems center ] ]
         [ div [ css [ navContainerStyles ] ]
             [ a [ href "/", css [ linkStyles ] ] [ text "DIY Asylum" ]
-            , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text "Get Started" ]
-            , a [ href "/about", css [ linkStyles ] ] [ text "About Us" ]
-            , a [ href "/contact", css [ linkStyles ] ] [ text "Contact Us" ]
+            , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text (i18n model "get-started") ]
+            , a [ href "/about", css [ linkStyles ] ] [ text (i18n model "about-us") ]
+            , a [ href "/contact", css [ linkStyles ] ] [ text (i18n model "contact-us") ]
             , select [ onInput SetLanguage ] (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) (languages model.languageDict))
             ]
         ]

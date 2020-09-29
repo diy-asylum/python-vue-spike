@@ -18,5 +18,38 @@ var translations = {
 	"no": {
 		"en": "No",
 		"es": "No"
+	},
+	"contact-us": {
+		"en": "Contact Us"
+	},
+	"about-us": {
+		"en": "About Us"
+	},
+	"get-started": {
+		"en": "Get Started"
+	},
+	"help-description": {
+		"en": "This area will be used to present help to the user."
+	},
+	"help": {
+		"en": "Help"
+	},
+	"progress": {
+		"en": "Progress"
+	},
+	"not-eligible-explanation": {
+		"en": "You are not eligible to apply for asylum if you are not currently in the US."
+	},
+	"not-eligible": {
+		"en": "Not Eligible"
+	},
+	"length-of-stay": {
+		"en": "Length of Stay"
+	},
+	"us-residency": {
+		"en": "US Residency"
+	},
+	"eligibility": {
+		"en": "Eligibility"
 	}
 }
