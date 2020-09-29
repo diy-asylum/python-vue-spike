@@ -7,13 +7,15 @@ import Browser.Navigation as Nav
 import Bytes exposing (Bytes)
 import Css exposing (..)
 import DataTypes exposing (..)
+import Dict exposing (Dict)
 import Element exposing (Device)
 import File.Download as Download
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, type_)
 import Html.Styled.Events exposing (..)
 import Http
-import I18n exposing (i18n, languages)
+import I18n exposing (i18nHelper, languages)
+import Json.Decode as D
 import Ports
 import Url
 
@@ -57,6 +59,7 @@ type alias Model =
     , focusedEntry : FormEntryElement
     , visitedElements : List FormEntryElement
     , language : String
+    , languageDict : Dict String (Dict String String)
     }
 
 
@@ -130,6 +133,7 @@ type alias Flags =
     { width : Int
     , height : Int
     , language : String
+    , languageDict : D.Value
     }
 
 
@@ -139,14 +143,27 @@ init flags url key =
         page =
             pathMatch url.path
 
+        languageDict =
+            case D.decodeValue (D.dict (D.dict D.string)) flags.languageDict of
+                Ok x ->
+                    x
+
+                Err _ ->
+                    Dict.empty
+
         lang =
-            if List.member flags.language languages then
+            if List.member flags.language (languages languageDict) then
                 flags.language
 
             else
                 "en"
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang, Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict, Cmd.none )
+
+
+i18n : Model -> String -> String
+i18n model key =
+    i18nHelper model.languageDict key model.language
 
 
 
@@ -428,16 +445,16 @@ setMaybeCheckBox isAlreadyChecked isNowChecked =
 
 backButton : Model -> Html Msg
 backButton model =
-    button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Back ] [ text (i18n "back" model.language) ]
+    button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Back ] [ text (i18n model "back") ]
 
 
 nextButton : Model -> Bool -> Html Msg
 nextButton model isValid =
     if isValid then
-        button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Next ] [ text (i18n "next" model.language) ]
+        button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Next ] [ text (i18n model "next") ]
 
     else
-        button [ css [ backgroundColor dark, color background, margin (px 10) ] ] [ text (i18n "next" model.language) ]
+        button [ css [ backgroundColor dark, color background, margin (px 10) ] ] [ text (i18n model "next") ]
 
 
 centerWrap : List (Html Msg) -> Html Msg
@@ -469,10 +486,10 @@ render e model =
                             False
             in
             centerWrap
-                [ div [ css [ margin (px 10) ] ] [ text (i18n "currently-in-us" model.language) ]
+                [ div [ css [ margin (px 10) ] ] [ text (i18n model "currently-in-us") ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
-                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (setMaybeCheckBox yesChecked) ] [], text (i18n "yes" model.language) ]
-                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> setMaybeCheckBox noChecked (not r)) ] [], text (i18n "no" model.language) ]
+                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (setMaybeCheckBox yesChecked) ] [], text (i18n model "yes") ]
+                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> setMaybeCheckBox noChecked (not r)) ] [], text (i18n model "no") ]
                     ]
                 , nextButton model (yesChecked || noChecked)
                 ]
@@ -498,10 +515,6 @@ getProgressList model =
     getProgressListHelper Eligibility CurrentlyInUS True model []
 
 
-
--- TODO: only show form elements contained in the focused section
-
-
 getProgressListHelper : SectionTitle -> FormEntryElement -> Bool -> Model -> List (Html Msg) -> List (Html Msg)
 getProgressListHelper title element printSection model currentList =
     let
@@ -512,7 +525,7 @@ getProgressListHelper title element printSection model currentList =
             List.member element model.visitedElements
 
         toBeAdded =
-            if printSection then
+            if printSection && title == model.focusedSection then
                 [ titleHtml title element clickable, elementNameHtml element clickable ]
 
             else
@@ -602,7 +615,7 @@ webNav model =
             , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text "Get Started" ]
             , a [ href "/about", css [ linkStyles ] ] [ text "About Us" ]
             , a [ href "/contact", css [ linkStyles ] ] [ text "Contact Us" ]
-            , select [ onInput SetLanguage ] (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) languages)
+            , select [ onInput SetLanguage ] (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) (languages model.languageDict))
             ]
         ]
 

@@ -5509,7 +5509,9 @@ var $author$project$Main$Model = function (key) {
 							return function (focusedEntry) {
 								return function (visitedElements) {
 									return function (language) {
-										return {device: device, focusedEntry: focusedEntry, focusedSection: focusedSection, key: key, language: language, page: page, state: state, title: title, url: url, visitedElements: visitedElements};
+										return function (languageDict) {
+											return {device: device, focusedEntry: focusedEntry, focusedSection: focusedSection, key: key, language: language, languageDict: languageDict, page: page, state: state, title: title, url: url, visitedElements: visitedElements};
+										};
 									};
 								};
 							};
@@ -5540,41 +5542,9 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 		orientation: (_Utils_cmp(window.width, window.height) < 0) ? $mdgriffith$elm_ui$Element$Portrait : $mdgriffith$elm_ui$Element$Landscape
 	};
 };
+var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData};
-var $elm$core$Basics$compare = _Utils_compare;
-var $elm$core$Dict$get = F2(
-	function (targetKey, dict) {
-		get:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
-				switch (_v1.$) {
-					case 'LT':
-						var $temp$targetKey = targetKey,
-							$temp$dict = left;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-					case 'EQ':
-						return $elm$core$Maybe$Just(value);
-					default:
-						var $temp$targetKey = targetKey,
-							$temp$dict = right;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-				}
-			}
-		}
-	});
-var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Dict$Black = {$: 'Black'};
@@ -5637,6 +5607,7 @@ var $elm$core$Dict$balance = F5(
 			}
 		}
 	});
+var $elm$core$Basics$compare = _Utils_compare;
 var $elm$core$Dict$insertHelp = F3(
 	function (key, value, dict) {
 		if (dict.$ === 'RBEmpty_elm_builtin') {
@@ -5704,30 +5675,46 @@ var $elm$json$Json$Decode$dict = function (decoder) {
 		$elm$core$Dict$fromList,
 		$elm$json$Json$Decode$keyValuePairs(decoder));
 };
-var $author$project$I18n$rawLanguageDict = '{ \"back\": { \"en\": \"Back\", \"es\": \"Previo\"}, \"next\": { \"en\": \"Next\", \"es\": \"Siguiente\"},    \"currently-in-us\": { \"en\": \"Do you currently reside in the US?\", \"es\": \"¿Reside actualmente en los EE. UU.?\"}, \n    \"yes\": { \"en\": \"Yes\", \"es\": \"Sí\"},\n    \"no\":{ \"en\": \"No\", \"es\": \"No\"}}';
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$I18n$languageDict = function () {
-	var _v0 = A2(
-		$elm$json$Json$Decode$decodeString,
-		$elm$json$Json$Decode$dict(
-			$elm$json$Json$Decode$dict($elm$json$Json$Decode$string)),
-		$author$project$I18n$rawLanguageDict);
-	if (_v0.$ === 'Ok') {
-		var x = _v0.a;
-		return x;
-	} else {
-		return $elm$core$Dict$empty;
-	}
-}();
-var $author$project$I18n$languages = function () {
-	var _v0 = A2($elm$core$Dict$get, 'yes', $author$project$I18n$languageDict);
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $author$project$I18n$languages = function (languageDict) {
+	var _v0 = A2($elm$core$Dict$get, 'yes', languageDict);
 	if (_v0.$ === 'Just') {
 		var k = _v0.a;
 		return $elm$core$Dict$keys(k);
 	} else {
 		return _List_Nil;
 	}
-}();
+};
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -5801,16 +5788,33 @@ var $author$project$Main$pathMatch = function (path) {
 	}();
 	return page;
 };
+var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$init = F3(
 	function (flags, url, key) {
 		var page = $author$project$Main$pathMatch(url.path);
-		var lang = A2($elm$core$List$member, flags.language, $author$project$I18n$languages) ? flags.language : 'en';
+		var languageDict = function () {
+			var _v0 = A2(
+				$elm$json$Json$Decode$decodeValue,
+				$elm$json$Json$Decode$dict(
+					$elm$json$Json$Decode$dict($elm$json$Json$Decode$string)),
+				flags.languageDict);
+			if (_v0.$ === 'Ok') {
+				var x = _v0.a;
+				return x;
+			} else {
+				return $elm$core$Dict$empty;
+			}
+		}();
+		var lang = A2(
+			$elm$core$List$member,
+			flags.language,
+			$author$project$I18n$languages(languageDict)) ? flags.language : 'en';
 		return _Utils_Tuple2(
 			$author$project$Main$Model(key)(url)(page)(
 				$author$project$Main$pageToTitle(page))(
 				$mdgriffith$elm_ui$Element$classifyDevice(flags))($author$project$Main$defaultFormState)($author$project$Main$Eligibility)($author$project$Main$CurrentlyInUS)(
 				_List_fromArray(
-					[$author$project$Main$CurrentlyInUS]))(lang),
+					[$author$project$Main$CurrentlyInUS]))(lang)(languageDict),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -7723,6 +7727,7 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
 		return true;
@@ -10542,10 +10547,10 @@ var $author$project$Main$footer = A2(
 		]));
 var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
-var $author$project$I18n$i18n = F2(
-	function (key, language) {
+var $author$project$I18n$i18nHelper = F3(
+	function (languageDict, key, language) {
 		var errorValue = 'No translation available.';
-		var entry = A2($elm$core$Dict$get, key, $author$project$I18n$languageDict);
+		var entry = A2($elm$core$Dict$get, key, languageDict);
 		var value = function () {
 			if (entry.$ === 'Just') {
 				var d = entry.a;
@@ -10567,6 +10572,10 @@ var $author$project$I18n$i18n = F2(
 			}
 		}();
 		return value;
+	});
+var $author$project$Main$i18n = F2(
+	function (model, key) {
+		return A3($author$project$I18n$i18nHelper, model.languageDict, key, model.language);
 	});
 var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -10612,7 +10621,7 @@ var $author$project$Main$backButton = function (model) {
 		_List_fromArray(
 			[
 				$rtfeldman$elm_css$Html$Styled$text(
-				A2($author$project$I18n$i18n, 'back', model.language))
+				A2($author$project$Main$i18n, model, 'back'))
 			]));
 };
 var $author$project$Main$accent = $rtfeldman$elm_css$Css$hex('4F7CAC');
@@ -10703,7 +10712,7 @@ var $author$project$Main$nextButton = F2(
 			_List_fromArray(
 				[
 					$rtfeldman$elm_css$Html$Styled$text(
-					A2($author$project$I18n$i18n, 'next', model.language))
+					A2($author$project$Main$i18n, model, 'next'))
 				])) : A2(
 			$rtfeldman$elm_css$Html$Styled$button,
 			_List_fromArray(
@@ -10720,7 +10729,7 @@ var $author$project$Main$nextButton = F2(
 			_List_fromArray(
 				[
 					$rtfeldman$elm_css$Html$Styled$text(
-					A2($author$project$I18n$i18n, 'next', model.language))
+					A2($author$project$Main$i18n, model, 'next'))
 				]));
 	});
 var $elm$json$Json$Decode$at = F2(
@@ -10787,7 +10796,7 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									$rtfeldman$elm_css$Html$Styled$text(
-									A2($author$project$I18n$i18n, 'currently-in-us', model.language))
+									A2($author$project$Main$i18n, model, 'currently-in-us'))
 								])),
 							A2(
 							$rtfeldman$elm_css$Html$Styled$div,
@@ -10829,7 +10838,7 @@ var $author$project$Main$render = F2(
 												]),
 											_List_Nil),
 											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$I18n$i18n, 'yes', model.language))
+											A2($author$project$Main$i18n, model, 'yes'))
 										])),
 									A2(
 									$rtfeldman$elm_css$Html$Styled$label,
@@ -10857,7 +10866,7 @@ var $author$project$Main$render = F2(
 												]),
 											_List_Nil),
 											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$I18n$i18n, 'no', model.language))
+											A2($author$project$Main$i18n, model, 'no'))
 										]))
 								])),
 							A2($author$project$Main$nextButton, model, yesChecked || noChecked)
@@ -11005,7 +11014,7 @@ var $author$project$Main$getProgressListHelper = F5(
 		var next = A2($author$project$Main$getNext, element, model);
 		var printNextSection = !_Utils_eq(title, next.title);
 		var clickable = A2($elm$core$List$member, element, model.visitedElements);
-		var toBeAdded = printSection ? _List_fromArray(
+		var toBeAdded = (printSection && _Utils_eq(title, model.focusedSection)) ? _List_fromArray(
 			[
 				A3($author$project$Main$titleHtml, title, element, clickable),
 				A2($author$project$Main$elementNameHtml, element, clickable)
@@ -11251,7 +11260,7 @@ var $author$project$Main$webNav = function (model) {
 											$rtfeldman$elm_css$Html$Styled$text(r)
 										]));
 							},
-							$author$project$I18n$languages))
+							$author$project$I18n$languages(model.languageDict)))
 					]))
 			]));
 };
@@ -11309,15 +11318,20 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 		function (width) {
 			return A2(
 				$elm$json$Json$Decode$andThen,
-				function (language) {
+				function (languageDict) {
 					return A2(
 						$elm$json$Json$Decode$andThen,
-						function (height) {
-							return $elm$json$Json$Decode$succeed(
-								{height: height, language: language, width: width});
+						function (language) {
+							return A2(
+								$elm$json$Json$Decode$andThen,
+								function (height) {
+									return $elm$json$Json$Decode$succeed(
+										{height: height, language: language, languageDict: languageDict, width: width});
+								},
+								A2($elm$json$Json$Decode$field, 'height', $elm$json$Json$Decode$int));
 						},
-						A2($elm$json$Json$Decode$field, 'height', $elm$json$Json$Decode$int));
+						A2($elm$json$Json$Decode$field, 'language', $elm$json$Json$Decode$string));
 				},
-				A2($elm$json$Json$Decode$field, 'language', $elm$json$Json$Decode$string));
+				A2($elm$json$Json$Decode$field, 'languageDict', $elm$json$Json$Decode$value));
 		},
 		A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$int)))(0)}});}(this));

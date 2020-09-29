@@ -1,16 +1,10 @@
-module I18n exposing (i18n, languages)
+module I18n exposing (i18nHelper, languages)
 
 import Dict exposing (Dict)
-import Json.Decode as D
 
 
-rawLanguageDict : String
-rawLanguageDict =
-    "{ \"back\": { \"en\": \"Back\", \"es\": \"Previo\"}, \"next\": { \"en\": \"Next\", \"es\": \"Siguiente\"},    \"currently-in-us\": { \"en\": \"Do you currently reside in the US?\", \"es\": \"¿Reside actualmente en los EE. UU.?\"}, \n    \"yes\": { \"en\": \"Yes\", \"es\": \"Sí\"},\n    \"no\":{ \"en\": \"No\", \"es\": \"No\"}}"
-
-
-i18n : String -> String -> String
-i18n key language =
+i18nHelper : Dict String (Dict String String) -> String -> String -> String
+i18nHelper languageDict key language =
     let
         entry =
             Dict.get key languageDict
@@ -39,21 +33,11 @@ i18n key language =
     value
 
 
-languages : List String
-languages =
+languages : Dict String (Dict String String) -> List String
+languages languageDict =
     case Dict.get "yes" languageDict of
         Just k ->
             Dict.keys k
 
         Nothing ->
             []
-
-
-languageDict : Dict String (Dict String String)
-languageDict =
-    case D.decodeString (D.dict (D.dict D.string)) rawLanguageDict of
-        Ok x ->
-            x
-
-        Err _ ->
-            Dict.empty
