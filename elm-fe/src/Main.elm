@@ -96,10 +96,11 @@ type FormEntryElement
     = CurrentlyInUS
     | InUSLessThanOneYear
     | NotEligible
+    | FirstName
 
 
 type SectionTitle
-    = Eligibility
+    = Eligibility | PersonalInfo
 
 
 type alias ElementWithSection =
@@ -178,7 +179,7 @@ type Msg
     | FinishDownload (Result Http.Error Bytes)
     | Next
     | Back
-    | SetCurrentlyInUS (Maybe Bool)
+    | SetEligibility EligibilityData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -270,29 +271,35 @@ update msg model =
             let
                 next =
                     getNext model.focusedEntry model
+                
+                nextTitle = 
+                    getSectionFromElement next
 
                 visitedElements =
-                    if not (List.member next.element model.visitedElements) then
-                        next.element :: model.visitedElements
+                    if not (List.member next model.visitedElements) then
+                        next :: model.visitedElements
 
                     else
                         model.visitedElements
             in
-            ( { model | focusedEntry = next.element, focusedSection = next.title, visitedElements = visitedElements }, Cmd.none )
+            ( { model | focusedEntry = next, focusedSection = nextTitle, visitedElements = visitedElements }, Cmd.none )
 
         Back ->
             let
                 next =
                     getBack model.focusedEntry model
+                
+                nextTitle = 
+                    getSectionFromElement next
 
                 visitedElements =
-                    if not (List.member next.element model.visitedElements) then
-                        next.element :: model.visitedElements
+                    if not (List.member next model.visitedElements) then
+                        next :: model.visitedElements
 
                     else
                         model.visitedElements
             in
-            ( { model | focusedEntry = next.element, focusedSection = next.title, visitedElements = visitedElements }, Cmd.none )
+            ( { model | focusedEntry = next, focusedSection = nextTitle, visitedElements = visitedElements }, Cmd.none )
 
         SetFormEntryElement element ->
             let
@@ -305,55 +312,68 @@ update msg model =
             in
             ( { model | focusedEntry = element, focusedSection = getSectionFromElement element, visitedElements = visitedElements }, Cmd.none )
 
-        SetCurrentlyInUS toggle ->
+        SetEligibility e ->
             let
-                e =
-                    model.state.eligibility
-
-                newE =
-                    { e | currentlyInUS = toggle }
 
                 s =
                     model.state
 
                 newS =
-                    { s | eligibility = newE }
+                    { s | eligibility = e }
             in
             ( { model | state = newS }, Cmd.none )
 
 
-getNext : FormEntryElement -> Model -> ElementWithSection
+getNext : FormEntryElement -> Model -> FormEntryElement
 getNext entry model =
     case entry of
         CurrentlyInUS ->
             case model.state.eligibility.currentlyInUS of
                 Just False ->
-                    { title = Eligibility, element = NotEligible }
+                    NotEligible
 
                 Just True ->
-                    { title = Eligibility, element = InUSLessThanOneYear }
+                    InUSLessThanOneYear
 
                 Nothing ->
-                    { title = Eligibility, element = CurrentlyInUS }
+                    CurrentlyInUS
 
         InUSLessThanOneYear ->
-            { title = Eligibility, element = InUSLessThanOneYear }
+             case model.state.eligibility.lessThanOneYear of
+                Just True -> 
+                    FirstName 
+                Just False ->
+                    NotEligible
+                Nothing ->
+                    InUSLessThanOneYear
+            
 
         NotEligible ->
-            { title = Eligibility, element = NotEligible }
+            NotEligible
+        
+        FirstName ->
+            FirstName
 
 
-getBack : FormEntryElement -> Model -> ElementWithSection
+getBack : FormEntryElement -> Model -> FormEntryElement
 getBack entry model =
     case entry of
         CurrentlyInUS ->
-            { title = Eligibility, element = CurrentlyInUS }
+            CurrentlyInUS
 
         InUSLessThanOneYear ->
-            { title = Eligibility, element = CurrentlyInUS }
+            CurrentlyInUS
 
         NotEligible ->
-            { title = Eligibility, element = CurrentlyInUS }
+            case model.state.eligibility.currentlyInUS of
+                Just True ->
+                    InUSLessThanOneYear
+                _ ->
+                    CurrentlyInUS
+            
+        
+        FirstName -> 
+            InUSLessThanOneYear
 
 
 getSectionFromElement : FormEntryElement -> SectionTitle
@@ -367,6 +387,9 @@ getSectionFromElement element =
 
         NotEligible ->
             Eligibility
+
+        FirstName -> 
+            PersonalInfo
 
 
 
@@ -434,13 +457,13 @@ formEntryView model =
     render model.focusedEntry model
 
 
-setMaybeCheckBox : Bool -> Bool -> Msg
+setMaybeCheckBox : Bool -> Bool -> Maybe Bool
 setMaybeCheckBox isAlreadyChecked isNowChecked =
     if isAlreadyChecked then
-        SetCurrentlyInUS Nothing
+        Nothing
 
     else
-        SetCurrentlyInUS (Just isNowChecked)
+        Just isNowChecked
 
 
 backButton : Model -> Html Msg
@@ -484,21 +507,50 @@ render e model =
 
                         Nothing ->
                             False
+                
+
             in
             centerWrap
                 [ div [ css [ margin (px 10) ] ] [ text (i18n model "currently-in-us") ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
-                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (setMaybeCheckBox yesChecked) ] [], text (i18n model "yes") ]
-                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> setMaybeCheckBox noChecked (not r)) ] [], text (i18n model "no") ]
+                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility {elig | currentlyInUS = setMaybeCheckBox yesChecked r}) ] [], text (i18n model "yes") ]
+                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility {elig | currentlyInUS = setMaybeCheckBox noChecked (not r)}) ] [], text (i18n model "no") ]
                     ]
                 , nextButton model (yesChecked || noChecked)
                 ]
 
         InUSLessThanOneYear ->
-            centerWrap [ backButton model ]
+            let
+                elig =
+                    model.state.eligibility
+
+                yesChecked =
+                    Maybe.withDefault False elig.lessThanOneYear
+
+                noChecked =
+                    case elig.lessThanOneYear of
+                        Just b ->
+                            not b
+
+                        Nothing ->
+                            False
+                
+
+            in
+            centerWrap
+                [ backButton model, div [ css [ margin (px 10) ] ] [ text (i18n model "less-than-one-year") ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
+                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility {elig | lessThanOneYear = setMaybeCheckBox yesChecked r}) ] [], text (i18n model "yes") ]
+                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility {elig | lessThanOneYear = setMaybeCheckBox noChecked (not r)}) ] [], text (i18n model "no") ]
+                    ]
+                , nextButton model (yesChecked || noChecked)
+                ]
 
         NotEligible ->
             centerWrap [ text (i18n model "not-eligible-explanation"), backButton model ]
+        
+        FirstName ->
+            centerWrap [backButton model]
 
 
 progressView : Model -> Html Msg
@@ -520,6 +572,8 @@ getProgressListHelper title element printSection model currentList =
     let
         next =
             getNext element model
+        
+        nextTitle = getSectionFromElement next
 
         clickable =
             List.member element model.visitedElements
@@ -528,21 +582,27 @@ getProgressListHelper title element printSection model currentList =
             if printSection && title == model.focusedSection then
                 [ titleHtml title element clickable model, elementNameHtml element clickable model ]
 
-            else
+            else if title == model.focusedSection then
                 [ elementNameHtml element clickable model ]
+            
+            else if printSection then 
+                [titleHtml title element clickable model]
+            
+            else 
+                []
 
         appendedList =
             List.append currentList toBeAdded
 
         printNextSection =
-            title /= next.title
+            title /= nextTitle
 
         nextList =
-            if element == next.element then
+            if element == next then
                 appendedList
 
             else
-                getProgressListHelper next.title next.element printNextSection model appendedList
+                getProgressListHelper nextTitle next printNextSection model appendedList
     in
     nextList
 
@@ -584,6 +644,9 @@ sectionToDescription title model =
     case title of
         Eligibility ->
             i18n model "eligibility"
+        
+        PersonalInfo -> 
+            i18n model "personal-info"
 
 
 formElementToDescription : FormEntryElement -> Model -> String
@@ -597,6 +660,9 @@ formElementToDescription element model =
 
         NotEligible ->
             i18n model "not-eligible"
+        
+        FirstName ->
+            i18n model "first-name"
 
 
 helpView : Model -> Html Msg

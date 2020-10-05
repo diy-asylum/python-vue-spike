@@ -7377,18 +7377,26 @@ var $author$project$Main$downloadFilledForm = function (data) {
 			url: 'http://localhost:12345/fill-i589'
 		});
 };
+var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
 var $author$project$Main$getBack = F2(
 	function (entry, model) {
 		switch (entry.$) {
 			case 'CurrentlyInUS':
-				return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+				return $author$project$Main$CurrentlyInUS;
 			case 'InUSLessThanOneYear':
-				return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+				return $author$project$Main$CurrentlyInUS;
+			case 'NotEligible':
+				var _v1 = model.state.eligibility.currentlyInUS;
+				if ((_v1.$ === 'Just') && _v1.a) {
+					return $author$project$Main$InUSLessThanOneYear;
+				} else {
+					return $author$project$Main$CurrentlyInUS;
+				}
 			default:
-				return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+				return $author$project$Main$InUSLessThanOneYear;
 		}
 	});
-var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
+var $author$project$Main$FirstName = {$: 'FirstName'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -7397,27 +7405,41 @@ var $author$project$Main$getNext = F2(
 				var _v1 = model.state.eligibility.currentlyInUS;
 				if (_v1.$ === 'Just') {
 					if (!_v1.a) {
-						return {element: $author$project$Main$NotEligible, title: $author$project$Main$Eligibility};
+						return $author$project$Main$NotEligible;
 					} else {
-						return {element: $author$project$Main$InUSLessThanOneYear, title: $author$project$Main$Eligibility};
+						return $author$project$Main$InUSLessThanOneYear;
 					}
 				} else {
-					return {element: $author$project$Main$CurrentlyInUS, title: $author$project$Main$Eligibility};
+					return $author$project$Main$CurrentlyInUS;
 				}
 			case 'InUSLessThanOneYear':
-				return {element: $author$project$Main$InUSLessThanOneYear, title: $author$project$Main$Eligibility};
+				var _v2 = model.state.eligibility.lessThanOneYear;
+				if (_v2.$ === 'Just') {
+					if (_v2.a) {
+						return $author$project$Main$FirstName;
+					} else {
+						return $author$project$Main$NotEligible;
+					}
+				} else {
+					return $author$project$Main$InUSLessThanOneYear;
+				}
+			case 'NotEligible':
+				return $author$project$Main$NotEligible;
 			default:
-				return {element: $author$project$Main$NotEligible, title: $author$project$Main$Eligibility};
+				return $author$project$Main$FirstName;
 		}
 	});
+var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
 var $author$project$Main$getSectionFromElement = function (element) {
 	switch (element.$) {
 		case 'CurrentlyInUS':
 			return $author$project$Main$Eligibility;
 		case 'InUSLessThanOneYear':
 			return $author$project$Main$Eligibility;
-		default:
+		case 'NotEligible':
 			return $author$project$Main$Eligibility;
+		default:
+			return $author$project$Main$PersonalInfo;
 	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -7684,19 +7706,21 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'Next':
 				var next = A2($author$project$Main$getNext, model.focusedEntry, model);
-				var visitedElements = (!A2($elm$core$List$member, next.element, model.visitedElements)) ? A2($elm$core$List$cons, next.element, model.visitedElements) : model.visitedElements;
+				var nextTitle = $author$project$Main$getSectionFromElement(next);
+				var visitedElements = (!A2($elm$core$List$member, next, model.visitedElements)) ? A2($elm$core$List$cons, next, model.visitedElements) : model.visitedElements;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{focusedEntry: next.element, focusedSection: next.title, visitedElements: visitedElements}),
+						{focusedEntry: next, focusedSection: nextTitle, visitedElements: visitedElements}),
 					$elm$core$Platform$Cmd$none);
 			case 'Back':
 				var next = A2($author$project$Main$getBack, model.focusedEntry, model);
-				var visitedElements = (!A2($elm$core$List$member, next.element, model.visitedElements)) ? A2($elm$core$List$cons, next.element, model.visitedElements) : model.visitedElements;
+				var nextTitle = $author$project$Main$getSectionFromElement(next);
+				var visitedElements = (!A2($elm$core$List$member, next, model.visitedElements)) ? A2($elm$core$List$cons, next, model.visitedElements) : model.visitedElements;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{focusedEntry: next.element, focusedSection: next.title, visitedElements: visitedElements}),
+						{focusedEntry: next, focusedSection: nextTitle, visitedElements: visitedElements}),
 					$elm$core$Platform$Cmd$none);
 			case 'SetFormEntryElement':
 				var element = msg.a;
@@ -7711,15 +7735,11 @@ var $author$project$Main$update = F2(
 						}),
 					$elm$core$Platform$Cmd$none);
 			default:
-				var toggle = msg.a;
+				var e = msg.a;
 				var s = model.state;
-				var e = model.state.eligibility;
-				var newE = _Utils_update(
-					e,
-					{currentlyInUS: toggle});
 				var newS = _Utils_update(
 					s,
-					{eligibility: newE});
+					{eligibility: e});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -10545,6 +10565,9 @@ var $author$project$Main$footer = A2(
 					$rtfeldman$elm_css$Html$Styled$text('© 2020 DIY Asylum LLC')
 				]))
 		]));
+var $author$project$Main$SetEligibility = function (a) {
+	return {$: 'SetEligibility', a: a};
+};
 var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $author$project$I18n$i18nHelper = F3(
@@ -10748,13 +10771,9 @@ var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
 };
-var $author$project$Main$SetCurrentlyInUS = function (a) {
-	return {$: 'SetCurrentlyInUS', a: a};
-};
 var $author$project$Main$setMaybeCheckBox = F2(
 	function (isAlreadyChecked, isNowChecked) {
-		return isAlreadyChecked ? $author$project$Main$SetCurrentlyInUS($elm$core$Maybe$Nothing) : $author$project$Main$SetCurrentlyInUS(
-			$elm$core$Maybe$Just(isNowChecked));
+		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(isNowChecked);
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -10834,7 +10853,14 @@ var $author$project$Main$render = F2(
 													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
 													$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
 													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-													$author$project$Main$setMaybeCheckBox(yesChecked))
+													function (r) {
+														return $author$project$Main$SetEligibility(
+															_Utils_update(
+																elig,
+																{
+																	currentlyInUS: A2($author$project$Main$setMaybeCheckBox, yesChecked, r)
+																}));
+													})
 												]),
 											_List_Nil),
 											$rtfeldman$elm_css$Html$Styled$text(
@@ -10861,7 +10887,12 @@ var $author$project$Main$render = F2(
 													$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
 													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
 													function (r) {
-														return A2($author$project$Main$setMaybeCheckBox, noChecked, !r);
+														return $author$project$Main$SetEligibility(
+															_Utils_update(
+																elig,
+																{
+																	currentlyInUS: A2($author$project$Main$setMaybeCheckBox, noChecked, !r)
+																}));
 													})
 												]),
 											_List_Nil),
@@ -10872,17 +10903,134 @@ var $author$project$Main$render = F2(
 							A2($author$project$Main$nextButton, model, yesChecked || noChecked)
 						]));
 			case 'InUSLessThanOneYear':
+				var elig = model.state.eligibility;
+				var noChecked = function () {
+					var _v2 = elig.lessThanOneYear;
+					if (_v2.$ === 'Just') {
+						var b = _v2.a;
+						return !b;
+					} else {
+						return false;
+					}
+				}();
+				var yesChecked = A2($elm$core$Maybe$withDefault, false, elig.lessThanOneYear);
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$margin(
+											$rtfeldman$elm_css$Css$px(10))
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'less-than-one-year'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$rtfeldman$elm_css$Css$margin(
+											$rtfeldman$elm_css$Css$px(10))
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$label,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$padding(
+													$rtfeldman$elm_css$Css$em(1))
+												]))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$rtfeldman$elm_css$Html$Styled$input,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+													$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
+													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+													function (r) {
+														return $author$project$Main$SetEligibility(
+															_Utils_update(
+																elig,
+																{
+																	lessThanOneYear: A2($author$project$Main$setMaybeCheckBox, yesChecked, r)
+																}));
+													})
+												]),
+											_List_Nil),
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$Main$i18n, model, 'yes'))
+										])),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$label,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$padding(
+													$rtfeldman$elm_css$Css$em(1))
+												]))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$rtfeldman$elm_css$Html$Styled$input,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+													$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
+													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+													function (r) {
+														return $author$project$Main$SetEligibility(
+															_Utils_update(
+																elig,
+																{
+																	lessThanOneYear: A2($author$project$Main$setMaybeCheckBox, noChecked, !r)
+																}));
+													})
+												]),
+											_List_Nil),
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$Main$i18n, model, 'no'))
+										]))
+								])),
+							A2($author$project$Main$nextButton, model, yesChecked || noChecked)
+						]));
+			case 'NotEligible':
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'not-eligible-explanation')),
 							$author$project$Main$backButton(model)
 						]));
 			default:
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$text(
-							A2($author$project$Main$i18n, model, 'not-eligible-explanation')),
 							$author$project$Main$backButton(model)
 						]));
 		}
@@ -10946,8 +11094,10 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'us-residency');
 			case 'InUSLessThanOneYear':
 				return A2($author$project$Main$i18n, model, 'length-of-stay');
-			default:
+			case 'NotEligible':
 				return A2($author$project$Main$i18n, model, 'not-eligible');
+			default:
+				return A2($author$project$Main$i18n, model, 'first-name');
 		}
 	});
 var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
@@ -10983,7 +11133,11 @@ var $author$project$Main$elementNameHtml = F3(
 var $rtfeldman$elm_css$Html$Styled$h3 = $rtfeldman$elm_css$Html$Styled$node('h3');
 var $author$project$Main$sectionToDescription = F2(
 	function (title, model) {
-		return A2($author$project$Main$i18n, model, 'eligibility');
+		if (title.$ === 'Eligibility') {
+			return A2($author$project$Main$i18n, model, 'eligibility');
+		} else {
+			return A2($author$project$Main$i18n, model, 'personal-info');
+		}
 	});
 var $author$project$Main$titleHtml = F4(
 	function (title, elementLink, clickable, model) {
@@ -11017,18 +11171,22 @@ var $author$project$Main$titleHtml = F4(
 var $author$project$Main$getProgressListHelper = F5(
 	function (title, element, printSection, model, currentList) {
 		var next = A2($author$project$Main$getNext, element, model);
-		var printNextSection = !_Utils_eq(title, next.title);
+		var nextTitle = $author$project$Main$getSectionFromElement(next);
+		var printNextSection = !_Utils_eq(title, nextTitle);
 		var clickable = A2($elm$core$List$member, element, model.visitedElements);
 		var toBeAdded = (printSection && _Utils_eq(title, model.focusedSection)) ? _List_fromArray(
 			[
 				A4($author$project$Main$titleHtml, title, element, clickable, model),
 				A3($author$project$Main$elementNameHtml, element, clickable, model)
-			]) : _List_fromArray(
+			]) : (_Utils_eq(title, model.focusedSection) ? _List_fromArray(
 			[
 				A3($author$project$Main$elementNameHtml, element, clickable, model)
-			]);
+			]) : (printSection ? _List_fromArray(
+			[
+				A4($author$project$Main$titleHtml, title, element, clickable, model)
+			]) : _List_Nil));
 		var appendedList = A2($elm$core$List$append, currentList, toBeAdded);
-		var nextList = _Utils_eq(element, next.element) ? appendedList : A5($author$project$Main$getProgressListHelper, next.title, next.element, printNextSection, model, appendedList);
+		var nextList = _Utils_eq(element, next) ? appendedList : A5($author$project$Main$getProgressListHelper, nextTitle, next, printNextSection, model, appendedList);
 		return nextList;
 	});
 var $author$project$Main$getProgressList = function (model) {

@@ -51,5 +51,14 @@ var translations = {
 	},
 	"eligibility": {
 		"en": "Eligibility"
+	},
+	"personal-info": {
+		"en": "Personal Info"
+	},
+	"first-name": {
+		"en": "First Name"
+	},
+	"less-than-one-year": {
+		"en": "Have you been in the US for less than one year since your most recent entry?"
 	}
 }
