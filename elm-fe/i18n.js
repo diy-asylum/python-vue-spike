@@ -60,5 +60,8 @@ var translations = {
 	},
 	"less-than-one-year": {
 		"en": "Have you been in the US for less than one year since your most recent entry?"
+	},
+	"first-name-entry": {
+		"en": "What is your first name?"
 	}
 }

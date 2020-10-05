@@ -5544,7 +5544,8 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 };
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
-var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData};
+var $author$project$Main$defaultPersonalData = {firstName: ''};
+var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Dict$Black = {$: 'Black'};
@@ -7734,12 +7735,23 @@ var $author$project$Main$update = F2(
 							visitedElements: visitedElements
 						}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'SetEligibility':
 				var e = msg.a;
 				var s = model.state;
 				var newS = _Utils_update(
 					s,
 					{eligibility: e});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var d = msg.a;
+				var s = model.state;
+				var newS = _Utils_update(
+					s,
+					{personal: d});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -10568,8 +10580,14 @@ var $author$project$Main$footer = A2(
 var $author$project$Main$SetEligibility = function (a) {
 	return {$: 'SetEligibility', a: a};
 };
+var $author$project$Main$SetPersonalData = function (a) {
+	return {$: 'SetPersonalData', a: a};
+};
 var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
+var $author$project$Main$defaultMargin = $rtfeldman$elm_css$Css$margin(
+	$rtfeldman$elm_css$Css$px(10));
 var $author$project$I18n$i18nHelper = F3(
 	function (languageDict, key, language) {
 		var errorValue = 'No translation available.';
@@ -10600,7 +10618,6 @@ var $author$project$Main$i18n = F2(
 	function (model, key) {
 		return A3($author$project$I18n$i18nHelper, model.languageDict, key, model.language);
 	});
-var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -10636,8 +10653,7 @@ var $author$project$Main$backButton = function (model) {
 					[
 						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
 						$rtfeldman$elm_css$Css$color($author$project$Main$dark),
-						$rtfeldman$elm_css$Css$margin(
-						$rtfeldman$elm_css$Css$px(10))
+						$author$project$Main$defaultMargin
 					])),
 				$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Back)
 			]),
@@ -10727,8 +10743,7 @@ var $author$project$Main$nextButton = F2(
 						[
 							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
 							$rtfeldman$elm_css$Css$color($author$project$Main$dark),
-							$rtfeldman$elm_css$Css$margin(
-							$rtfeldman$elm_css$Css$px(10))
+							$author$project$Main$defaultMargin
 						])),
 					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Next)
 				]),
@@ -10745,8 +10760,7 @@ var $author$project$Main$nextButton = F2(
 						[
 							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark),
 							$rtfeldman$elm_css$Css$color($author$project$Main$background),
-							$rtfeldman$elm_css$Css$margin(
-							$rtfeldman$elm_css$Css$px(10))
+							$author$project$Main$defaultMargin
 						]))
 				]),
 			_List_fromArray(
@@ -10771,6 +10785,33 @@ var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
 };
+var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
+};
 var $author$project$Main$setMaybeCheckBox = F2(
 	function (isAlreadyChecked, isNowChecked) {
 		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(isNowChecked);
@@ -10783,6 +10824,7 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
+var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
 var $author$project$Main$render = F2(
 	function (e, model) {
 		switch (e.$) {
@@ -10807,10 +10849,7 @@ var $author$project$Main$render = F2(
 								[
 									$rtfeldman$elm_css$Html$Styled$Attributes$css(
 									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$margin(
-											$rtfeldman$elm_css$Css$px(10))
-										]))
+										[$author$project$Main$defaultMargin]))
 								]),
 							_List_fromArray(
 								[
@@ -10827,8 +10866,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Css$displayFlex,
 											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
 											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$margin(
-											$rtfeldman$elm_css$Css$px(10))
+											$author$project$Main$defaultMargin
 										]))
 								]),
 							_List_fromArray(
@@ -10924,10 +10962,7 @@ var $author$project$Main$render = F2(
 								[
 									$rtfeldman$elm_css$Html$Styled$Attributes$css(
 									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$margin(
-											$rtfeldman$elm_css$Css$px(10))
-										]))
+										[$author$project$Main$defaultMargin]))
 								]),
 							_List_fromArray(
 								[
@@ -10944,8 +10979,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Css$displayFlex,
 											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
 											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$margin(
-											$rtfeldman$elm_css$Css$px(10))
+											$author$project$Main$defaultMargin
 										]))
 								]),
 							_List_fromArray(
@@ -11028,10 +11062,45 @@ var $author$project$Main$render = F2(
 							$author$project$Main$backButton(model)
 						]));
 			default:
+				var d = model.state.personal;
+				var firstName = d.firstName;
+				var allowNext = firstName !== '';
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
-							$author$project$Main$backButton(model)
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'first-name-entry'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$input,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin])),
+									$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
+									$rtfeldman$elm_css$Html$Styled$Attributes$value(firstName),
+									$rtfeldman$elm_css$Html$Styled$Events$onInput(
+									function (r) {
+										return $author$project$Main$SetPersonalData(
+											_Utils_update(
+												d,
+												{firstName: r}));
+									})
+								]),
+							_List_Nil),
+							A2($author$project$Main$nextButton, model, allowNext)
 						]));
 		}
 	});
@@ -11292,33 +11361,6 @@ var $author$project$Main$navContainerStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
 			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$start)
 		]));
-var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
-};
 var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
 var $rtfeldman$elm_css$Html$Styled$select = $rtfeldman$elm_css$Html$Styled$node('select');
 var $rtfeldman$elm_css$Html$Styled$Attributes$selected = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('selected');

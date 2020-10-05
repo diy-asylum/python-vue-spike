@@ -69,13 +69,15 @@ i18n model key =
 
 
 type alias FormState =
-    { eligibility : EligibilityData
+    { eligibility : EligibilityData,
+      personal : PersonalData
     }
 
 
 defaultFormState : FormState
 defaultFormState =
-    { eligibility = defaultEligibilityData
+    { eligibility = defaultEligibilityData,
+      personal = defaultPersonalData
     }
 
 
@@ -84,6 +86,9 @@ type alias EligibilityData =
     , lessThanOneYear : Maybe Bool
     }
 
+type alias PersonalData = 
+    {firstName : String}
+
 
 defaultEligibilityData : EligibilityData
 defaultEligibilityData =
@@ -91,6 +96,9 @@ defaultEligibilityData =
     , lessThanOneYear = Nothing
     }
 
+defaultPersonalData : PersonalData 
+defaultPersonalData = 
+    {firstName = ""}
 
 type FormEntryElement
     = CurrentlyInUS
@@ -180,6 +188,7 @@ type Msg
     | Next
     | Back
     | SetEligibility EligibilityData
+    | SetPersonalData PersonalData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -320,6 +329,17 @@ update msg model =
 
                 newS =
                     { s | eligibility = e }
+            in
+            ( { model | state = newS }, Cmd.none )
+        
+        SetPersonalData d -> 
+            let
+
+                s =
+                    model.state
+
+                newS =
+                    { s | personal = d }
             in
             ( { model | state = newS }, Cmd.none )
 
@@ -468,16 +488,16 @@ setMaybeCheckBox isAlreadyChecked isNowChecked =
 
 backButton : Model -> Html Msg
 backButton model =
-    button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Back ] [ text (i18n model "back") ]
+    button [ css [ backgroundColor background, color dark, defaultMargin ], onClick Back ] [ text (i18n model "back") ]
 
 
 nextButton : Model -> Bool -> Html Msg
 nextButton model isValid =
     if isValid then
-        button [ css [ backgroundColor background, color dark, margin (px 10) ], onClick Next ] [ text (i18n model "next") ]
+        button [ css [ backgroundColor background, color dark, defaultMargin ], onClick Next ] [ text (i18n model "next") ]
 
     else
-        button [ css [ backgroundColor dark, color background, margin (px 10) ] ] [ text (i18n model "next") ]
+        button [ css [ backgroundColor dark, color background, defaultMargin ] ] [ text (i18n model "next") ]
 
 
 centerWrap : List (Html Msg) -> Html Msg
@@ -511,8 +531,8 @@ render e model =
 
             in
             centerWrap
-                [ div [ css [ margin (px 10) ] ] [ text (i18n model "currently-in-us") ]
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
+                [ div [ css [ defaultMargin ] ] [ text (i18n model "currently-in-us") ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility {elig | currentlyInUS = setMaybeCheckBox yesChecked r}) ] [], text (i18n model "yes") ]
                     , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility {elig | currentlyInUS = setMaybeCheckBox noChecked (not r)}) ] [], text (i18n model "no") ]
                     ]
@@ -538,8 +558,8 @@ render e model =
 
             in
             centerWrap
-                [ backButton model, div [ css [ margin (px 10) ] ] [ text (i18n model "less-than-one-year") ]
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, margin (px 10) ] ]
+                [ backButton model, div [ css [ defaultMargin ] ] [ text (i18n model "less-than-one-year") ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility {elig | lessThanOneYear = setMaybeCheckBox yesChecked r}) ] [], text (i18n model "yes") ]
                     , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility {elig | lessThanOneYear = setMaybeCheckBox noChecked (not r)}) ] [], text (i18n model "no") ]
                     ]
@@ -550,7 +570,17 @@ render e model =
             centerWrap [ text (i18n model "not-eligible-explanation"), backButton model ]
         
         FirstName ->
-            centerWrap [backButton model]
+            let
+                d = model.state.personal
+
+                firstName = d.firstName
+
+                allowNext = firstName /= ""
+            in
+            centerWrap [backButton model, div [css [ defaultMargin ] ] [ text (i18n model "first-name-entry") ]
+                , input [css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value firstName, onInput (\r -> SetPersonalData {d | firstName = r})] []
+                , nextButton model allowNext
+                ]
 
 
 progressView : Model -> Html Msg
@@ -718,7 +748,9 @@ navContainerStyles : Style
 navContainerStyles =
     batch [ minHeight (vh 5), maxHeight (vh 5), padding (Css.em 0.1), property "grid-column" "2", color dark, displayFlex, alignItems center, justifyContent start ]
 
-
+defaultMargin : Style 
+defaultMargin = 
+    margin (px 10)
 
 -- REQUESTS
 
