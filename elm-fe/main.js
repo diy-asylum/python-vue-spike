@@ -5544,7 +5544,7 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 };
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
-var $author$project$Main$defaultPersonalData = {firstName: ''};
+var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, currentAliasInput: '', firstName: '', lastName: '', middleName: ''};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -7378,7 +7378,10 @@ var $author$project$Main$downloadFilledForm = function (data) {
 			url: 'http://localhost:12345/fill-i589'
 		});
 };
+var $author$project$Main$FirstName = {$: 'FirstName'};
 var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
+var $author$project$Main$LastName = {$: 'LastName'};
+var $author$project$Main$MiddleName = {$: 'MiddleName'};
 var $author$project$Main$getBack = F2(
 	function (entry, model) {
 		switch (entry.$) {
@@ -7393,11 +7396,17 @@ var $author$project$Main$getBack = F2(
 				} else {
 					return $author$project$Main$CurrentlyInUS;
 				}
-			default:
+			case 'FirstName':
 				return $author$project$Main$InUSLessThanOneYear;
+			case 'LastName':
+				return $author$project$Main$FirstName;
+			case 'MiddleName':
+				return $author$project$Main$LastName;
+			default:
+				return $author$project$Main$MiddleName;
 		}
 	});
-var $author$project$Main$FirstName = {$: 'FirstName'};
+var $author$project$Main$Aliases = {$: 'Aliases'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -7426,8 +7435,14 @@ var $author$project$Main$getNext = F2(
 				}
 			case 'NotEligible':
 				return $author$project$Main$NotEligible;
+			case 'FirstName':
+				return $author$project$Main$LastName;
+			case 'LastName':
+				return $author$project$Main$MiddleName;
+			case 'MiddleName':
+				return $author$project$Main$Aliases;
 			default:
-				return $author$project$Main$FirstName;
+				return $author$project$Main$Aliases;
 		}
 	});
 var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
@@ -7439,6 +7454,12 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$Eligibility;
 		case 'NotEligible':
 			return $author$project$Main$Eligibility;
+		case 'FirstName':
+			return $author$project$Main$PersonalInfo;
+		case 'MiddleName':
+			return $author$project$Main$PersonalInfo;
+		case 'LastName':
+			return $author$project$Main$PersonalInfo;
 		default:
 			return $author$project$Main$PersonalInfo;
 	}
@@ -8897,57 +8918,57 @@ var $rtfeldman$elm_css$Css$Structure$concatMapLastStyleBlock = F2(
 			A2($rtfeldman$elm_css$Css$Structure$concatMapLastStyleBlock, update, rest));
 	});
 var $elm$core$String$cons = _String_cons;
-var $Skinney$murmur3$Murmur3$HashData = F4(
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$HashData = F4(
 	function (shift, seed, hash, charsProcessed) {
 		return {charsProcessed: charsProcessed, hash: hash, seed: seed, shift: shift};
 	});
-var $Skinney$murmur3$Murmur3$c1 = 3432918353;
-var $Skinney$murmur3$Murmur3$c2 = 461845907;
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$c1 = 3432918353;
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$c2 = 461845907;
 var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
 var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $Skinney$murmur3$Murmur3$multiplyBy = F2(
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy = F2(
 	function (b, a) {
 		return ((a & 65535) * b) + ((((a >>> 16) * b) & 65535) << 16);
 	});
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $elm$core$Bitwise$or = _Bitwise_or;
-var $Skinney$murmur3$Murmur3$rotlBy = F2(
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$rotlBy = F2(
 	function (b, a) {
 		return (a << b) | (a >>> (32 - b));
 	});
 var $elm$core$Bitwise$xor = _Bitwise_xor;
-var $Skinney$murmur3$Murmur3$finalize = function (data) {
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$finalize = function (data) {
 	var acc = (!(!data.hash)) ? (data.seed ^ A2(
-		$Skinney$murmur3$Murmur3$multiplyBy,
-		$Skinney$murmur3$Murmur3$c2,
+		$rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy,
+		$rtfeldman$elm_css$ElmCssVendor$Murmur3$c2,
 		A2(
-			$Skinney$murmur3$Murmur3$rotlBy,
+			$rtfeldman$elm_css$ElmCssVendor$Murmur3$rotlBy,
 			15,
-			A2($Skinney$murmur3$Murmur3$multiplyBy, $Skinney$murmur3$Murmur3$c1, data.hash)))) : data.seed;
+			A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, $rtfeldman$elm_css$ElmCssVendor$Murmur3$c1, data.hash)))) : data.seed;
 	var h0 = acc ^ data.charsProcessed;
-	var h1 = A2($Skinney$murmur3$Murmur3$multiplyBy, 2246822507, h0 ^ (h0 >>> 16));
-	var h2 = A2($Skinney$murmur3$Murmur3$multiplyBy, 3266489909, h1 ^ (h1 >>> 13));
+	var h1 = A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, 2246822507, h0 ^ (h0 >>> 16));
+	var h2 = A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, 3266489909, h1 ^ (h1 >>> 13));
 	return (h2 ^ (h2 >>> 16)) >>> 0;
 };
 var $elm$core$String$foldl = _String_foldl;
-var $Skinney$murmur3$Murmur3$mix = F2(
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$mix = F2(
 	function (h1, k1) {
 		return A2(
-			$Skinney$murmur3$Murmur3$multiplyBy,
+			$rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy,
 			5,
 			A2(
-				$Skinney$murmur3$Murmur3$rotlBy,
+				$rtfeldman$elm_css$ElmCssVendor$Murmur3$rotlBy,
 				13,
 				h1 ^ A2(
-					$Skinney$murmur3$Murmur3$multiplyBy,
-					$Skinney$murmur3$Murmur3$c2,
+					$rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy,
+					$rtfeldman$elm_css$ElmCssVendor$Murmur3$c2,
 					A2(
-						$Skinney$murmur3$Murmur3$rotlBy,
+						$rtfeldman$elm_css$ElmCssVendor$Murmur3$rotlBy,
 						15,
-						A2($Skinney$murmur3$Murmur3$multiplyBy, $Skinney$murmur3$Murmur3$c1, k1))))) + 3864292196;
+						A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, $rtfeldman$elm_css$ElmCssVendor$Murmur3$c1, k1))))) + 3864292196;
 	});
-var $Skinney$murmur3$Murmur3$hashFold = F2(
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$hashFold = F2(
 	function (c, data) {
 		var res = data.hash | ((255 & $elm$core$Char$toCode(c)) << data.shift);
 		var _v0 = data.shift;
@@ -8955,20 +8976,20 @@ var $Skinney$murmur3$Murmur3$hashFold = F2(
 			return {
 				charsProcessed: data.charsProcessed + 1,
 				hash: 0,
-				seed: A2($Skinney$murmur3$Murmur3$mix, data.seed, res),
+				seed: A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$mix, data.seed, res),
 				shift: 0
 			};
 		} else {
 			return {charsProcessed: data.charsProcessed + 1, hash: res, seed: data.seed, shift: data.shift + 8};
 		}
 	});
-var $Skinney$murmur3$Murmur3$hashString = F2(
+var $rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString = F2(
 	function (seed, str) {
-		return $Skinney$murmur3$Murmur3$finalize(
+		return $rtfeldman$elm_css$ElmCssVendor$Murmur3$finalize(
 			A3(
 				$elm$core$String$foldl,
-				$Skinney$murmur3$Murmur3$hashFold,
-				A4($Skinney$murmur3$Murmur3$HashData, 0, seed, 0, 0),
+				$rtfeldman$elm_css$ElmCssVendor$Murmur3$hashFold,
+				A4($rtfeldman$elm_css$ElmCssVendor$Murmur3$HashData, 0, seed, 0, 0),
 				str));
 	});
 var $rtfeldman$elm_css$Hash$murmurSeed = 15739;
@@ -9054,7 +9075,7 @@ var $rtfeldman$elm_css$Hash$fromString = function (str) {
 		$elm$core$String$cons,
 		_Utils_chr('_'),
 		$rtfeldman$elm_hex$Hex$toString(
-			A2($Skinney$murmur3$Murmur3$hashString, $rtfeldman$elm_css$Hash$murmurSeed, str)));
+			A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString, $rtfeldman$elm_css$Hash$murmurSeed, str)));
 };
 var $elm$core$List$head = function (list) {
 	if (list.b) {
@@ -10456,7 +10477,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$getClassname = function (styles) {
 		_Utils_chr('_'),
 		$rtfeldman$elm_hex$Hex$toString(
 			A2(
-				$Skinney$murmur3$Murmur3$hashString,
+				$rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString,
 				$rtfeldman$elm_css$VirtualDom$Styled$murmurSeed,
 				$rtfeldman$elm_css$Css$Preprocess$Resolve$compile(
 					$elm$core$List$singleton(
@@ -10583,8 +10604,123 @@ var $author$project$Main$SetEligibility = function (a) {
 var $author$project$Main$SetPersonalData = function (a) {
 	return {$: 'SetPersonalData', a: a};
 };
-var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
+var $rtfeldman$elm_css$Html$Styled$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
+	function (eventName, handler) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$onSubmit = function (msg) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$rtfeldman$elm_css$Html$Styled$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm_community$list_extra$List$Extra$removeAt = F2(
+	function (index, l) {
+		if (index < 0) {
+			return l;
+		} else {
+			var _v0 = A2($elm$core$List$drop, index, l);
+			if (!_v0.b) {
+				return l;
+			} else {
+				var rest = _v0.b;
+				return _Utils_ap(
+					A2($elm$core$List$take, index, l),
+					rest);
+			}
+		}
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$property, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
+var $author$project$Main$aliasElement = F3(
+	function (model, index, alias_) {
+		var d = model.state.personal;
+		var aliases = d.aliases;
+		var newAliases = A2($elm_community$list_extra$List$Extra$removeAt, index, aliases);
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$form,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Events$onSubmit(
+					$author$project$Main$SetPersonalData(
+						_Utils_update(
+							d,
+							{aliases: newAliases})))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(alias_),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$button,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$type_('submit')
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text('-')
+						]))
+				]));
+	});
+var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $author$project$Main$defaultMargin = $rtfeldman$elm_css$Css$margin(
 	$rtfeldman$elm_css$Css$px(10));
@@ -10621,15 +10757,6 @@ var $author$project$Main$i18n = F2(
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
-	function (eventName, handler) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$on, eventName, handler),
-			_List_Nil,
-			'');
-	});
 var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
 	function (event, decoder) {
 		return A2(
@@ -10713,14 +10840,6 @@ var $author$project$Main$centerWrap = function (list) {
 				list)
 			]));
 };
-var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$property, key, value),
-			_List_Nil,
-			'');
-	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -10731,6 +10850,7 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
 var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
+var $elm$core$Debug$log = _Debug_log;
 var $author$project$Main$Next = {$: 'Next'};
 var $author$project$Main$nextButton = F2(
 	function (model, isValid) {
@@ -10816,14 +10936,14 @@ var $author$project$Main$setMaybeCheckBox = F2(
 	function (isAlreadyChecked, isNowChecked) {
 		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(isNowChecked);
 	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
+var $rtfeldman$elm_css$Css$textAlign = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'textAlign',
+		'text-align',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
+};
+var $elm$core$Debug$toString = _Debug_toString;
 var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
 var $author$project$Main$render = F2(
 	function (e, model) {
@@ -11061,7 +11181,7 @@ var $author$project$Main$render = F2(
 							A2($author$project$Main$i18n, model, 'not-eligible-explanation')),
 							$author$project$Main$backButton(model)
 						]));
-			default:
+			case 'FirstName':
 				var d = model.state.personal;
 				var firstName = d.firstName;
 				var allowNext = firstName !== '';
@@ -11102,19 +11222,196 @@ var $author$project$Main$render = F2(
 							_List_Nil),
 							A2($author$project$Main$nextButton, model, allowNext)
 						]));
+			case 'MiddleName':
+				var d = model.state.personal;
+				var middleName = d.middleName;
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'middle-name-entry'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$input,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin])),
+									$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
+									$rtfeldman$elm_css$Html$Styled$Attributes$value(middleName),
+									$rtfeldman$elm_css$Html$Styled$Events$onInput(
+									function (r) {
+										return $author$project$Main$SetPersonalData(
+											_Utils_update(
+												d,
+												{middleName: r}));
+									})
+								]),
+							_List_Nil),
+							A2($author$project$Main$nextButton, model, true)
+						]));
+			case 'LastName':
+				var d = model.state.personal;
+				var lastName = d.lastName;
+				var allowNext = lastName !== '';
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'last-name-entry'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$input,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin])),
+									$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
+									$rtfeldman$elm_css$Html$Styled$Attributes$value(lastName),
+									$rtfeldman$elm_css$Html$Styled$Events$onInput(
+									function (r) {
+										return $author$project$Main$SetPersonalData(
+											_Utils_update(
+												d,
+												{lastName: r}));
+									})
+								]),
+							_List_Nil),
+							A2($author$project$Main$nextButton, model, allowNext)
+						]));
+			default:
+				var d = model.state.personal;
+				var test = $elm$core$Debug$log(
+					$elm$core$Debug$toString(d.aliases));
+				var currentInput = d.currentAliasInput;
+				var newAliases = (currentInput !== '') ? A2($elm$core$List$cons, currentInput, d.aliases) : d.aliases;
+				var aliasString = $elm$core$Debug$toString(newAliases);
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$author$project$Main$defaultMargin,
+											$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'aliases-entry'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$form,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onSubmit(
+									$author$project$Main$SetPersonalData(
+										_Utils_update(
+											d,
+											{aliases: newAliases, currentAliasInput: ''})))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$div,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$displayFlex,
+													$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+													$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+													$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+												]))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$rtfeldman$elm_css$Html$Styled$input,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$css(
+													_List_fromArray(
+														[$author$project$Main$defaultMargin])),
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
+													$rtfeldman$elm_css$Html$Styled$Events$onInput(
+													function (r) {
+														return $author$project$Main$SetPersonalData(
+															_Utils_update(
+																d,
+																{currentAliasInput: r}));
+													}),
+													$rtfeldman$elm_css$Html$Styled$Attributes$value(currentInput)
+												]),
+											_List_Nil),
+											A2(
+											$rtfeldman$elm_css$Html$Styled$button,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('submit')
+												]),
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$text('+')
+												]))
+										]))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							A2(
+								$elm$core$List$indexedMap,
+								$author$project$Main$aliasElement(model),
+								d.aliases)),
+							A2($author$project$Main$nextButton, model, true)
+						]));
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {
 	return A2($author$project$Main$render, model.focusedEntry, model);
 };
 var $rtfeldman$elm_css$Html$Styled$h2 = $rtfeldman$elm_css$Html$Styled$node('h2');
-var $rtfeldman$elm_css$Css$textAlign = function (fn) {
-	return A3(
-		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
-		'textAlign',
-		'text-align',
-		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
-};
 var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
 var $author$project$Main$helpView = function (model) {
 	return A2(
@@ -11153,6 +11450,18 @@ var $author$project$Main$helpView = function (model) {
 				A2($author$project$Main$i18n, model, 'help-description'))
 			]));
 };
+var $elm$virtual_dom$VirtualDom$lazy2 = _VirtualDom_lazy2;
+var $rtfeldman$elm_css$VirtualDom$Styled$lazyHelp = F2(
+	function (fn, arg) {
+		return $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled(
+			fn(arg));
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$lazy = F2(
+	function (fn, arg) {
+		return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
+			A3($elm$virtual_dom$VirtualDom$lazy2, $rtfeldman$elm_css$VirtualDom$Styled$lazyHelp, fn, arg));
+	});
+var $rtfeldman$elm_css$Html$Styled$Lazy$lazy = $rtfeldman$elm_css$VirtualDom$Styled$lazy;
 var $author$project$Main$SetFormEntryElement = function (a) {
 	return {$: 'SetFormEntryElement', a: a};
 };
@@ -11165,8 +11474,14 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'length-of-stay');
 			case 'NotEligible':
 				return A2($author$project$Main$i18n, model, 'not-eligible');
-			default:
+			case 'FirstName':
 				return A2($author$project$Main$i18n, model, 'first-name');
+			case 'LastName':
+				return A2($author$project$Main$i18n, model, 'last-name');
+			case 'MiddleName':
+				return A2($author$project$Main$i18n, model, 'middle-name');
+			default:
+				return A2($author$project$Main$i18n, model, 'aliases');
 		}
 	});
 var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
@@ -11319,9 +11634,9 @@ var $author$project$Main$i589View = function (model) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$progressView(model),
-				$author$project$Main$formEntryView(model),
-				$author$project$Main$helpView(model)
+				A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$progressView, model),
+				A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$formEntryView, model),
+				A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$helpView, model)
 			]));
 };
 var $author$project$Main$SetLanguage = function (a) {
@@ -11480,32 +11795,32 @@ var $author$project$Main$webView = function (model) {
 			case 'Home':
 				return _List_fromArray(
 					[
-						$author$project$Main$webNav(model),
+						A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$webNav, model),
 						$author$project$Main$footer
 					]);
 			case 'I589':
 				return _List_fromArray(
 					[
-						$author$project$Main$webNav(model),
+						A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$webNav, model),
 						$author$project$Main$i589View(model),
 						$author$project$Main$footer
 					]);
 			case 'AboutUs':
 				return _List_fromArray(
 					[
-						$author$project$Main$webNav(model),
+						A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$webNav, model),
 						$author$project$Main$footer
 					]);
 			case 'Contact':
 				return _List_fromArray(
 					[
-						$author$project$Main$webNav(model),
+						A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$webNav, model),
 						$author$project$Main$footer
 					]);
 			default:
 				return _List_fromArray(
 					[
-						$author$project$Main$webNav(model),
+						A2($rtfeldman$elm_css$Html$Styled$Lazy$lazy, $author$project$Main$webNav, model),
 						$author$project$Main$footer
 					]);
 		}

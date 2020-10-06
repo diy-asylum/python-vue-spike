@@ -13,9 +13,11 @@ import File.Download as Download
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, href, type_)
 import Html.Styled.Events exposing (..)
+import Html.Styled.Lazy exposing (lazy)
 import Http
 import I18n exposing (i18nHelper, languages)
 import Json.Decode as D
+import List.Extra
 import Ports
 import Url
 
@@ -69,15 +71,15 @@ i18n model key =
 
 
 type alias FormState =
-    { eligibility : EligibilityData,
-      personal : PersonalData
+    { eligibility : EligibilityData
+    , personal : PersonalData
     }
 
 
 defaultFormState : FormState
 defaultFormState =
-    { eligibility = defaultEligibilityData,
-      personal = defaultPersonalData
+    { eligibility = defaultEligibilityData
+    , personal = defaultPersonalData
     }
 
 
@@ -86,8 +88,14 @@ type alias EligibilityData =
     , lessThanOneYear : Maybe Bool
     }
 
-type alias PersonalData = 
-    {firstName : String}
+
+type alias PersonalData =
+    { firstName : String
+    , lastName : String
+    , middleName : String
+    , aliases : List String
+    , currentAliasInput : String
+    }
 
 
 defaultEligibilityData : EligibilityData
@@ -96,25 +104,30 @@ defaultEligibilityData =
     , lessThanOneYear = Nothing
     }
 
-defaultPersonalData : PersonalData 
-defaultPersonalData = 
-    {firstName = ""}
+
+defaultPersonalData : PersonalData
+defaultPersonalData =
+    { firstName = ""
+    , lastName = ""
+    , middleName = ""
+    , aliases = []
+    , currentAliasInput = ""
+    }
+
 
 type FormEntryElement
     = CurrentlyInUS
     | InUSLessThanOneYear
     | NotEligible
     | FirstName
+    | MiddleName
+    | LastName
+    | Aliases
 
 
 type SectionTitle
-    = Eligibility | PersonalInfo
-
-
-type alias ElementWithSection =
-    { title : SectionTitle
-    , element : FormEntryElement
-    }
+    = Eligibility
+    | PersonalInfo
 
 
 pathMatch : String -> Page
@@ -280,8 +293,8 @@ update msg model =
             let
                 next =
                     getNext model.focusedEntry model
-                
-                nextTitle = 
+
+                nextTitle =
                     getSectionFromElement next
 
                 visitedElements =
@@ -297,8 +310,8 @@ update msg model =
             let
                 next =
                     getBack model.focusedEntry model
-                
-                nextTitle = 
+
+                nextTitle =
                     getSectionFromElement next
 
                 visitedElements =
@@ -323,7 +336,6 @@ update msg model =
 
         SetEligibility e ->
             let
-
                 s =
                     model.state
 
@@ -331,10 +343,9 @@ update msg model =
                     { s | eligibility = e }
             in
             ( { model | state = newS }, Cmd.none )
-        
-        SetPersonalData d -> 
-            let
 
+        SetPersonalData d ->
+            let
                 s =
                     model.state
 
@@ -359,20 +370,30 @@ getNext entry model =
                     CurrentlyInUS
 
         InUSLessThanOneYear ->
-             case model.state.eligibility.lessThanOneYear of
-                Just True -> 
-                    FirstName 
+            case model.state.eligibility.lessThanOneYear of
+                Just True ->
+                    FirstName
+
                 Just False ->
                     NotEligible
+
                 Nothing ->
                     InUSLessThanOneYear
-            
 
         NotEligible ->
             NotEligible
-        
+
         FirstName ->
-            FirstName
+            LastName
+
+        LastName ->
+            MiddleName
+
+        MiddleName ->
+            Aliases
+
+        Aliases ->
+            Aliases
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -388,12 +409,21 @@ getBack entry model =
             case model.state.eligibility.currentlyInUS of
                 Just True ->
                     InUSLessThanOneYear
+
                 _ ->
                     CurrentlyInUS
-            
-        
-        FirstName -> 
+
+        FirstName ->
             InUSLessThanOneYear
+
+        LastName ->
+            FirstName
+
+        MiddleName ->
+            LastName
+
+        Aliases ->
+            MiddleName
 
 
 getSectionFromElement : FormEntryElement -> SectionTitle
@@ -408,7 +438,16 @@ getSectionFromElement element =
         NotEligible ->
             Eligibility
 
-        FirstName -> 
+        FirstName ->
+            PersonalInfo
+
+        MiddleName ->
+            PersonalInfo
+
+        LastName ->
+            PersonalInfo
+
+        Aliases ->
             PersonalInfo
 
 
@@ -446,19 +485,19 @@ webView model =
         content =
             case model.page of
                 Home ->
-                    [ webNav model, footer ]
+                    [ lazy webNav model, footer ]
 
                 I589 ->
-                    [ webNav model, i589View model, footer ]
+                    [ lazy webNav model, i589View model, footer ]
 
                 AboutUs ->
-                    [ webNav model, footer ]
+                    [ lazy webNav model, footer ]
 
                 Contact ->
-                    [ webNav model, footer ]
+                    [ lazy webNav model, footer ]
 
                 Error ->
-                    [ webNav model, footer ]
+                    [ lazy webNav model, footer ]
     in
     content
 
@@ -466,9 +505,9 @@ webView model =
 i589View : Model -> Html Msg
 i589View model =
     div [ css [ gridStyles, standardStyles, backgroundColor background, minHeight (vh 95), color dark ] ]
-        [ progressView model
-        , formEntryView model
-        , helpView model
+        [ lazy progressView model
+        , lazy formEntryView model
+        , lazy helpView model
         ]
 
 
@@ -527,14 +566,12 @@ render e model =
 
                         Nothing ->
                             False
-                
-
             in
             centerWrap
                 [ div [ css [ defaultMargin ] ] [ text (i18n model "currently-in-us") ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility {elig | currentlyInUS = setMaybeCheckBox yesChecked r}) ] [], text (i18n model "yes") ]
-                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility {elig | currentlyInUS = setMaybeCheckBox noChecked (not r)}) ] [], text (i18n model "no") ]
+                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility { elig | currentlyInUS = setMaybeCheckBox yesChecked r }) ] [], text (i18n model "yes") ]
+                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility { elig | currentlyInUS = setMaybeCheckBox noChecked (not r) }) ] [], text (i18n model "no") ]
                     ]
                 , nextButton model (yesChecked || noChecked)
                 ]
@@ -554,33 +591,121 @@ render e model =
 
                         Nothing ->
                             False
-                
-
             in
             centerWrap
-                [ backButton model, div [ css [ defaultMargin ] ] [ text (i18n model "less-than-one-year") ]
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "less-than-one-year") ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility {elig | lessThanOneYear = setMaybeCheckBox yesChecked r}) ] [], text (i18n model "yes") ]
-                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility {elig | lessThanOneYear = setMaybeCheckBox noChecked (not r)}) ] [], text (i18n model "no") ]
+                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility { elig | lessThanOneYear = setMaybeCheckBox yesChecked r }) ] [], text (i18n model "yes") ]
+                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility { elig | lessThanOneYear = setMaybeCheckBox noChecked (not r) }) ] [], text (i18n model "no") ]
                     ]
                 , nextButton model (yesChecked || noChecked)
                 ]
 
         NotEligible ->
             centerWrap [ text (i18n model "not-eligible-explanation"), backButton model ]
-        
+
         FirstName ->
             let
-                d = model.state.personal
+                d =
+                    model.state.personal
 
-                firstName = d.firstName
+                firstName =
+                    d.firstName
 
-                allowNext = firstName /= ""
+                allowNext =
+                    firstName /= ""
             in
-            centerWrap [backButton model, div [css [ defaultMargin ] ] [ text (i18n model "first-name-entry") ]
-                , input [css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value firstName, onInput (\r -> SetPersonalData {d | firstName = r})] []
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "first-name-entry") ]
+                , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value firstName, onInput (\r -> SetPersonalData { d | firstName = r }) ] []
                 , nextButton model allowNext
                 ]
+
+        MiddleName ->
+            let
+                d =
+                    model.state.personal
+
+                middleName =
+                    d.middleName
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "middle-name-entry") ]
+                , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value middleName, onInput (\r -> SetPersonalData { d | middleName = r }) ] []
+                , nextButton model True
+                ]
+
+        LastName ->
+            let
+                d =
+                    model.state.personal
+
+                lastName =
+                    d.lastName
+
+                allowNext =
+                    lastName /= ""
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "last-name-entry") ]
+                , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value lastName, onInput (\r -> SetPersonalData { d | lastName = r }) ] []
+                , nextButton model allowNext
+                ]
+
+        Aliases ->
+            let
+                d =
+                    model.state.personal
+
+                currentInput =
+                    d.currentAliasInput
+
+                newAliases =
+                    if currentInput /= "" then
+                        currentInput :: d.aliases
+
+                    else
+                        d.aliases
+
+                aliasString =
+                    Debug.toString newAliases
+
+                test =
+                    Debug.log (Debug.toString d.aliases)
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "aliases-entry") ]
+                , form [ onSubmit (SetPersonalData { d | currentAliasInput = "", aliases = newAliases }) ]
+                    [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
+                        [ input
+                            [ css [ defaultMargin ], type_ "text", onInput (\r -> SetPersonalData { d | currentAliasInput = r }), Html.Styled.Attributes.value currentInput ]
+                            []
+                        , button [ type_ "submit" ] [ text "+" ]
+                        ]
+                    ]
+                , div [ css [ displayFlex, flexDirection column, alignItems center, justifyContent center ] ] (List.indexedMap (aliasElement model) d.aliases)
+                , nextButton model True
+                ]
+
+
+aliasElement : Model -> Int -> String -> Html Msg
+aliasElement model index alias_ =
+    let
+        d =
+            model.state.personal
+
+        aliases =
+            d.aliases
+
+        newAliases =
+            List.Extra.removeAt index aliases
+    in
+    form [ onSubmit (SetPersonalData { d | aliases = newAliases }) ] [ text alias_, button [ type_ "submit" ] [ text "-" ] ]
 
 
 progressView : Model -> Html Msg
@@ -602,8 +727,9 @@ getProgressListHelper title element printSection model currentList =
     let
         next =
             getNext element model
-        
-        nextTitle = getSectionFromElement next
+
+        nextTitle =
+            getSectionFromElement next
 
         clickable =
             List.member element model.visitedElements
@@ -614,11 +740,11 @@ getProgressListHelper title element printSection model currentList =
 
             else if title == model.focusedSection then
                 [ elementNameHtml element clickable model ]
-            
-            else if printSection then 
-                [titleHtml title element clickable model]
-            
-            else 
+
+            else if printSection then
+                [ titleHtml title element clickable model ]
+
+            else
                 []
 
         appendedList =
@@ -674,8 +800,8 @@ sectionToDescription title model =
     case title of
         Eligibility ->
             i18n model "eligibility"
-        
-        PersonalInfo -> 
+
+        PersonalInfo ->
             i18n model "personal-info"
 
 
@@ -690,9 +816,18 @@ formElementToDescription element model =
 
         NotEligible ->
             i18n model "not-eligible"
-        
+
         FirstName ->
             i18n model "first-name"
+
+        LastName ->
+            i18n model "last-name"
+
+        MiddleName ->
+            i18n model "middle-name"
+
+        Aliases ->
+            i18n model "aliases"
 
 
 helpView : Model -> Html Msg
@@ -748,9 +883,12 @@ navContainerStyles : Style
 navContainerStyles =
     batch [ minHeight (vh 5), maxHeight (vh 5), padding (Css.em 0.1), property "grid-column" "2", color dark, displayFlex, alignItems center, justifyContent start ]
 
-defaultMargin : Style 
-defaultMargin = 
+
+defaultMargin : Style
+defaultMargin =
     margin (px 10)
+
+
 
 -- REQUESTS
 
