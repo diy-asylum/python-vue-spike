@@ -62,6 +62,7 @@ type alias Model =
     , visitedElements : List FormEntryElement
     , language : String
     , languageDict : Dict String (Dict String String)
+    , debug : Bool
     }
 
 
@@ -185,7 +186,7 @@ init flags url key =
             else
                 "en"
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict, Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict True, Cmd.none )
 
 
 
@@ -359,26 +360,34 @@ getNext : FormEntryElement -> Model -> FormEntryElement
 getNext entry model =
     case entry of
         CurrentlyInUS ->
-            case model.state.eligibility.currentlyInUS of
-                Just False ->
-                    NotEligible
+            if not model.debug then
+                case model.state.eligibility.currentlyInUS of
+                    Just False ->
+                        NotEligible
 
-                Just True ->
-                    InUSLessThanOneYear
+                    Just True ->
+                        InUSLessThanOneYear
 
-                Nothing ->
-                    CurrentlyInUS
+                    Nothing ->
+                        CurrentlyInUS
+
+            else
+                InUSLessThanOneYear
 
         InUSLessThanOneYear ->
-            case model.state.eligibility.lessThanOneYear of
-                Just True ->
-                    FirstName
+            if not model.debug then
+                case model.state.eligibility.lessThanOneYear of
+                    Just True ->
+                        FirstName
 
-                Just False ->
-                    NotEligible
+                    Just False ->
+                        NotEligible
 
-                Nothing ->
-                    InUSLessThanOneYear
+                    Nothing ->
+                        InUSLessThanOneYear
+
+            else
+                FirstName
 
         NotEligible ->
             NotEligible
@@ -449,6 +458,53 @@ getSectionFromElement element =
 
         Aliases ->
             PersonalInfo
+
+
+validate : Model -> Bool
+validate model =
+    if not model.debug then
+        case model.focusedEntry of
+            CurrentlyInUS ->
+                let
+                    elig =
+                        model.state.eligibility
+                in
+                case elig.currentlyInUS of
+                    Nothing ->
+                        False
+
+                    _ ->
+                        True
+
+            InUSLessThanOneYear ->
+                let
+                    elig =
+                        model.state.eligibility
+                in
+                case elig.lessThanOneYear of
+                    Nothing ->
+                        False
+
+                    _ ->
+                        True
+
+            NotEligible ->
+                False
+
+            FirstName ->
+                model.state.personal.firstName /= ""
+
+            MiddleName ->
+                True
+
+            LastName ->
+                model.state.personal.lastName /= ""
+
+            Aliases ->
+                True
+
+    else
+        True
 
 
 
@@ -530,9 +586,9 @@ backButton model =
     button [ css [ backgroundColor background, color dark, defaultMargin ], onClick Back ] [ text (i18n model "back") ]
 
 
-nextButton : Model -> Bool -> Html Msg
-nextButton model isValid =
-    if isValid then
+nextButton : Model -> Html Msg
+nextButton model =
+    if validate model then
         button [ css [ backgroundColor background, color dark, defaultMargin ], onClick Next ] [ text (i18n model "next") ]
 
     else
@@ -573,7 +629,7 @@ render e model =
                     [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility { elig | currentlyInUS = setMaybeCheckBox yesChecked r }) ] [], text (i18n model "yes") ]
                     , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility { elig | currentlyInUS = setMaybeCheckBox noChecked (not r) }) ] [], text (i18n model "no") ]
                     ]
-                , nextButton model (yesChecked || noChecked)
+                , nextButton model
                 ]
 
         InUSLessThanOneYear ->
@@ -599,7 +655,7 @@ render e model =
                     [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility { elig | lessThanOneYear = setMaybeCheckBox yesChecked r }) ] [], text (i18n model "yes") ]
                     , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility { elig | lessThanOneYear = setMaybeCheckBox noChecked (not r) }) ] [], text (i18n model "no") ]
                     ]
-                , nextButton model (yesChecked || noChecked)
+                , nextButton model
                 ]
 
         NotEligible ->
@@ -612,15 +668,12 @@ render e model =
 
                 firstName =
                     d.firstName
-
-                allowNext =
-                    firstName /= ""
             in
             centerWrap
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "first-name-entry") ]
                 , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value firstName, onInput (\r -> SetPersonalData { d | firstName = r }) ] []
-                , nextButton model allowNext
+                , nextButton model
                 ]
 
         MiddleName ->
@@ -635,7 +688,7 @@ render e model =
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "middle-name-entry") ]
                 , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value middleName, onInput (\r -> SetPersonalData { d | middleName = r }) ] []
-                , nextButton model True
+                , nextButton model
                 ]
 
         LastName ->
@@ -645,15 +698,12 @@ render e model =
 
                 lastName =
                     d.lastName
-
-                allowNext =
-                    lastName /= ""
             in
             centerWrap
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "last-name-entry") ]
                 , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value lastName, onInput (\r -> SetPersonalData { d | lastName = r }) ] []
-                , nextButton model allowNext
+                , nextButton model
                 ]
 
         Aliases ->
@@ -671,11 +721,32 @@ render e model =
                     else
                         d.aliases
 
-                aliasString =
-                    Debug.toString newAliases
+                numAliases =
+                    List.length d.aliases
 
-                test =
-                    Debug.log (Debug.toString d.aliases)
+                gridRows =
+                    String.repeat (numAliases + 1) "1fr "
+
+                aliasList =
+                    case numAliases of
+                        0 ->
+                            div [] []
+
+                        _ ->
+                            div
+                                [ css
+                                    [ property "display" "grid"
+                                    , property "grid-template-columns" "1fr 1fr"
+                                    , property "grid-template-rows" gridRows
+                                    , alignItems center
+                                    , justifyContent center
+                                    ]
+                                ]
+                                (h4 [ css [ property "grid-column" "1/3", property "grid-row" "1", textAlign center ] ] [ text (i18n model "aliases") ]
+                                    :: List.append
+                                        (List.indexedMap aliasElement d.aliases)
+                                        (List.indexedMap (aliasRemoveButton model) d.aliases)
+                                )
             in
             centerWrap
                 [ backButton model
@@ -685,16 +756,16 @@ render e model =
                         [ input
                             [ css [ defaultMargin ], type_ "text", onInput (\r -> SetPersonalData { d | currentAliasInput = r }), Html.Styled.Attributes.value currentInput ]
                             []
-                        , button [ type_ "submit" ] [ text "+" ]
+                        , button [ type_ "submit" ] [ text (i18n model "add") ]
                         ]
                     ]
-                , div [ css [ displayFlex, flexDirection column, alignItems center, justifyContent center ] ] (List.indexedMap (aliasElement model) d.aliases)
-                , nextButton model True
+                , aliasList
+                , nextButton model
                 ]
 
 
-aliasElement : Model -> Int -> String -> Html Msg
-aliasElement model index alias_ =
+aliasRemoveButton : Model -> Int -> String -> Html Msg
+aliasRemoveButton model index alias_ =
     let
         d =
             model.state.personal
@@ -705,7 +776,29 @@ aliasElement model index alias_ =
         newAliases =
             List.Extra.removeAt index aliases
     in
-    form [ onSubmit (SetPersonalData { d | aliases = newAliases }) ] [ text alias_, button [ type_ "submit" ] [ text "-" ] ]
+    form
+        [ css
+            [ property "grid-column" "2"
+            , property "grid-row" (String.fromInt (index + 2))
+            ]
+        , onSubmit (SetPersonalData { d | aliases = newAliases })
+        ]
+        [ button
+            [ type_ "submit"
+            ]
+            [ text (i18n model "remove") ]
+        ]
+
+
+aliasElement : Int -> String -> Html Msg
+aliasElement index alias_ =
+    div
+        [ css
+            [ property "grid-column" "1"
+            , property "grid-row" (String.fromInt (index + 2))
+            ]
+        ]
+        [ text alias_ ]
 
 
 progressView : Model -> Html Msg
@@ -732,7 +825,11 @@ getProgressListHelper title element printSection model currentList =
             getSectionFromElement next
 
         clickable =
-            List.member element model.visitedElements
+            if model.debug then
+                True
+
+            else
+                List.member element model.visitedElements
 
         toBeAdded =
             if printSection && title == model.focusedSection then

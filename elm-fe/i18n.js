@@ -81,5 +81,11 @@ var translations = {
 	},
 	"aliases-entry": {
 		"en": "Have you used any other names or aliases, including maiden names? Create an entry for each alias below."
+	},
+	"add": {
+		"en": "Add"
+	},
+	"remove": {
+		"en": "Remove"
 	}
 }

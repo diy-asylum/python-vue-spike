@@ -5510,7 +5510,9 @@ var $author$project$Main$Model = function (key) {
 								return function (visitedElements) {
 									return function (language) {
 										return function (languageDict) {
-											return {device: device, focusedEntry: focusedEntry, focusedSection: focusedSection, key: key, language: language, languageDict: languageDict, page: page, state: state, title: title, url: url, visitedElements: visitedElements};
+											return function (debug) {
+												return {debug: debug, device: device, focusedEntry: focusedEntry, focusedSection: focusedSection, key: key, language: language, languageDict: languageDict, page: page, state: state, title: title, url: url, visitedElements: visitedElements};
+											};
 										};
 									};
 								};
@@ -5815,7 +5817,7 @@ var $author$project$Main$init = F3(
 				$author$project$Main$pageToTitle(page))(
 				$mdgriffith$elm_ui$Element$classifyDevice(flags))($author$project$Main$defaultFormState)($author$project$Main$Eligibility)($author$project$Main$CurrentlyInUS)(
 				_List_fromArray(
-					[$author$project$Main$CurrentlyInUS]))(lang)(languageDict),
+					[$author$project$Main$CurrentlyInUS]))(lang)(languageDict)(true),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -7408,30 +7410,39 @@ var $author$project$Main$getBack = F2(
 	});
 var $author$project$Main$Aliases = {$: 'Aliases'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
+var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
 		switch (entry.$) {
 			case 'CurrentlyInUS':
-				var _v1 = model.state.eligibility.currentlyInUS;
-				if (_v1.$ === 'Just') {
-					if (!_v1.a) {
-						return $author$project$Main$NotEligible;
+				if (!model.debug) {
+					var _v1 = model.state.eligibility.currentlyInUS;
+					if (_v1.$ === 'Just') {
+						if (!_v1.a) {
+							return $author$project$Main$NotEligible;
+						} else {
+							return $author$project$Main$InUSLessThanOneYear;
+						}
+					} else {
+						return $author$project$Main$CurrentlyInUS;
+					}
+				} else {
+					return $author$project$Main$InUSLessThanOneYear;
+				}
+			case 'InUSLessThanOneYear':
+				if (!model.debug) {
+					var _v2 = model.state.eligibility.lessThanOneYear;
+					if (_v2.$ === 'Just') {
+						if (_v2.a) {
+							return $author$project$Main$FirstName;
+						} else {
+							return $author$project$Main$NotEligible;
+						}
 					} else {
 						return $author$project$Main$InUSLessThanOneYear;
 					}
 				} else {
-					return $author$project$Main$CurrentlyInUS;
-				}
-			case 'InUSLessThanOneYear':
-				var _v2 = model.state.eligibility.lessThanOneYear;
-				if (_v2.$ === 'Just') {
-					if (_v2.a) {
-						return $author$project$Main$FirstName;
-					} else {
-						return $author$project$Main$NotEligible;
-					}
-				} else {
-					return $author$project$Main$InUSLessThanOneYear;
+					return $author$project$Main$FirstName;
 				}
 			case 'NotEligible':
 				return $author$project$Main$NotEligible;
@@ -7465,7 +7476,6 @@ var $author$project$Main$getSectionFromElement = function (element) {
 	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$pageToDescription = function (page) {
 	var description = function () {
 		switch (page.$) {
@@ -10604,8 +10614,59 @@ var $author$project$Main$SetEligibility = function (a) {
 var $author$project$Main$SetPersonalData = function (a) {
 	return {$: 'SetPersonalData', a: a};
 };
+var $author$project$Main$aliasElement = F2(
+	function (index, alias_) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							A2($rtfeldman$elm_css$Css$property, 'grid-column', '1'),
+							A2(
+							$rtfeldman$elm_css$Css$property,
+							'grid-row',
+							$elm$core$String$fromInt(index + 2))
+						]))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(alias_)
+				]));
+	});
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
+var $author$project$I18n$i18nHelper = F3(
+	function (languageDict, key, language) {
+		var errorValue = 'No translation available.';
+		var entry = A2($elm$core$Dict$get, key, languageDict);
+		var value = function () {
+			if (entry.$ === 'Just') {
+				var d = entry.a;
+				var _v1 = A2($elm$core$Dict$get, language, d);
+				if (_v1.$ === 'Just') {
+					var s = _v1.a;
+					return s;
+				} else {
+					var _v2 = A2($elm$core$Dict$get, 'en', d);
+					if (_v2.$ === 'Just') {
+						var s = _v2.a;
+						return s;
+					} else {
+						return errorValue;
+					}
+				}
+			} else {
+				return errorValue;
+			}
+		}();
+		return value;
+	});
+var $author$project$Main$i18n = F2(
+	function (model, key) {
+		return A3($author$project$I18n$i18nHelper, model.languageDict, key, model.language);
+	});
 var $rtfeldman$elm_css$Html$Styled$Events$alwaysPreventDefault = function (msg) {
 	return _Utils_Tuple2(msg, true);
 };
@@ -10690,7 +10751,7 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
-var $author$project$Main$aliasElement = F3(
+var $author$project$Main$aliasRemoveButton = F3(
 	function (model, index, alias_) {
 		var d = model.state.personal;
 		var aliases = d.aliases;
@@ -10699,6 +10760,15 @@ var $author$project$Main$aliasElement = F3(
 			$rtfeldman$elm_css$Html$Styled$form,
 			_List_fromArray(
 				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							A2($rtfeldman$elm_css$Css$property, 'grid-column', '2'),
+							A2(
+							$rtfeldman$elm_css$Css$property,
+							'grid-row',
+							$elm$core$String$fromInt(index + 2))
+						])),
 					$rtfeldman$elm_css$Html$Styled$Events$onSubmit(
 					$author$project$Main$SetPersonalData(
 						_Utils_update(
@@ -10707,7 +10777,6 @@ var $author$project$Main$aliasElement = F3(
 				]),
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$text(alias_),
 					A2(
 					$rtfeldman$elm_css$Html$Styled$button,
 					_List_fromArray(
@@ -10716,7 +10785,8 @@ var $author$project$Main$aliasElement = F3(
 						]),
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$text('-')
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'remove'))
 						]))
 				]));
 	});
@@ -10724,36 +10794,6 @@ var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $author$project$Main$defaultMargin = $rtfeldman$elm_css$Css$margin(
 	$rtfeldman$elm_css$Css$px(10));
-var $author$project$I18n$i18nHelper = F3(
-	function (languageDict, key, language) {
-		var errorValue = 'No translation available.';
-		var entry = A2($elm$core$Dict$get, key, languageDict);
-		var value = function () {
-			if (entry.$ === 'Just') {
-				var d = entry.a;
-				var _v1 = A2($elm$core$Dict$get, language, d);
-				if (_v1.$ === 'Just') {
-					var s = _v1.a;
-					return s;
-				} else {
-					var _v2 = A2($elm$core$Dict$get, 'en', d);
-					if (_v2.$ === 'Just') {
-						var s = _v2.a;
-						return s;
-					} else {
-						return errorValue;
-					}
-				}
-			} else {
-				return errorValue;
-			}
-		}();
-		return value;
-	});
-var $author$project$Main$i18n = F2(
-	function (model, key) {
-		return A3($author$project$I18n$i18nHelper, model.languageDict, key, model.language);
-	});
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -10848,47 +10888,81 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
+var $rtfeldman$elm_css$Html$Styled$h4 = $rtfeldman$elm_css$Html$Styled$node('h4');
 var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
-var $elm$core$Debug$log = _Debug_log;
 var $author$project$Main$Next = {$: 'Next'};
-var $author$project$Main$nextButton = F2(
-	function (model, isValid) {
-		return isValid ? A2(
-			$rtfeldman$elm_css$Html$Styled$button,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
-							$rtfeldman$elm_css$Css$color($author$project$Main$dark),
-							$author$project$Main$defaultMargin
-						])),
-					$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Next)
-				]),
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$text(
-					A2($author$project$Main$i18n, model, 'next'))
-				])) : A2(
-			$rtfeldman$elm_css$Html$Styled$button,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark),
-							$rtfeldman$elm_css$Css$color($author$project$Main$background),
-							$author$project$Main$defaultMargin
-						]))
-				]),
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$text(
-					A2($author$project$Main$i18n, model, 'next'))
-				]));
-	});
+var $author$project$Main$validate = function (model) {
+	if (!model.debug) {
+		var _v0 = model.focusedEntry;
+		switch (_v0.$) {
+			case 'CurrentlyInUS':
+				var elig = model.state.eligibility;
+				var _v1 = elig.currentlyInUS;
+				if (_v1.$ === 'Nothing') {
+					return false;
+				} else {
+					return true;
+				}
+			case 'InUSLessThanOneYear':
+				var elig = model.state.eligibility;
+				var _v2 = elig.lessThanOneYear;
+				if (_v2.$ === 'Nothing') {
+					return false;
+				} else {
+					return true;
+				}
+			case 'NotEligible':
+				return false;
+			case 'FirstName':
+				return model.state.personal.firstName !== '';
+			case 'MiddleName':
+				return true;
+			case 'LastName':
+				return model.state.personal.lastName !== '';
+			default:
+				return true;
+		}
+	} else {
+		return true;
+	}
+};
+var $author$project$Main$nextButton = function (model) {
+	return $author$project$Main$validate(model) ? A2(
+		$rtfeldman$elm_css$Html$Styled$button,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+						$rtfeldman$elm_css$Css$color($author$project$Main$dark),
+						$author$project$Main$defaultMargin
+					])),
+				$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Next)
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$text(
+				A2($author$project$Main$i18n, model, 'next'))
+			])) : A2(
+		$rtfeldman$elm_css$Html$Styled$button,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark),
+						$rtfeldman$elm_css$Css$color($author$project$Main$background),
+						$author$project$Main$defaultMargin
+					]))
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$text(
+				A2($author$project$Main$i18n, model, 'next'))
+			]));
+};
 var $elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
@@ -10932,6 +11006,19 @@ var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
 			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
 };
+var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var $elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			$elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var $elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3($elm$core$String$repeatHelp, n, chunk, '');
+	});
 var $author$project$Main$setMaybeCheckBox = F2(
 	function (isAlreadyChecked, isNowChecked) {
 		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(isNowChecked);
@@ -10943,7 +11030,6 @@ var $rtfeldman$elm_css$Css$textAlign = function (fn) {
 		'text-align',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
-var $elm$core$Debug$toString = _Debug_toString;
 var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
 var $author$project$Main$render = F2(
 	function (e, model) {
@@ -11058,7 +11144,7 @@ var $author$project$Main$render = F2(
 											A2($author$project$Main$i18n, model, 'no'))
 										]))
 								])),
-							A2($author$project$Main$nextButton, model, yesChecked || noChecked)
+							$author$project$Main$nextButton(model)
 						]));
 			case 'InUSLessThanOneYear':
 				var elig = model.state.eligibility;
@@ -11171,7 +11257,7 @@ var $author$project$Main$render = F2(
 											A2($author$project$Main$i18n, model, 'no'))
 										]))
 								])),
-							A2($author$project$Main$nextButton, model, yesChecked || noChecked)
+							$author$project$Main$nextButton(model)
 						]));
 			case 'NotEligible':
 				return $author$project$Main$centerWrap(
@@ -11184,7 +11270,6 @@ var $author$project$Main$render = F2(
 			case 'FirstName':
 				var d = model.state.personal;
 				var firstName = d.firstName;
-				var allowNext = firstName !== '';
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
@@ -11220,7 +11305,7 @@ var $author$project$Main$render = F2(
 									})
 								]),
 							_List_Nil),
-							A2($author$project$Main$nextButton, model, allowNext)
+							$author$project$Main$nextButton(model)
 						]));
 			case 'MiddleName':
 				var d = model.state.personal;
@@ -11260,12 +11345,11 @@ var $author$project$Main$render = F2(
 									})
 								]),
 							_List_Nil),
-							A2($author$project$Main$nextButton, model, true)
+							$author$project$Main$nextButton(model)
 						]));
 			case 'LastName':
 				var d = model.state.personal;
 				var lastName = d.lastName;
-				var allowNext = lastName !== '';
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
@@ -11301,15 +11385,60 @@ var $author$project$Main$render = F2(
 									})
 								]),
 							_List_Nil),
-							A2($author$project$Main$nextButton, model, allowNext)
+							$author$project$Main$nextButton(model)
 						]));
 			default:
 				var d = model.state.personal;
-				var test = $elm$core$Debug$log(
-					$elm$core$Debug$toString(d.aliases));
+				var numAliases = $elm$core$List$length(d.aliases);
+				var gridRows = A2($elm$core$String$repeat, numAliases + 1, '1fr ');
 				var currentInput = d.currentAliasInput;
 				var newAliases = (currentInput !== '') ? A2($elm$core$List$cons, currentInput, d.aliases) : d.aliases;
-				var aliasString = $elm$core$Debug$toString(newAliases);
+				var aliasList = function () {
+					if (!numAliases) {
+						return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+					} else {
+						return A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
+											A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 1fr'),
+											A2($rtfeldman$elm_css$Css$property, 'grid-template-rows', gridRows),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							A2(
+								$elm$core$List$cons,
+								A2(
+									$rtfeldman$elm_css$Html$Styled$h4,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/3'),
+													A2($rtfeldman$elm_css$Css$property, 'grid-row', '1'),
+													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+												]))
+										]),
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$Main$i18n, model, 'aliases'))
+										])),
+								A2(
+									$elm$core$List$append,
+									A2($elm$core$List$indexedMap, $author$project$Main$aliasElement, d.aliases),
+									A2(
+										$elm$core$List$indexedMap,
+										$author$project$Main$aliasRemoveButton(model),
+										d.aliases))));
+					}
+				}();
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
 						[
@@ -11383,28 +11512,13 @@ var $author$project$Main$render = F2(
 												]),
 											_List_fromArray(
 												[
-													$rtfeldman$elm_css$Html$Styled$text('+')
+													$rtfeldman$elm_css$Html$Styled$text(
+													A2($author$project$Main$i18n, model, 'add'))
 												]))
 										]))
 								])),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-										]))
-								]),
-							A2(
-								$elm$core$List$indexedMap,
-								$author$project$Main$aliasElement(model),
-								d.aliases)),
-							A2($author$project$Main$nextButton, model, true)
+							aliasList,
+							$author$project$Main$nextButton(model)
 						]));
 		}
 	});
@@ -11557,7 +11671,7 @@ var $author$project$Main$getProgressListHelper = F5(
 		var next = A2($author$project$Main$getNext, element, model);
 		var nextTitle = $author$project$Main$getSectionFromElement(next);
 		var printNextSection = !_Utils_eq(title, nextTitle);
-		var clickable = A2($elm$core$List$member, element, model.visitedElements);
+		var clickable = model.debug ? true : A2($elm$core$List$member, element, model.visitedElements);
 		var toBeAdded = (printSection && _Utils_eq(title, model.focusedSection)) ? _List_fromArray(
 			[
 				A4($author$project$Main$titleHtml, title, element, clickable, model),
