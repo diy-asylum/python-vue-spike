@@ -96,6 +96,7 @@ type alias PersonalData =
     , middleName : String
     , aliases : List String
     , currentAliasInput : String
+    , homeAddress : MailingAddress
     }
 
 
@@ -113,6 +114,7 @@ defaultPersonalData =
     , middleName = ""
     , aliases = []
     , currentAliasInput = ""
+    , homeAddress = defaultMailingAddress
     }
 
 
@@ -124,6 +126,7 @@ type FormEntryElement
     | MiddleName
     | LastName
     | Aliases
+    | HomeAddress
 
 
 type SectionTitle
@@ -402,7 +405,10 @@ getNext entry model =
             Aliases
 
         Aliases ->
-            Aliases
+            HomeAddress
+
+        HomeAddress ->
+            HomeAddress
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -434,6 +440,9 @@ getBack entry model =
         Aliases ->
             MiddleName
 
+        HomeAddress ->
+            Aliases
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -457,6 +466,9 @@ getSectionFromElement element =
             PersonalInfo
 
         Aliases ->
+            PersonalInfo
+
+        HomeAddress ->
             PersonalInfo
 
 
@@ -502,6 +514,34 @@ validate model =
 
             Aliases ->
                 True
+
+            HomeAddress ->
+                let
+                    address =
+                        model.state.personal.homeAddress
+
+                    validStreetNumber =
+                        address.streetNumber /= ""
+
+                    validStreetName =
+                        address.streetName /= ""
+
+                    validCity =
+                        address.city /= ""
+
+                    validState =
+                        address.state /= ""
+
+                    validZip =
+                        address.zipCode /= ""
+
+                    validAreaCode =
+                        address.areaCode /= ""
+
+                    validPhone =
+                        address.phoneNumber /= ""
+                in
+                validStreetNumber && validStreetName && validCity && validState && validZip && validAreaCode && validPhone
 
     else
         True
@@ -763,6 +803,47 @@ render e model =
                 , nextButton model
                 ]
 
+        HomeAddress ->
+            let
+                d =
+                    model.state.personal
+
+                h =
+                    d.homeAddress
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "home-address-entry") ]
+                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 2fr 1fr", alignItems center, justifyContent center ] ]
+                    [ input
+                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        , Html.Styled.Attributes.placeholder "Street Number"
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | streetNumber = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "2/4" ]
+                        , Html.Styled.Attributes.placeholder "Street Name"
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | streetName = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "4/5" ]
+                        , Html.Styled.Attributes.placeholder "Apt. Number"
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | apartmentNumber = r } })
+                        ]
+                        []
+                    ]
+                , nextButton model
+                ]
+
+
+
+-- Alias views
+
 
 aliasRemoveButton : Model -> Int -> String -> Html Msg
 aliasRemoveButton model index alias_ =
@@ -799,6 +880,10 @@ aliasElement index alias_ =
             ]
         ]
         [ text alias_ ]
+
+
+
+-- Progress bar views
 
 
 progressView : Model -> Html Msg
@@ -925,6 +1010,13 @@ formElementToDescription element model =
 
         Aliases ->
             i18n model "aliases"
+
+        HomeAddress ->
+            i18n model "home-address"
+
+
+
+-- Help view
 
 
 helpView : Model -> Html Msg

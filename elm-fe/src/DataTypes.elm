@@ -334,6 +334,20 @@ mailingAddressMock =
     }
 
 
+defaultMailingAddress : MailingAddress
+defaultMailingAddress =
+    { inCareOf = ""
+    , streetName = ""
+    , streetNumber = ""
+    , apartmentNumber = ""
+    , city = ""
+    , state = ""
+    , zipCode = ""
+    , areaCode = ""
+    , phoneNumber = ""
+    }
+
+
 encodeMailingAddress : MailingAddress -> E.Value
 encodeMailingAddress o =
     E.object

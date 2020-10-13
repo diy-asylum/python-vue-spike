@@ -5546,7 +5546,8 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 };
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
-var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, currentAliasInput: '', firstName: '', lastName: '', middleName: ''};
+var $author$project$DataTypes$defaultMailingAddress = {apartmentNumber: '', areaCode: '', city: '', inCareOf: '', phoneNumber: '', state: '', streetName: '', streetNumber: '', zipCode: ''};
+var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, currentAliasInput: '', firstName: '', homeAddress: $author$project$DataTypes$defaultMailingAddress, lastName: '', middleName: ''};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -7380,6 +7381,7 @@ var $author$project$Main$downloadFilledForm = function (data) {
 			url: 'http://localhost:12345/fill-i589'
 		});
 };
+var $author$project$Main$Aliases = {$: 'Aliases'};
 var $author$project$Main$FirstName = {$: 'FirstName'};
 var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
 var $author$project$Main$LastName = {$: 'LastName'};
@@ -7404,11 +7406,13 @@ var $author$project$Main$getBack = F2(
 				return $author$project$Main$FirstName;
 			case 'MiddleName':
 				return $author$project$Main$LastName;
-			default:
+			case 'Aliases':
 				return $author$project$Main$MiddleName;
+			default:
+				return $author$project$Main$Aliases;
 		}
 	});
-var $author$project$Main$Aliases = {$: 'Aliases'};
+var $author$project$Main$HomeAddress = {$: 'HomeAddress'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
@@ -7452,8 +7456,10 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$MiddleName;
 			case 'MiddleName':
 				return $author$project$Main$Aliases;
+			case 'Aliases':
+				return $author$project$Main$HomeAddress;
 			default:
-				return $author$project$Main$Aliases;
+				return $author$project$Main$HomeAddress;
 		}
 	});
 var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
@@ -7470,6 +7476,8 @@ var $author$project$Main$getSectionFromElement = function (element) {
 		case 'MiddleName':
 			return $author$project$Main$PersonalInfo;
 		case 'LastName':
+			return $author$project$Main$PersonalInfo;
+		case 'Aliases':
 			return $author$project$Main$PersonalInfo;
 		default:
 			return $author$project$Main$PersonalInfo;
@@ -10920,8 +10928,18 @@ var $author$project$Main$validate = function (model) {
 				return true;
 			case 'LastName':
 				return model.state.personal.lastName !== '';
-			default:
+			case 'Aliases':
 				return true;
+			default:
+				var address = model.state.personal.homeAddress;
+				var validAreaCode = address.areaCode !== '';
+				var validCity = address.city !== '';
+				var validPhone = address.phoneNumber !== '';
+				var validState = address.state !== '';
+				var validStreetName = address.streetName !== '';
+				var validStreetNumber = address.streetNumber !== '';
+				var validZip = address.zipCode !== '';
+				return validStreetNumber && (validStreetName && (validCity && (validState && (validZip && (validAreaCode && validPhone)))));
 		}
 	} else {
 		return true;
@@ -11006,6 +11024,7 @@ var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
 			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
 };
+var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
 var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var $elm$core$String$repeatHelp = F3(
 	function (n, chunk, result) {
@@ -11387,7 +11406,7 @@ var $author$project$Main$render = F2(
 							_List_Nil),
 							$author$project$Main$nextButton(model)
 						]));
-			default:
+			case 'Aliases':
 				var d = model.state.personal;
 				var numAliases = $elm$core$List$length(d.aliases);
 				var gridRows = A2($elm$core$String$repeat, numAliases + 1, '1fr ');
@@ -11520,6 +11539,122 @@ var $author$project$Main$render = F2(
 							aliasList,
 							$author$project$Main$nextButton(model)
 						]));
+			default:
+				var d = model.state.personal;
+				var h = d.homeAddress;
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$author$project$Main$defaultMargin,
+											$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'home-address-entry'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
+											A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 2fr 1fr'),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$input,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$author$project$Main$defaultMargin,
+													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
+												])),
+											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Street Number'),
+											$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
+											$rtfeldman$elm_css$Html$Styled$Events$onInput(
+											function (r) {
+												return $author$project$Main$SetPersonalData(
+													_Utils_update(
+														d,
+														{
+															homeAddress: _Utils_update(
+																h,
+																{streetNumber: r})
+														}));
+											})
+										]),
+									_List_Nil),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$input,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$author$project$Main$defaultMargin,
+													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/4')
+												])),
+											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Street Name'),
+											$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
+											$rtfeldman$elm_css$Html$Styled$Events$onInput(
+											function (r) {
+												return $author$project$Main$SetPersonalData(
+													_Utils_update(
+														d,
+														{
+															homeAddress: _Utils_update(
+																h,
+																{streetName: r})
+														}));
+											})
+										]),
+									_List_Nil),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$input,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$author$project$Main$defaultMargin,
+													A2($rtfeldman$elm_css$Css$property, 'grid-column', '4/5')
+												])),
+											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Apt. Number'),
+											$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
+											$rtfeldman$elm_css$Html$Styled$Events$onInput(
+											function (r) {
+												return $author$project$Main$SetPersonalData(
+													_Utils_update(
+														d,
+														{
+															homeAddress: _Utils_update(
+																h,
+																{apartmentNumber: r})
+														}));
+											})
+										]),
+									_List_Nil)
+								])),
+							$author$project$Main$nextButton(model)
+						]));
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {
@@ -11594,8 +11729,10 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'last-name');
 			case 'MiddleName':
 				return A2($author$project$Main$i18n, model, 'middle-name');
-			default:
+			case 'Aliases':
 				return A2($author$project$Main$i18n, model, 'aliases');
+			default:
+				return A2($author$project$Main$i18n, model, 'home-address');
 		}
 	});
 var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');

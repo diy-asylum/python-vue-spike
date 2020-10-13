@@ -87,5 +87,11 @@ var translations = {
 	},
 	"remove": {
 		"en": "Remove"
+	},
+	"home-address": {
+		"en": "Home Address"
+	},
+	"home-address-entry": {
+		"en": "Please enter the address of your current residence in the US."
 	}
 }
