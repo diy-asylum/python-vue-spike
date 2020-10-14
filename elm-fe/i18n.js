@@ -121,6 +121,9 @@ var translations = {
 	"home-mailing-same": {
 		"en": "Mailing Address Same"
 	},
+	"home-mailing-same-text": {
+		"en": "Is your mailing address the same as your home address?"
+	},
 	"mailing-address": {
 		"en": "Mailing Address"
 	},
@@ -132,5 +135,32 @@ var translations = {
 	},
 	"gender": {
 		"en": "Gender"
+	},
+	"enter-gender": {
+		"en": "Please select your gender."
+	},
+	"male": {
+		"en": "Male"
+	},
+	"female": {
+		"en": "Female"
+	},
+	"marital-status": {
+		"en": "Marital Status"
+	},
+	"enter-marital-status": {
+		"en": "Please select your marital status."
+	},
+	"single": {
+		"en": "Single"
+	},
+	"married": {
+		"en": "Married"
+	},
+	"divorced": {
+		"en": "Divorced"
+	},
+	"widowed": {
+		"en": "Widowed"
 	}
 }

@@ -5547,7 +5547,7 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
 var $author$project$DataTypes$defaultMailingAddress = {apartmentNumber: '', areaCode: '', city: '', inCareOf: '', phoneNumber: '', state: '', streetName: '', streetNumber: '', zipCode: ''};
-var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, currentAliasInput: '', firstName: '', gender: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, middleName: ''};
+var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, currentAliasInput: '', firstName: '', gender: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, maritalStatus: $elm$core$Maybe$Nothing, middleName: ''};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -7382,6 +7382,7 @@ var $author$project$Main$downloadFilledForm = function (data) {
 		});
 };
 var $author$project$Main$Aliases = {$: 'Aliases'};
+var $author$project$Main$EnterGender = {$: 'EnterGender'};
 var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
 var $author$project$Main$FirstName = {$: 'FirstName'};
 var $author$project$Main$HomeAddress = {$: 'HomeAddress'};
@@ -7417,16 +7418,18 @@ var $author$project$Main$getBack = F2(
 				return $author$project$Main$HomeAddress;
 			case 'EnterMailingAddress':
 				return $author$project$Main$HomeMailingSame;
-			default:
+			case 'EnterGender':
 				var _v2 = model.state.personal.homeMailingSame;
 				if ((_v2.$ === 'Just') && _v2.a) {
 					return $author$project$Main$HomeMailingSame;
 				} else {
 					return $author$project$Main$EnterMailingAddress;
 				}
+			default:
+				return $author$project$Main$EnterGender;
 		}
 	});
-var $author$project$Main$EnterGender = {$: 'EnterGender'};
+var $author$project$Main$EnterMaritalStatus = {$: 'EnterMaritalStatus'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
@@ -7483,8 +7486,10 @@ var $author$project$Main$getNext = F2(
 				}
 			case 'EnterMailingAddress':
 				return $author$project$Main$EnterGender;
+			case 'EnterGender':
+				return $author$project$Main$EnterMaritalStatus;
 			default:
-				return $author$project$Main$EnterGender;
+				return $author$project$Main$EnterMaritalStatus;
 		}
 	});
 var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
@@ -7509,6 +7514,8 @@ var $author$project$Main$getSectionFromElement = function (element) {
 		case 'HomeMailingSame':
 			return $author$project$Main$PersonalInfo;
 		case 'EnterMailingAddress':
+			return $author$project$Main$PersonalInfo;
+		case 'EnterGender':
 			return $author$project$Main$PersonalInfo;
 		default:
 			return $author$project$Main$PersonalInfo;
@@ -10647,12 +10654,15 @@ var $author$project$Main$footer = A2(
 					$rtfeldman$elm_css$Html$Styled$text('© 2020 DIY Asylum LLC')
 				]))
 		]));
+var $author$project$DataTypes$DIVORCED = {$: 'DIVORCED'};
+var $author$project$DataTypes$SINGLE = {$: 'SINGLE'};
 var $author$project$Main$SetEligibility = function (a) {
 	return {$: 'SetEligibility', a: a};
 };
 var $author$project$Main$SetPersonalData = function (a) {
 	return {$: 'SetPersonalData', a: a};
 };
+var $author$project$DataTypes$WIDOWED = {$: 'WIDOWED'};
 var $author$project$Main$aliasElement = F2(
 	function (index, alias_) {
 		return A2(
@@ -10934,10 +10944,57 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
-var $rtfeldman$elm_css$Css$flexStart = $rtfeldman$elm_css$Css$prop1('flex-start');
-var $rtfeldman$elm_css$Html$Styled$h4 = $rtfeldman$elm_css$Html$Styled$node('h4');
 var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $rtfeldman$elm_css$Html$Styled$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
+};
+var $author$project$Main$checkBox = F5(
+	function (model, isChecked, labelTextId, dataMessage, newData) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$label,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$padding(
+							$rtfeldman$elm_css$Css$em(1))
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$input,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$checked(isChecked),
+							$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+							function (r) {
+								return dataMessage(newData);
+							})
+						]),
+					_List_Nil),
+					$rtfeldman$elm_css$Html$Styled$text(
+					A2($author$project$Main$i18n, model, labelTextId))
+				]));
+	});
+var $rtfeldman$elm_css$Css$flexStart = $rtfeldman$elm_css$Css$prop1('flex-start');
+var $rtfeldman$elm_css$Html$Styled$h4 = $rtfeldman$elm_css$Html$Styled$node('h4');
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $rtfeldman$elm_css$Css$minWidth = $rtfeldman$elm_css$Css$prop1('min-width');
 var $author$project$Main$Next = {$: 'Next'};
@@ -10993,8 +11050,10 @@ var $author$project$Main$validate = function (model) {
 				return validStreetNumber && (validStreetName && (validCity && (validState && (validZip && (validAreaCode && validPhone)))));
 			case 'HomeMailingSame':
 				return !_Utils_eq(model.state.personal.homeMailingSame, $elm$core$Maybe$Nothing);
-			default:
+			case 'EnterGender':
 				return !_Utils_eq(model.state.personal.gender, $elm$core$Maybe$Nothing);
+			default:
+				return !_Utils_eq(model.state.personal.maritalStatus, $elm$core$Maybe$Nothing);
 		}
 	} else {
 		return true;
@@ -11035,22 +11094,6 @@ var $author$project$Main$nextButton = function (model) {
 				$rtfeldman$elm_css$Html$Styled$text(
 				A2($author$project$Main$i18n, model, 'next'))
 			]));
-};
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
-var $elm$json$Json$Decode$bool = _Json_decodeBool;
-var $rtfeldman$elm_css$Html$Styled$Events$targetChecked = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'checked']),
-	$elm$json$Json$Decode$bool);
-var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$Events$on,
-		'change',
-		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
 };
 var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -11095,9 +11138,9 @@ var $elm$core$String$repeat = F2(
 	function (n, chunk) {
 		return A3($elm$core$String$repeatHelp, n, chunk, '');
 	});
-var $author$project$Main$setMaybeCheckBox = F2(
-	function (isAlreadyChecked, isNowChecked) {
-		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(isNowChecked);
+var $author$project$Main$setMaybe = F2(
+	function (isAlreadyChecked, x) {
+		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(x);
 	});
 var $rtfeldman$elm_css$Css$textAlign = function (fn) {
 	return A3(
@@ -11153,72 +11196,28 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A2(
-									$rtfeldman$elm_css$Html$Styled$label,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$padding(
-													$rtfeldman$elm_css$Css$em(1))
-												]))
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$rtfeldman$elm_css$Html$Styled$input,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-													$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
-													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-													function (r) {
-														return $author$project$Main$SetEligibility(
-															_Utils_update(
-																elig,
-																{
-																	currentlyInUS: A2($author$project$Main$setMaybeCheckBox, yesChecked, r)
-																}));
-													})
-												]),
-											_List_Nil),
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'yes'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$label,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$padding(
-													$rtfeldman$elm_css$Css$em(1))
-												]))
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$rtfeldman$elm_css$Html$Styled$input,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-													$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
-													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-													function (r) {
-														return $author$project$Main$SetEligibility(
-															_Utils_update(
-																elig,
-																{
-																	currentlyInUS: A2($author$project$Main$setMaybeCheckBox, noChecked, !r)
-																}));
-													})
-												]),
-											_List_Nil),
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'no'))
-										]))
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									yesChecked,
+									'yes',
+									$author$project$Main$SetEligibility,
+									_Utils_update(
+										elig,
+										{
+											currentlyInUS: A2($author$project$Main$setMaybe, yesChecked, true)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									noChecked,
+									'no',
+									$author$project$Main$SetEligibility,
+									_Utils_update(
+										elig,
+										{
+											currentlyInUS: A2($author$project$Main$setMaybe, noChecked, false)
+										}))
 								])),
 							$author$project$Main$nextButton(model)
 						]));
@@ -11266,72 +11265,28 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A2(
-									$rtfeldman$elm_css$Html$Styled$label,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$padding(
-													$rtfeldman$elm_css$Css$em(1))
-												]))
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$rtfeldman$elm_css$Html$Styled$input,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-													$rtfeldman$elm_css$Html$Styled$Attributes$checked(yesChecked),
-													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-													function (r) {
-														return $author$project$Main$SetEligibility(
-															_Utils_update(
-																elig,
-																{
-																	lessThanOneYear: A2($author$project$Main$setMaybeCheckBox, yesChecked, r)
-																}));
-													})
-												]),
-											_List_Nil),
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'yes'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$label,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$padding(
-													$rtfeldman$elm_css$Css$em(1))
-												]))
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$rtfeldman$elm_css$Html$Styled$input,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-													$rtfeldman$elm_css$Html$Styled$Attributes$checked(noChecked),
-													$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-													function (r) {
-														return $author$project$Main$SetEligibility(
-															_Utils_update(
-																elig,
-																{
-																	lessThanOneYear: A2($author$project$Main$setMaybeCheckBox, noChecked, !r)
-																}));
-													})
-												]),
-											_List_Nil),
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'no'))
-										]))
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									yesChecked,
+									'yes',
+									$author$project$Main$SetEligibility,
+									_Utils_update(
+										elig,
+										{
+											lessThanOneYear: A2($author$project$Main$setMaybe, yesChecked, true)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									noChecked,
+									'no',
+									$author$project$Main$SetEligibility,
+									_Utils_update(
+										elig,
+										{
+											lessThanOneYear: A2($author$project$Main$setMaybe, noChecked, false)
+										}))
 								])),
 							$author$project$Main$nextButton(model)
 						]));
@@ -11889,7 +11844,74 @@ var $author$project$Main$render = F2(
 							$author$project$Main$nextButton(model)
 						]));
 			case 'HomeMailingSame':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var d = model.state.personal;
+				var same = d.homeMailingSame;
+				var noChecked = function () {
+					if (same.$ === 'Just') {
+						var b = same.a;
+						return !b;
+					} else {
+						return false;
+					}
+				}();
+				var yesChecked = A2($elm$core$Maybe$withDefault, false, same);
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'home-mailing-same-text'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$author$project$Main$defaultMargin
+										]))
+								]),
+							_List_fromArray(
+								[
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									yesChecked,
+									'yes',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											homeMailingSame: A2($author$project$Main$setMaybe, yesChecked, true)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									noChecked,
+									'no',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											homeMailingSame: A2($author$project$Main$setMaybe, noChecked, false)
+										}))
+								])),
+							$author$project$Main$nextButton(model)
+						]));
 			case 'EnterMailingAddress':
 				var d = model.state.personal;
 				var h = d.mailingAddress;
@@ -12212,8 +12234,196 @@ var $author$project$Main$render = F2(
 								])),
 							$author$project$Main$nextButton(model)
 						]));
+			case 'EnterGender':
+				var d = model.state.personal;
+				var gender = d.gender;
+				var femaleChecked = function () {
+					if ((gender.$ === 'Just') && (gender.a.$ === 'FEMALE')) {
+						var _v8 = gender.a;
+						return true;
+					} else {
+						return false;
+					}
+				}();
+				var maleChecked = function () {
+					if ((gender.$ === 'Just') && (gender.a.$ === 'MALE')) {
+						var _v6 = gender.a;
+						return true;
+					} else {
+						return false;
+					}
+				}();
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'enter-gender'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$author$project$Main$defaultMargin
+										]))
+								]),
+							_List_fromArray(
+								[
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									maleChecked,
+									'male',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											gender: A2($author$project$Main$setMaybe, maleChecked, $author$project$DataTypes$MALE)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									femaleChecked,
+									'female',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											gender: A2($author$project$Main$setMaybe, femaleChecked, $author$project$DataTypes$FEMALE)
+										}))
+								])),
+							$author$project$Main$nextButton(model)
+						]));
 			default:
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var d = model.state.personal;
+				var status = d.maritalStatus;
+				var divorcedChecked = function () {
+					if ((status.$ === 'Just') && (status.a.$ === 'DIVORCED')) {
+						var _v16 = status.a;
+						return true;
+					} else {
+						return false;
+					}
+				}();
+				var marriedChecked = function () {
+					if ((status.$ === 'Just') && (status.a.$ === 'MARRIED')) {
+						var _v14 = status.a;
+						return true;
+					} else {
+						return false;
+					}
+				}();
+				var singleChecked = function () {
+					if ((status.$ === 'Just') && (status.a.$ === 'SINGLE')) {
+						var _v12 = status.a;
+						return true;
+					} else {
+						return false;
+					}
+				}();
+				var widowedChecked = function () {
+					if ((status.$ === 'Just') && (status.a.$ === 'WIDOWED')) {
+						var _v10 = status.a;
+						return true;
+					} else {
+						return false;
+					}
+				}();
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$defaultMargin]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'enter-marital-status'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$author$project$Main$defaultMargin
+										]))
+								]),
+							_List_fromArray(
+								[
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									singleChecked,
+									'single',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											maritalStatus: A2($author$project$Main$setMaybe, singleChecked, $author$project$DataTypes$SINGLE)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									marriedChecked,
+									'married',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											maritalStatus: A2($author$project$Main$setMaybe, marriedChecked, $author$project$DataTypes$MARRIED)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									divorcedChecked,
+									'divorced',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											maritalStatus: A2($author$project$Main$setMaybe, divorcedChecked, $author$project$DataTypes$DIVORCED)
+										})),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									widowedChecked,
+									'widowed',
+									$author$project$Main$SetPersonalData,
+									_Utils_update(
+										d,
+										{
+											maritalStatus: A2($author$project$Main$setMaybe, widowedChecked, $author$project$DataTypes$WIDOWED)
+										}))
+								])),
+							$author$project$Main$nextButton(model)
+						]));
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {
@@ -12296,8 +12506,10 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'home-mailing-same');
 			case 'EnterMailingAddress':
 				return A2($author$project$Main$i18n, model, 'mailing-address');
-			default:
+			case 'EnterGender':
 				return A2($author$project$Main$i18n, model, 'gender');
+			default:
+				return A2($author$project$Main$i18n, model, 'marital-status');
 		}
 	});
 var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');

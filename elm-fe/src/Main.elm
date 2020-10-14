@@ -100,6 +100,7 @@ type alias PersonalData =
     , homeMailingSame : Maybe Bool
     , mailingAddress : MailingAddress
     , gender : Maybe Gender
+    , maritalStatus : Maybe MaritalStatus
     }
 
 
@@ -121,6 +122,7 @@ defaultPersonalData =
     , homeMailingSame = Nothing
     , mailingAddress = defaultMailingAddress
     , gender = Nothing
+    , maritalStatus = Nothing
     }
 
 
@@ -136,6 +138,7 @@ type FormEntryElement
     | HomeMailingSame
     | EnterMailingAddress
     | EnterGender
+    | EnterMaritalStatus
 
 
 type SectionTitle
@@ -431,7 +434,10 @@ getNext entry model =
             EnterGender
 
         EnterGender ->
-            EnterGender
+            EnterMaritalStatus
+
+        EnterMaritalStatus ->
+            EnterMaritalStatus
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -480,6 +486,9 @@ getBack entry model =
                 _ ->
                     EnterMailingAddress
 
+        EnterMaritalStatus ->
+            EnterGender
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -515,6 +524,9 @@ getSectionFromElement element =
             PersonalInfo
 
         EnterGender ->
+            PersonalInfo
+
+        EnterMaritalStatus ->
             PersonalInfo
 
 
@@ -623,6 +635,9 @@ validate model =
             EnterGender ->
                 model.state.personal.gender /= Nothing
 
+            EnterMaritalStatus ->
+                model.state.personal.maritalStatus /= Nothing
+
     else
         True
 
@@ -692,13 +707,13 @@ formEntryView model =
     render model.focusedEntry model
 
 
-setMaybeCheckBox : Bool -> Bool -> Maybe Bool
-setMaybeCheckBox isAlreadyChecked isNowChecked =
+setMaybe : Bool -> x -> Maybe x
+setMaybe isAlreadyChecked x =
     if isAlreadyChecked then
         Nothing
 
     else
-        Just isNowChecked
+        Just x
 
 
 backButton : Model -> Html Msg
@@ -746,8 +761,8 @@ render e model =
             centerWrap
                 [ div [ css [ defaultMargin ] ] [ text (i18n model "currently-in-us") ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility { elig | currentlyInUS = setMaybeCheckBox yesChecked r }) ] [], text (i18n model "yes") ]
-                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility { elig | currentlyInUS = setMaybeCheckBox noChecked (not r) }) ] [], text (i18n model "no") ]
+                    [ checkBox model yesChecked "yes" SetEligibility { elig | currentlyInUS = setMaybe yesChecked True }
+                    , checkBox model noChecked "no" SetEligibility { elig | currentlyInUS = setMaybe noChecked False }
                     ]
                 , nextButton model
                 ]
@@ -772,8 +787,8 @@ render e model =
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "less-than-one-year") ]
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked yesChecked, onCheck (\r -> SetEligibility { elig | lessThanOneYear = setMaybeCheckBox yesChecked r }) ] [], text (i18n model "yes") ]
-                    , label [ css [ padding (Css.em 1) ] ] [ input [ type_ "checkbox", Html.Styled.Attributes.checked noChecked, onCheck (\r -> SetEligibility { elig | lessThanOneYear = setMaybeCheckBox noChecked (not r) }) ] [], text (i18n model "no") ]
+                    [ checkBox model yesChecked "yes" SetEligibility { elig | lessThanOneYear = setMaybe yesChecked True }
+                    , checkBox model noChecked "no" SetEligibility { elig | lessThanOneYear = setMaybe noChecked False }
                     ]
                 , nextButton model
                 ]
@@ -968,7 +983,33 @@ render e model =
                 ]
 
         HomeMailingSame ->
-            div [] []
+            let
+                d =
+                    model.state.personal
+
+                same =
+                    d.homeMailingSame
+
+                yesChecked =
+                    Maybe.withDefault False same
+
+                noChecked =
+                    case same of
+                        Just b ->
+                            not b
+
+                        Nothing ->
+                            False
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "home-mailing-same-text") ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+                    [ checkBox model yesChecked "yes" SetPersonalData { d | homeMailingSame = setMaybe yesChecked True }
+                    , checkBox model noChecked "no" SetPersonalData { d | homeMailingSame = setMaybe noChecked False }
+                    ]
+                , nextButton model
+                ]
 
         EnterMailingAddress ->
             let
@@ -1063,7 +1104,109 @@ render e model =
                 ]
 
         EnterGender ->
-            div [] []
+            let
+                d =
+                    model.state.personal
+
+                gender =
+                    d.gender
+
+                maleChecked =
+                    case gender of
+                        Just MALE ->
+                            True
+
+                        _ ->
+                            False
+
+                femaleChecked =
+                    case gender of
+                        Just FEMALE ->
+                            True
+
+                        _ ->
+                            False
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "enter-gender") ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+                    [ checkBox model maleChecked "male" SetPersonalData { d | gender = setMaybe maleChecked MALE }
+                    , checkBox model femaleChecked "female" SetPersonalData { d | gender = setMaybe femaleChecked FEMALE }
+                    ]
+                , nextButton model
+                ]
+
+        EnterMaritalStatus ->
+            let
+                d =
+                    model.state.personal
+
+                status =
+                    d.maritalStatus
+
+                singleChecked =
+                    case status of
+                        Just SINGLE ->
+                            True
+
+                        _ ->
+                            False
+
+                marriedChecked =
+                    case status of
+                        Just MARRIED ->
+                            True
+
+                        _ ->
+                            False
+
+                divorcedChecked =
+                    case status of
+                        Just DIVORCED ->
+                            True
+
+                        _ ->
+                            False
+
+                widowedChecked =
+                    case status of
+                        Just WIDOWED ->
+                            True
+
+                        _ ->
+                            False
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin ] ] [ text (i18n model "enter-marital-status") ]
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+                    [ checkBox model singleChecked "single" SetPersonalData { d | maritalStatus = setMaybe singleChecked SINGLE }
+                    , checkBox model marriedChecked "married" SetPersonalData { d | maritalStatus = setMaybe marriedChecked MARRIED }
+                    , checkBox model divorcedChecked "divorced" SetPersonalData { d | maritalStatus = setMaybe divorcedChecked DIVORCED }
+                    , checkBox model widowedChecked "widowed" SetPersonalData { d | maritalStatus = setMaybe widowedChecked WIDOWED }
+                    ]
+                , nextButton model
+                ]
+
+
+
+-- Personal Data views
+
+
+checkBox : Model -> Bool -> String -> (x -> Msg) -> x -> Html Msg
+checkBox model isChecked labelTextId dataMessage newData =
+    label
+        [ css [ padding (Css.em 1) ]
+        ]
+        [ input
+            [ type_ "checkbox"
+            , Html.Styled.Attributes.checked isChecked
+            , onCheck (\r -> dataMessage newData)
+            ]
+            []
+        , text (i18n model labelTextId)
+        ]
 
 
 
@@ -1247,6 +1390,9 @@ formElementToDescription element model =
 
         EnterGender ->
             i18n model "gender"
+
+        EnterMaritalStatus ->
+            i18n model "marital-status"
 
 
 
