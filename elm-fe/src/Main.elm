@@ -97,6 +97,9 @@ type alias PersonalData =
     , aliases : List String
     , currentAliasInput : String
     , homeAddress : MailingAddress
+    , homeMailingSame : Maybe Bool
+    , mailingAddress : MailingAddress
+    , gender : Maybe Gender
     }
 
 
@@ -115,6 +118,9 @@ defaultPersonalData =
     , aliases = []
     , currentAliasInput = ""
     , homeAddress = defaultMailingAddress
+    , homeMailingSame = Nothing
+    , mailingAddress = defaultMailingAddress
+    , gender = Nothing
     }
 
 
@@ -127,6 +133,9 @@ type FormEntryElement
     | LastName
     | Aliases
     | HomeAddress
+    | HomeMailingSame
+    | EnterMailingAddress
+    | EnterGender
 
 
 type SectionTitle
@@ -408,7 +417,21 @@ getNext entry model =
             HomeAddress
 
         HomeAddress ->
-            HomeAddress
+            HomeMailingSame
+
+        HomeMailingSame ->
+            case model.state.personal.homeMailingSame of
+                Just True ->
+                    EnterGender
+
+                _ ->
+                    EnterMailingAddress
+
+        EnterMailingAddress ->
+            EnterGender
+
+        EnterGender ->
+            EnterGender
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -443,6 +466,20 @@ getBack entry model =
         HomeAddress ->
             Aliases
 
+        HomeMailingSame ->
+            HomeAddress
+
+        EnterMailingAddress ->
+            HomeMailingSame
+
+        EnterGender ->
+            case model.state.personal.homeMailingSame of
+                Just True ->
+                    HomeMailingSame
+
+                _ ->
+                    EnterMailingAddress
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -469,6 +506,15 @@ getSectionFromElement element =
             PersonalInfo
 
         HomeAddress ->
+            PersonalInfo
+
+        HomeMailingSame ->
+            PersonalInfo
+
+        EnterMailingAddress ->
+            PersonalInfo
+
+        EnterGender ->
             PersonalInfo
 
 
@@ -542,6 +588,40 @@ validate model =
                         address.phoneNumber /= ""
                 in
                 validStreetNumber && validStreetName && validCity && validState && validZip && validAreaCode && validPhone
+
+            EnterMailingAddress ->
+                let
+                    address =
+                        model.state.personal.mailingAddress
+
+                    validStreetNumber =
+                        address.streetNumber /= ""
+
+                    validStreetName =
+                        address.streetName /= ""
+
+                    validCity =
+                        address.city /= ""
+
+                    validState =
+                        address.state /= ""
+
+                    validZip =
+                        address.zipCode /= ""
+
+                    validAreaCode =
+                        address.areaCode /= ""
+
+                    validPhone =
+                        address.phoneNumber /= ""
+                in
+                validStreetNumber && validStreetName && validCity && validState && validZip && validAreaCode && validPhone
+
+            HomeMailingSame ->
+                model.state.personal.homeMailingSame /= Nothing
+
+            EnterGender ->
+                model.state.personal.gender /= Nothing
 
     else
         True
@@ -814,31 +894,176 @@ render e model =
             centerWrap
                 [ backButton model
                 , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "home-address-entry") ]
-                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 2fr 1fr", alignItems center, justifyContent center ] ]
+                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center, alignSelf flexStart ] ]
                     [ input
                         [ css [ defaultMargin, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder "Street Number"
+                        , Html.Styled.Attributes.placeholder (i18n model "street-number")
+                        , Html.Styled.Attributes.value h.streetNumber
                         , type_ "text"
                         , onInput (\r -> SetPersonalData { d | homeAddress = { h | streetNumber = r } })
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/4" ]
-                        , Html.Styled.Attributes.placeholder "Street Name"
+                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "street-name")
+                        , Html.Styled.Attributes.value h.streetName
                         , type_ "text"
                         , onInput (\r -> SetPersonalData { d | homeAddress = { h | streetName = r } })
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "4/5" ]
-                        , Html.Styled.Attributes.placeholder "Apt. Number"
+                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "apt-number")
+                        , Html.Styled.Attributes.value h.apartmentNumber
                         , type_ "text"
                         , onInput (\r -> SetPersonalData { d | homeAddress = { h | apartmentNumber = r } })
                         ]
                         []
                     ]
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "2fr 2fr 1fr", alignItems center, justifyContent center ] ]
+                    [ input
+                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "city")
+                        , Html.Styled.Attributes.value h.city
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | city = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "state")
+                        , Html.Styled.Attributes.value h.state
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | state = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "zip-code")
+                        , Html.Styled.Attributes.value h.zipCode
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | zipCode = r } })
+                        ]
+                        []
+                    ]
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left ] ]
+                    [ input
+                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "area-code")
+                        , Html.Styled.Attributes.value h.areaCode
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | areaCode = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "phone-number")
+                        , Html.Styled.Attributes.value h.phoneNumber
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | phoneNumber = r } })
+                        ]
+                        []
+                    ]
                 , nextButton model
                 ]
+
+        HomeMailingSame ->
+            div [] []
+
+        EnterMailingAddress ->
+            let
+                d =
+                    model.state.personal
+
+                h =
+                    d.mailingAddress
+            in
+            centerWrap
+                [ backButton model
+                , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "mailing-address-entry") ]
+                , input
+                    [ css [ defaultMargin, alignSelf flexStart, minWidth (pc 20) ]
+                    , Html.Styled.Attributes.placeholder (i18n model "in-care-of")
+                    , Html.Styled.Attributes.value h.inCareOf
+                    , type_ "text"
+                    , onInput (\r -> SetPersonalData { d | mailingAddress = { h | inCareOf = r } })
+                    ]
+                    []
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center ] ]
+                    [ input
+                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "street-number")
+                        , Html.Styled.Attributes.value h.streetNumber
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | streetNumber = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "street-name")
+                        , Html.Styled.Attributes.value h.streetName
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | streetName = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "apt-number")
+                        , Html.Styled.Attributes.value h.apartmentNumber
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | apartmentNumber = r } })
+                        ]
+                        []
+                    ]
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "2fr 2fr 1fr", alignItems center, justifyContent center ] ]
+                    [ input
+                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "city")
+                        , Html.Styled.Attributes.value h.city
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | city = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "state")
+                        , Html.Styled.Attributes.value h.state
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | state = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "zip-code")
+                        , Html.Styled.Attributes.value h.zipCode
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | zipCode = r } })
+                        ]
+                        []
+                    ]
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left, alignSelf flexStart ] ]
+                    [ input
+                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "area-code")
+                        , Html.Styled.Attributes.value h.areaCode
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | areaCode = r } })
+                        ]
+                        []
+                    , input
+                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        , Html.Styled.Attributes.placeholder (i18n model "phone-number")
+                        , Html.Styled.Attributes.value h.phoneNumber
+                        , type_ "text"
+                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | phoneNumber = r } })
+                        ]
+                        []
+                    ]
+                , nextButton model
+                ]
+
+        EnterGender ->
+            div [] []
 
 
 
@@ -1013,6 +1238,15 @@ formElementToDescription element model =
 
         HomeAddress ->
             i18n model "home-address"
+
+        HomeMailingSame ->
+            i18n model "home-mailing-same"
+
+        EnterMailingAddress ->
+            i18n model "mailing-address"
+
+        EnterGender ->
+            i18n model "gender"
 
 
 

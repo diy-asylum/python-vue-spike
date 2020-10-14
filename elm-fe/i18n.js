@@ -92,6 +92,45 @@ var translations = {
 		"en": "Home Address"
 	},
 	"home-address-entry": {
-		"en": "Please enter the address of your current residence in the US."
+		"en": "Please enter the address and phone number of your current residence in the US."
+	},
+	"street-name": {
+		"en": "Street Name"
+	},
+	"street-number": {
+		"en": "Street Number"
+	},
+	"apt-number": {
+		"en": "Apt. Number"
+	},
+	"city": {
+		"en": "City"
+	},
+	"state": {
+		"en": "State"
+	},
+	"zip-code": {
+		"en": "Zip Code"
+	},
+	"area-code": {
+		"en": "Area Code"
+	},
+	"phone-number": {
+		"en": "Phone Number"
+	},
+	"home-mailing-same": {
+		"en": "Mailing Address Same"
+	},
+	"mailing-address": {
+		"en": "Mailing Address"
+	},
+	"mailing-address-entry": {
+		"en": "Please enter the address and phone number of your mailing address in the US."
+	},
+	"in-care-of": {
+		"en": "In Care Of"
+	},
+	"gender": {
+		"en": "Gender"
 	}
 }
