@@ -10847,9 +10847,72 @@ var $rtfeldman$elm_css$Css$alignSelf = function (fn) {
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
 var $author$project$Main$Back = {$: 'Back'};
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$active = $rtfeldman$elm_css$Css$pseudoClass('active');
+var $rtfeldman$elm_css$Css$borderBottomColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-bottom-color', c.value);
+};
+var $rtfeldman$elm_css$Css$borderLeftColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-left-color', c.value);
+};
+var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$borderRightColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-right-color', c.value);
+};
+var $rtfeldman$elm_css$Css$borderStyle = $rtfeldman$elm_css$Css$prop1('border-style');
+var $rtfeldman$elm_css$Css$borderTopColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-top-color', c.value);
+};
 var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $author$project$Main$defaultMargin = $rtfeldman$elm_css$Css$margin(
 	$rtfeldman$elm_css$Css$px(10));
+var $rtfeldman$elm_css$Css$focus = $rtfeldman$elm_css$Css$pseudoClass('focus');
+var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
+var $rtfeldman$elm_css$Css$outline = $rtfeldman$elm_css$Css$prop1('outline');
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
+var $rtfeldman$elm_css$Css$UnitlessInteger = {$: 'UnitlessInteger'};
+var $rtfeldman$elm_css$Css$zero = {length: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible, number: $rtfeldman$elm_css$Css$Structure$Compatible, numericValue: 0, outline: $rtfeldman$elm_css$Css$Structure$Compatible, unitLabel: '', units: $rtfeldman$elm_css$Css$UnitlessInteger, value: '0'};
+var $author$project$Main$activeButtonStyles = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+			$rtfeldman$elm_css$Css$color($author$project$Main$dark),
+			$author$project$Main$defaultMargin,
+			$rtfeldman$elm_css$Css$borderRadius(
+			$rtfeldman$elm_css$Css$px(5)),
+			$rtfeldman$elm_css$Css$borderTopColor($author$project$Main$gray),
+			$rtfeldman$elm_css$Css$borderLeftColor($author$project$Main$gray),
+			$rtfeldman$elm_css$Css$borderBottomColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$borderRightColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(4)),
+			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+			$rtfeldman$elm_css$Css$active(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$focus(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$borderTopColor($author$project$Main$dark),
+							$rtfeldman$elm_css$Css$borderLeftColor($author$project$Main$dark),
+							$rtfeldman$elm_css$Css$borderBottomColor($author$project$Main$gray),
+							$rtfeldman$elm_css$Css$borderRightColor($author$project$Main$gray)
+						]))
+				]))
+		]));
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -10873,11 +10936,7 @@ var $author$project$Main$backButton = function (model) {
 			[
 				$rtfeldman$elm_css$Html$Styled$Attributes$css(
 				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
-						$rtfeldman$elm_css$Css$color($author$project$Main$dark),
-						$author$project$Main$defaultMargin
-					])),
+					[$author$project$Main$activeButtonStyles])),
 				$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Back)
 			]),
 		_List_fromArray(
@@ -10937,19 +10996,6 @@ var $author$project$Main$centerWrap = function (list) {
 			]));
 };
 var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
-var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
-var $rtfeldman$elm_css$Css$borderStyle = $rtfeldman$elm_css$Css$prop1('border-style');
-var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
-	function (a, b) {
-		return {$: 'ExtendSelector', a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
-	return {$: 'PseudoClassSelector', a: a};
-};
-var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
-	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
-		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
-};
 var $rtfeldman$elm_css$Css$checked = $rtfeldman$elm_css$Css$pseudoClass('checked');
 var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -10978,14 +11024,10 @@ var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
 };
-var $rtfeldman$elm_css$Css$outline = $rtfeldman$elm_css$Css$prop1('outline');
 var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
 var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
-var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
-var $rtfeldman$elm_css$Css$UnitlessInteger = {$: 'UnitlessInteger'};
-var $rtfeldman$elm_css$Css$zero = {length: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible, number: $rtfeldman$elm_css$Css$Structure$Compatible, numericValue: 0, outline: $rtfeldman$elm_css$Css$Structure$Compatible, unitLabel: '', units: $rtfeldman$elm_css$Css$UnitlessInteger, value: '0'};
 var $author$project$Main$checkBox = F5(
 	function (model, isChecked, labelTextId, dataMessage, newData) {
 		return A2(
@@ -11048,6 +11090,25 @@ var $rtfeldman$elm_css$Html$Styled$h4 = $rtfeldman$elm_css$Html$Styled$node('h4'
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $rtfeldman$elm_css$Css$minWidth = $rtfeldman$elm_css$Css$prop1('min-width');
 var $author$project$Main$Next = {$: 'Next'};
+var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$color($author$project$Main$background),
+			$author$project$Main$defaultMargin,
+			$rtfeldman$elm_css$Css$borderRadius(
+			$rtfeldman$elm_css$Css$px(5)),
+			$rtfeldman$elm_css$Css$borderTopColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$borderLeftColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$borderBottomColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$borderRightColor($author$project$Main$dark),
+			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(4)),
+			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero)
+		]));
 var $author$project$Main$validate = function (model) {
 	if (!model.debug) {
 		var _v0 = model.focusedEntry;
@@ -11116,11 +11177,7 @@ var $author$project$Main$nextButton = function (model) {
 			[
 				$rtfeldman$elm_css$Html$Styled$Attributes$css(
 				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
-						$rtfeldman$elm_css$Css$color($author$project$Main$dark),
-						$author$project$Main$defaultMargin
-					])),
+					[$author$project$Main$activeButtonStyles])),
 				$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$Next)
 			]),
 		_List_fromArray(
@@ -11133,11 +11190,7 @@ var $author$project$Main$nextButton = function (model) {
 			[
 				$rtfeldman$elm_css$Html$Styled$Attributes$css(
 				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark),
-						$rtfeldman$elm_css$Css$color($author$project$Main$background),
-						$author$project$Main$defaultMargin
-					]))
+					[$author$project$Main$disabledButtonStyles]))
 			]),
 		_List_fromArray(
 			[
@@ -12561,7 +12614,6 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'marital-status');
 		}
 	});
-var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
 var $author$project$Main$elementNameHtml = F3(
 	function (element, clickable, model) {
 		var description = A2($author$project$Main$formElementToDescription, element, model);

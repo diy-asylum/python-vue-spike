@@ -718,16 +718,23 @@ setMaybe isAlreadyChecked x =
 
 backButton : Model -> Html Msg
 backButton model =
-    button [ css [ backgroundColor background, color dark, defaultMargin ], onClick Back ] [ text (i18n model "back") ]
+    button [ css [ activeButtonStyles ], onClick Back ] [ text (i18n model "back") ]
 
 
 nextButton : Model -> Html Msg
 nextButton model =
     if validate model then
-        button [ css [ backgroundColor background, color dark, defaultMargin ], onClick Next ] [ text (i18n model "next") ]
+        button
+            [ css [ activeButtonStyles ]
+            , onClick Next
+            ]
+            [ text (i18n model "next") ]
 
     else
-        button [ css [ backgroundColor dark, color background, defaultMargin ] ] [ text (i18n model "next") ]
+        button
+            [ css [ disabledButtonStyles ]
+            ]
+            [ text (i18n model "next") ]
 
 
 centerWrap : List (Html Msg) -> Html Msg
@@ -1498,6 +1505,52 @@ navContainerStyles =
 defaultMargin : Style
 defaultMargin =
     margin (px 10)
+
+
+activeButtonStyles : Style
+activeButtonStyles =
+    Css.batch
+        [ backgroundColor background
+        , color dark
+        , defaultMargin
+        , borderRadius (px 5)
+        , borderTopColor gray
+        , borderLeftColor gray
+        , borderBottomColor dark
+        , borderRightColor dark
+        , borderStyle solid
+        , property "appearance" "none"
+        , property "-webkit-appearance" "none"
+        , padding (px 4)
+        , outline zero
+        , active
+            [ focus
+                [ borderTopColor dark
+                , borderLeftColor dark
+                , borderBottomColor gray
+                , borderRightColor gray
+                ]
+            ]
+        ]
+
+
+disabledButtonStyles : Style
+disabledButtonStyles =
+    Css.batch
+        [ backgroundColor dark
+        , color background
+        , defaultMargin
+        , borderRadius (px 5)
+        , borderTopColor dark
+        , borderLeftColor dark
+        , borderBottomColor dark
+        , borderRightColor dark
+        , borderStyle solid
+        , property "appearance" "none"
+        , property "-webkit-appearance" "none"
+        , padding (px 4)
+        , outline zero
+        ]
 
 
 
