@@ -10936,6 +10936,21 @@ var $author$project$Main$centerWrap = function (list) {
 				list)
 			]));
 };
+var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
+var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$borderStyle = $rtfeldman$elm_css$Css$prop1('border-style');
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$checked = $rtfeldman$elm_css$Css$pseudoClass('checked');
 var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -10944,6 +10959,7 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
 var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
 var $elm$json$Json$Decode$at = F2(
@@ -10962,6 +10978,14 @@ var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
 };
+var $rtfeldman$elm_css$Css$outline = $rtfeldman$elm_css$Css$prop1('outline');
+var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
+var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
+var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
+var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $rtfeldman$elm_css$Css$UnitlessInteger = {$: 'UnitlessInteger'};
+var $rtfeldman$elm_css$Css$zero = {length: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible, number: $rtfeldman$elm_css$Css$Structure$Compatible, numericValue: 0, outline: $rtfeldman$elm_css$Css$Structure$Compatible, unitLabel: '', units: $rtfeldman$elm_css$Css$UnitlessInteger, value: '0'};
 var $author$project$Main$checkBox = F5(
 	function (model, isChecked, labelTextId, dataMessage, newData) {
 		return A2(
@@ -10972,7 +10996,8 @@ var $author$project$Main$checkBox = F5(
 					_List_fromArray(
 						[
 							$rtfeldman$elm_css$Css$padding(
-							$rtfeldman$elm_css$Css$em(1))
+							$rtfeldman$elm_css$Css$em(1)),
+							$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative)
 						]))
 				]),
 			_List_fromArray(
@@ -10986,7 +11011,32 @@ var $author$project$Main$checkBox = F5(
 							$rtfeldman$elm_css$Html$Styled$Events$onCheck(
 							function (r) {
 								return dataMessage(newData);
-							})
+							}),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
+									$rtfeldman$elm_css$Css$width(
+									$rtfeldman$elm_css$Css$em(1)),
+									$rtfeldman$elm_css$Css$height(
+									$rtfeldman$elm_css$Css$em(1)),
+									$rtfeldman$elm_css$Css$border(
+									$rtfeldman$elm_css$Css$px(1)),
+									$rtfeldman$elm_css$Css$borderRadius(
+									$rtfeldman$elm_css$Css$px(2)),
+									$rtfeldman$elm_css$Css$top(
+									$rtfeldman$elm_css$Css$em(0.3)),
+									$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+									$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+									A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+									A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+									$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+									$rtfeldman$elm_css$Css$checked(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark)
+										]))
+								]))
 						]),
 					_List_Nil),
 					$rtfeldman$elm_css$Html$Styled$text(
@@ -12430,7 +12480,6 @@ var $author$project$Main$formEntryView = function (model) {
 	return A2($author$project$Main$render, model.focusedEntry, model);
 };
 var $rtfeldman$elm_css$Html$Styled$h2 = $rtfeldman$elm_css$Html$Styled$node('h2');
-var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
 var $author$project$Main$helpView = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -12671,7 +12720,22 @@ var $author$project$Main$SetLanguage = function (a) {
 	return {$: 'SetLanguage', a: a};
 };
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
+var $rtfeldman$elm_css$Css$absolute = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'absolute'};
+var $rtfeldman$elm_css$Css$Structure$PseudoElement = function (a) {
+	return {$: 'PseudoElement', a: a};
+};
+var $rtfeldman$elm_css$Css$Preprocess$WithPseudoElement = F2(
+	function (a, b) {
+		return {$: 'WithPseudoElement', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$pseudoElement = function (element) {
+	return $rtfeldman$elm_css$Css$Preprocess$WithPseudoElement(
+		$rtfeldman$elm_css$Css$Structure$PseudoElement(element));
+};
+var $rtfeldman$elm_css$Css$after = $rtfeldman$elm_css$Css$pseudoElement('after');
 var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
+var $rtfeldman$elm_css$Css$borderBox = {backgroundClip: $rtfeldman$elm_css$Css$Structure$Compatible, boxSizing: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'border-box'};
+var $rtfeldman$elm_css$Css$boxSizing = $rtfeldman$elm_css$Css$prop1('box-sizing');
 var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
 };
@@ -12705,6 +12769,8 @@ var $author$project$Main$navContainerStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$start)
 		]));
 var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
+var $rtfeldman$elm_css$Css$RemUnits = {$: 'RemUnits'};
+var $rtfeldman$elm_css$Css$rem = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$RemUnits, 'rem');
 var $rtfeldman$elm_css$Html$Styled$select = $rtfeldman$elm_css$Html$Styled$node('select');
 var $rtfeldman$elm_css$Html$Styled$Attributes$selected = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('selected');
 var $author$project$Main$webNav = function (model) {
@@ -12792,27 +12858,66 @@ var $author$project$Main$webNav = function (model) {
 								A2($author$project$Main$i18n, model, 'contact-us'))
 							])),
 						A2(
-						$rtfeldman$elm_css$Html$Styled$select,
+						$rtfeldman$elm_css$Html$Styled$div,
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$SetLanguage)
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
+										$rtfeldman$elm_css$Css$after(
+										_List_fromArray(
+											[
+												A2($rtfeldman$elm_css$Css$property, 'content', '\"▼\"'),
+												$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
+												$rtfeldman$elm_css$Css$top(
+												$rtfeldman$elm_css$Css$px(3)),
+												$rtfeldman$elm_css$Css$left(
+												$rtfeldman$elm_css$Css$px(24)),
+												$rtfeldman$elm_css$Css$fontSize(
+												$rtfeldman$elm_css$Css$rem(0.75))
+											]))
+									]))
 							]),
-						A2(
-							$elm$core$List$map,
-							function (r) {
-								return A2(
-									$rtfeldman$elm_css$Html$Styled$option,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-											_Utils_eq(r, model.language))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(r)
-										]));
-							},
-							$author$project$I18n$languages(model.languageDict)))
+						_List_fromArray(
+							[
+								A2(
+								$rtfeldman$elm_css$Html$Styled$select,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$SetLanguage),
+										$rtfeldman$elm_css$Html$Styled$Attributes$css(
+										_List_fromArray(
+											[
+												A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+												A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+												$rtfeldman$elm_css$Css$borderRadius(
+												$rtfeldman$elm_css$Css$px(5)),
+												$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+												$rtfeldman$elm_css$Css$padding(
+												$rtfeldman$elm_css$Css$px(1)),
+												$rtfeldman$elm_css$Css$boxSizing($rtfeldman$elm_css$Css$borderBox),
+												$rtfeldman$elm_css$Css$width(
+												$rtfeldman$elm_css$Css$px(40))
+											]))
+									]),
+								A2(
+									$elm$core$List$map,
+									function (r) {
+										return A2(
+											$rtfeldman$elm_css$Html$Styled$option,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+													_Utils_eq(r, model.language))
+												]),
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$text(r)
+												]));
+									},
+									$author$project$I18n$languages(model.languageDict)))
+							]))
 					]))
 			]));
 };

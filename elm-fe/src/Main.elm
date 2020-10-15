@@ -1197,12 +1197,29 @@ render e model =
 checkBox : Model -> Bool -> String -> (x -> Msg) -> x -> Html Msg
 checkBox model isChecked labelTextId dataMessage newData =
     label
-        [ css [ padding (Css.em 1) ]
+        [ css
+            [ padding (Css.em 1)
+            , position relative
+            ]
         ]
         [ input
             [ type_ "checkbox"
             , Html.Styled.Attributes.checked isChecked
             , onCheck (\r -> dataMessage newData)
+            , css
+                [ position relative
+                , width (Css.em 1)
+                , height (Css.em 1)
+                , border (px 1)
+                , borderRadius (px 2)
+                , top (Css.em 0.3)
+                , borderStyle solid
+                , outline zero
+                , property "appearance" "none"
+                , property "-webkit-appearance" "none"
+                , backgroundColor background
+                , checked [ backgroundColor dark ]
+                ]
             ]
             []
         , text (i18n model labelTextId)
@@ -1415,7 +1432,32 @@ webNav model =
             , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text (i18n model "get-started") ]
             , a [ href "/about", css [ linkStyles ] ] [ text (i18n model "about-us") ]
             , a [ href "/contact", css [ linkStyles ] ] [ text (i18n model "contact-us") ]
-            , select [ onInput SetLanguage ] (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) (languages model.languageDict))
+            , div
+                [ css
+                    [ position relative
+                    , after
+                        [ property "content" "\"▼\""
+                        , position absolute
+                        , top (px 3)
+                        , left (px 24)
+                        , fontSize (rem 0.75)
+                        ]
+                    ]
+                ]
+                [ select
+                    [ onInput SetLanguage
+                    , css
+                        [ property "appearance" "none"
+                        , property "-webkit-appearance" "none"
+                        , borderRadius (px 5)
+                        , outline zero
+                        , padding (px 1)
+                        , boxSizing borderBox
+                        , width (px 40)
+                        ]
+                    ]
+                    (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) (languages model.languageDict))
+                ]
             ]
         ]
 
