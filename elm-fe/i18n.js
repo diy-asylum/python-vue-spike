@@ -162,5 +162,20 @@ var translations = {
 	},
 	"widowed": {
 		"en": "Widowed"
+	},
+	"date-of-birth": {
+		"en": "Date of Birth"
+	},
+	"date-of-birth-entry": {
+		"en": "Please enter your date of birth."
+	},
+	"month": {
+		"en": "Month"
+	},
+	"day": {
+		"en": "Day"
+	},
+	"year": {
+		"en": "Year"
 	}
 }

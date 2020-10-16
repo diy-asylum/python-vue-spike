@@ -7,6 +7,7 @@ import Browser.Navigation as Nav
 import Bytes exposing (Bytes)
 import Css exposing (..)
 import DataTypes exposing (..)
+import Date exposing (Date)
 import Dict exposing (Dict)
 import Element exposing (Device)
 import File.Download as Download
@@ -19,6 +20,7 @@ import I18n exposing (i18nHelper, languages)
 import Json.Decode as D
 import List.Extra
 import Ports
+import Task
 import Url
 
 
@@ -56,6 +58,7 @@ type alias Model =
     , page : Page
     , title : String
     , device : Device
+    , currentYear : Maybe Int
     , state : FormState
     , focusedSection : SectionTitle
     , focusedEntry : FormEntryElement
@@ -101,6 +104,9 @@ type alias PersonalData =
     , mailingAddress : MailingAddress
     , gender : Maybe Gender
     , maritalStatus : Maybe MaritalStatus
+    , yearOfBirth : String
+    , dayOfBirth : String
+    , monthOfBirth : String
     }
 
 
@@ -123,6 +129,9 @@ defaultPersonalData =
     , mailingAddress = defaultMailingAddress
     , gender = Nothing
     , maritalStatus = Nothing
+    , yearOfBirth = ""
+    , monthOfBirth = ""
+    , dayOfBirth = ""
     }
 
 
@@ -139,6 +148,7 @@ type FormEntryElement
     | EnterMailingAddress
     | EnterGender
     | EnterMaritalStatus
+    | DateOfBirth
 
 
 type SectionTitle
@@ -201,7 +211,12 @@ init flags url key =
             else
                 "en"
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict True, Cmd.none )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) Nothing defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict True, now )
+
+
+now : Cmd Msg
+now =
+    Task.perform SetDate Date.today
 
 
 
@@ -212,6 +227,7 @@ type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | DeviceClassified Device
+    | SetDate Date
     | StartDownload
     | FinishDownload (Result Http.Error Bytes)
     | Next
@@ -304,6 +320,9 @@ update msg model =
 
         SetLanguage l ->
             ( { model | language = l }, Cmd.none )
+
+        SetDate d ->
+            ( { model | currentYear = Just (Date.year d) }, Cmd.none )
 
         Next ->
             let
@@ -437,7 +456,10 @@ getNext entry model =
             EnterMaritalStatus
 
         EnterMaritalStatus ->
-            EnterMaritalStatus
+            DateOfBirth
+
+        DateOfBirth ->
+            DateOfBirth
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -489,6 +511,9 @@ getBack entry model =
         EnterMaritalStatus ->
             EnterGender
 
+        DateOfBirth ->
+            EnterMaritalStatus
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -527,6 +552,9 @@ getSectionFromElement element =
             PersonalInfo
 
         EnterMaritalStatus ->
+            PersonalInfo
+
+        DateOfBirth ->
             PersonalInfo
 
 
@@ -638,6 +666,9 @@ validate model =
             EnterMaritalStatus ->
                 model.state.personal.maritalStatus /= Nothing
 
+            DateOfBirth ->
+                model.state.personal.yearOfBirth /= "" && model.state.personal.monthOfBirth /= "" && model.state.personal.dayOfBirth /= ""
+
     else
         True
 
@@ -746,6 +777,11 @@ centerWrap list =
         ]
 
 
+nextBackWrap : Model -> List (Html Msg) -> Html Msg
+nextBackWrap model content =
+    centerWrap (List.concat [ [ backButton model ], content, [ nextButton model ] ])
+
+
 render : FormEntryElement -> Model -> Html Msg
 render e model =
     case e of
@@ -766,7 +802,7 @@ render e model =
                             False
             in
             centerWrap
-                [ div [ css [ defaultMargin ] ] [ text (i18n model "currently-in-us") ]
+                [ prompt model [] "currently-in-us"
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ checkBox model yesChecked "yes" SetEligibility { elig | currentlyInUS = setMaybe yesChecked True }
                     , checkBox model noChecked "no" SetEligibility { elig | currentlyInUS = setMaybe noChecked False }
@@ -790,18 +826,16 @@ render e model =
                         Nothing ->
                             False
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "less-than-one-year") ]
+            nextBackWrap model
+                [ prompt model [] "less-than-one-year"
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ checkBox model yesChecked "yes" SetEligibility { elig | lessThanOneYear = setMaybe yesChecked True }
                     , checkBox model noChecked "no" SetEligibility { elig | lessThanOneYear = setMaybe noChecked False }
                     ]
-                , nextButton model
                 ]
 
         NotEligible ->
-            centerWrap [ text (i18n model "not-eligible-explanation"), backButton model ]
+            centerWrap [ prompt model [] "not-eligible-explanation", backButton model ]
 
         FirstName ->
             let
@@ -811,19 +845,9 @@ render e model =
                 firstName =
                     d.firstName
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "first-name-entry") ]
-                , input
-                    [ css
-                        [ inputStyles
-                        ]
-                    , type_ "input"
-                    , Html.Styled.Attributes.value firstName
-                    , onInput (\r -> SetPersonalData { d | firstName = r })
-                    ]
-                    []
-                , nextButton model
+            nextBackWrap model
+                [ prompt model [] "first-name-entry"
+                , textInput firstName "" [] (\r -> SetPersonalData { d | firstName = r })
                 ]
 
         MiddleName ->
@@ -834,11 +858,9 @@ render e model =
                 middleName =
                     d.middleName
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "middle-name-entry") ]
-                , input [ css [ inputStyles ], type_ "input", Html.Styled.Attributes.value middleName, onInput (\r -> SetPersonalData { d | middleName = r }) ] []
-                , nextButton model
+            nextBackWrap model
+                [ prompt model [] "middle-name-entry"
+                , textInput middleName "" [] (\r -> SetPersonalData { d | middleName = r })
                 ]
 
         LastName ->
@@ -849,11 +871,9 @@ render e model =
                 lastName =
                     d.lastName
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "last-name-entry") ]
-                , input [ css [ inputStyles ], type_ "input", Html.Styled.Attributes.value lastName, onInput (\r -> SetPersonalData { d | lastName = r }) ] []
-                , nextButton model
+            nextBackWrap model
+                [ prompt model [] "last-name-entry"
+                , textInput lastName "" [] (\r -> SetPersonalData { d | lastName = r })
                 ]
 
         Aliases ->
@@ -898,19 +918,15 @@ render e model =
                                         (List.indexedMap (aliasRemoveButton model) d.aliases)
                                 )
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "aliases-entry") ]
+            nextBackWrap model
+                [ prompt model [ textAlign center ] "aliases-entry"
                 , form [ onSubmit (SetPersonalData { d | currentAliasInput = "", aliases = newAliases }) ]
                     [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
-                        [ input
-                            [ css [ inputStyles ], type_ "text", onInput (\r -> SetPersonalData { d | currentAliasInput = r }), Html.Styled.Attributes.value currentInput ]
-                            []
-                        , button [ type_ "submit" ] [ text (i18n model "add") ]
+                        [ textInput currentInput "" [] (\r -> SetPersonalData { d | currentAliasInput = r })
+                        , button [ type_ "submit", css [ activeButtonStyles ] ] [ text (i18n model "add") ]
                         ]
                     ]
                 , aliasList
-                , nextButton model
                 ]
 
         HomeAddress ->
@@ -921,80 +937,22 @@ render e model =
                 h =
                     d.homeAddress
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "home-address-entry") ]
+            nextBackWrap model
+                [ prompt model [ textAlign center ] "home-address-entry"
                 , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center, alignSelf flexStart ] ]
-                    [ input
-                        [ css [ inputStyles, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "street-number")
-                        , Html.Styled.Attributes.value h.streetNumber
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | streetNumber = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "2/3" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "street-name")
-                        , Html.Styled.Attributes.value h.streetName
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | streetName = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "3/4" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "apt-number")
-                        , Html.Styled.Attributes.value h.apartmentNumber
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | apartmentNumber = r } })
-                        ]
-                        []
+                    [ textInput h.streetNumber (i18n model "street-number") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | homeAddress = { h | streetNumber = r } })
+                    , textInput h.streetName (i18n model "street-name") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | homeAddress = { h | streetName = r } })
+                    , textInput h.apartmentNumber (i18n model "apt-number") [ property "grid-column" "3/4" ] (\r -> SetPersonalData { d | homeAddress = { h | apartmentNumber = r } })
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "2fr 2fr 1fr", alignItems center, justifyContent center ] ]
-                    [ input
-                        [ css [ inputStyles, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "city")
-                        , Html.Styled.Attributes.value h.city
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | city = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "2/3" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "state")
-                        , Html.Styled.Attributes.value h.state
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | state = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "3/4" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "zip-code")
-                        , Html.Styled.Attributes.value h.zipCode
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | zipCode = r } })
-                        ]
-                        []
+                    [ textInput h.city (i18n model "city") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | homeAddress = { h | city = r } })
+                    , textInput h.state (i18n model "state") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | homeAddress = { h | state = r } })
+                    , textInput h.zipCode (i18n model "zip-code") [ property "grid-column" "3/4" ] (\r -> SetPersonalData { d | homeAddress = { h | zipCode = r } })
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left ] ]
-                    [ input
-                        [ css [ inputStyles, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "area-code")
-                        , Html.Styled.Attributes.value h.areaCode
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | areaCode = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "2/3" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "phone-number")
-                        , Html.Styled.Attributes.value h.phoneNumber
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | homeAddress = { h | phoneNumber = r } })
-                        ]
-                        []
+                    [ textInput h.areaCode (i18n model "area-code") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | homeAddress = { h | areaCode = r } })
+                    , textInput h.phoneNumber (i18n model "phone-number") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | homeAddress = { h | phoneNumber = r } })
                     ]
-                , nextButton model
                 ]
 
         HomeMailingSame ->
@@ -1016,14 +974,12 @@ render e model =
                         Nothing ->
                             False
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "home-mailing-same-text") ]
+            nextBackWrap model
+                [ prompt model [] "home-mailing-same-text"
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ checkBox model yesChecked "yes" SetPersonalData { d | homeMailingSame = setMaybe yesChecked True }
                     , checkBox model noChecked "no" SetPersonalData { d | homeMailingSame = setMaybe noChecked False }
                     ]
-                , nextButton model
                 ]
 
         EnterMailingAddress ->
@@ -1034,88 +990,23 @@ render e model =
                 h =
                     d.mailingAddress
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "mailing-address-entry") ]
-                , input
-                    [ css [ inputStyles, alignSelf flexStart, minWidth (pc 20) ]
-                    , Html.Styled.Attributes.placeholder (i18n model "in-care-of")
-                    , Html.Styled.Attributes.value h.inCareOf
-                    , type_ "text"
-                    , onInput (\r -> SetPersonalData { d | mailingAddress = { h | inCareOf = r } })
-                    ]
-                    []
-                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center ] ]
-                    [ input
-                        [ css [ inputStyles, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "street-number")
-                        , Html.Styled.Attributes.value h.streetNumber
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | streetNumber = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "2/3" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "street-name")
-                        , Html.Styled.Attributes.value h.streetName
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | streetName = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "3/4" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "apt-number")
-                        , Html.Styled.Attributes.value h.apartmentNumber
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | apartmentNumber = r } })
-                        ]
-                        []
+            nextBackWrap model
+                [ prompt model [] "mailing-address-entry"
+                , textInput h.inCareOf (i18n model "in-care-of") [ alignSelf flexStart, minWidth (pc 20) ] (\r -> SetPersonalData { d | mailingAddress = { h | inCareOf = r } })
+                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center, alignSelf flexStart ] ]
+                    [ textInput h.streetNumber (i18n model "street-number") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | mailingAddress = { h | streetNumber = r } })
+                    , textInput h.streetName (i18n model "street-name") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | mailingAddress = { h | streetName = r } })
+                    , textInput h.apartmentNumber (i18n model "apt-number") [ property "grid-column" "3/4" ] (\r -> SetPersonalData { d | mailingAddress = { h | apartmentNumber = r } })
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "2fr 2fr 1fr", alignItems center, justifyContent center ] ]
-                    [ input
-                        [ css [ inputStyles, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "city")
-                        , Html.Styled.Attributes.value h.city
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | city = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "2/3" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "state")
-                        , Html.Styled.Attributes.value h.state
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | state = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "3/4" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "zip-code")
-                        , Html.Styled.Attributes.value h.zipCode
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | zipCode = r } })
-                        ]
-                        []
+                    [ textInput h.city (i18n model "city") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | mailingAddress = { h | city = r } })
+                    , textInput h.state (i18n model "state") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | mailingAddress = { h | state = r } })
+                    , textInput h.zipCode (i18n model "zip-code") [ property "grid-column" "3/4" ] (\r -> SetPersonalData { d | mailingAddress = { h | zipCode = r } })
                     ]
-                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left, alignSelf flexStart ] ]
-                    [ input
-                        [ css [ inputStyles, property "grid-column" "1/2" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "area-code")
-                        , Html.Styled.Attributes.value h.areaCode
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | areaCode = r } })
-                        ]
-                        []
-                    , input
-                        [ css [ inputStyles, property "grid-column" "2/3" ]
-                        , Html.Styled.Attributes.placeholder (i18n model "phone-number")
-                        , Html.Styled.Attributes.value h.phoneNumber
-                        , type_ "text"
-                        , onInput (\r -> SetPersonalData { d | mailingAddress = { h | phoneNumber = r } })
-                        ]
-                        []
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left ] ]
+                    [ textInput h.areaCode (i18n model "area-code") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | mailingAddress = { h | areaCode = r } })
+                    , textInput h.phoneNumber (i18n model "phone-number") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | mailingAddress = { h | phoneNumber = r } })
                     ]
-                , nextButton model
                 ]
 
         EnterGender ->
@@ -1142,14 +1033,12 @@ render e model =
                         _ ->
                             False
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "enter-gender") ]
+            nextBackWrap model
+                [ prompt model [] "enter-gender"
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ checkBox model maleChecked "male" SetPersonalData { d | gender = setMaybe maleChecked MALE }
                     , checkBox model femaleChecked "female" SetPersonalData { d | gender = setMaybe femaleChecked FEMALE }
                     ]
-                , nextButton model
                 ]
 
         EnterMaritalStatus ->
@@ -1192,21 +1081,129 @@ render e model =
                         _ ->
                             False
             in
-            centerWrap
-                [ backButton model
-                , div [ css [ defaultMargin ] ] [ text (i18n model "enter-marital-status") ]
+            nextBackWrap model
+                [ prompt model [] "enter-marital-status"
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ checkBox model singleChecked "single" SetPersonalData { d | maritalStatus = setMaybe singleChecked SINGLE }
                     , checkBox model marriedChecked "married" SetPersonalData { d | maritalStatus = setMaybe marriedChecked MARRIED }
                     , checkBox model divorcedChecked "divorced" SetPersonalData { d | maritalStatus = setMaybe divorcedChecked DIVORCED }
                     , checkBox model widowedChecked "widowed" SetPersonalData { d | maritalStatus = setMaybe widowedChecked WIDOWED }
                     ]
-                , nextButton model
+                ]
+
+        DateOfBirth ->
+            let
+                d =
+                    model.state.personal
+
+                month =
+                    model.state.personal.monthOfBirth
+
+                day =
+                    model.state.personal.dayOfBirth
+
+                year =
+                    model.state.personal.yearOfBirth
+            in
+            nextBackWrap model
+                [ prompt model [] "date-of-birth-entry"
+                , div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
+                    [ div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+                        [ text (i18n model "month")
+                        , select
+                            [ onInput (\r -> SetPersonalData { d | monthOfBirth = r })
+                            , css
+                                [ dropdownStyles
+                                ]
+                            ]
+                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == month) ] [ text r ]) monthList)
+                        ]
+                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+                        [ text (i18n model "day")
+                        , select
+                            [ onInput (\r -> SetPersonalData { d | dayOfBirth = r })
+                            , css
+                                [ dropdownStyles
+                                ]
+                            ]
+                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == day) ] [ text r ]) dayList)
+                        ]
+                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+                        [ text (i18n model "year")
+                        , select
+                            [ onInput (\r -> SetPersonalData { d | yearOfBirth = r })
+                            , css
+                                [ dropdownStyles
+                                ]
+                            ]
+                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == year) ] [ text r ]) (yearList model.currentYear))
+                        ]
+                    ]
                 ]
 
 
 
--- Personal Data views
+-- Misc
+
+
+monthList : List String
+monthList =
+    [ "", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ]
+
+
+dayList : List String
+dayList =
+    [ ""
+    , "01"
+    , "02"
+    , "03"
+    , "04"
+    , "05"
+    , "06"
+    , "07"
+    , "08"
+    , "09"
+    , "10"
+    , "11"
+    , "12"
+    , "13"
+    , "14"
+    , "15"
+    , "16"
+    , "17"
+    , "18"
+    , "19"
+    , "20"
+    , "21"
+    , "22"
+    , "23"
+    , "24"
+    , "25"
+    , "26"
+    , "27"
+    , "28"
+    , "29"
+    , "30"
+    , "31"
+    ]
+
+
+yearList : Maybe Int -> List String
+yearList currentYear =
+    let
+        year =
+            Maybe.withDefault 2020 currentYear
+    in
+    "" :: List.map (\r -> String.fromInt (year - r)) (List.range 0 99)
+
+
+
+-- Generic views
+
+
+prompt : Model -> List Style -> String -> Html Msg
+prompt model additionalStyles textId =
+    div [ css [ defaultMargin, Css.batch additionalStyles ] ] [ text (i18n model textId) ]
 
 
 checkBox : Model -> Bool -> String -> (x -> Msg) -> x -> Html Msg
@@ -1241,6 +1238,18 @@ checkBox model isChecked labelTextId dataMessage newData =
         ]
 
 
+textInput : String -> String -> List Style -> (String -> Msg) -> Html Msg
+textInput value placeholder additionalStyles updateFunction =
+    input
+        [ css [ inputStyles, Css.batch additionalStyles ]
+        , type_ "input"
+        , Html.Styled.Attributes.value value
+        , Html.Styled.Attributes.placeholder placeholder
+        , onInput updateFunction
+        ]
+        []
+
+
 
 -- Alias views
 
@@ -1266,6 +1275,7 @@ aliasRemoveButton model index alias_ =
         ]
         [ button
             [ type_ "submit"
+            , css [ activeButtonStyles ]
             ]
             [ text (i18n model "remove") ]
         ]
@@ -1425,6 +1435,9 @@ formElementToDescription element model =
 
         EnterMaritalStatus ->
             i18n model "marital-status"
+
+        DateOfBirth ->
+            i18n model "date-of-birth"
 
 
 
