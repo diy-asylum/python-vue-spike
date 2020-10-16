@@ -11087,6 +11087,33 @@ var $author$project$Main$checkBox = F5(
 	});
 var $rtfeldman$elm_css$Css$flexStart = $rtfeldman$elm_css$Css$prop1('flex-start');
 var $rtfeldman$elm_css$Html$Styled$h4 = $rtfeldman$elm_css$Html$Styled$node('h4');
+var $rtfeldman$elm_css$Css$borderColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
+};
+var $rtfeldman$elm_css$Css$borderWidth = $rtfeldman$elm_css$Css$prop1('border-width');
+var $author$project$Main$highlight = $rtfeldman$elm_css$Css$hex('f06e11');
+var $rtfeldman$elm_css$Css$transparent = {color: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'transparent'};
+var $author$project$Main$inputStyles = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$author$project$Main$defaultMargin,
+			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+			$rtfeldman$elm_css$Css$borderRadius(
+			$rtfeldman$elm_css$Css$px(3)),
+			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+			$rtfeldman$elm_css$Css$borderWidth(
+			$rtfeldman$elm_css$Css$px(2)),
+			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			$rtfeldman$elm_css$Css$borderColor($rtfeldman$elm_css$Css$transparent),
+			$rtfeldman$elm_css$Css$focus(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$borderColor($author$project$Main$highlight)
+				])),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(7))
+		]));
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $rtfeldman$elm_css$Css$minWidth = $rtfeldman$elm_css$Css$prop1('min-width');
 var $author$project$Main$Next = {$: 'Next'};
@@ -11427,7 +11454,7 @@ var $author$project$Main$render = F2(
 								[
 									$rtfeldman$elm_css$Html$Styled$Attributes$css(
 									_List_fromArray(
-										[$author$project$Main$defaultMargin])),
+										[$author$project$Main$inputStyles])),
 									$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
 									$rtfeldman$elm_css$Html$Styled$Attributes$value(firstName),
 									$rtfeldman$elm_css$Html$Styled$Events$onInput(
@@ -11467,7 +11494,7 @@ var $author$project$Main$render = F2(
 								[
 									$rtfeldman$elm_css$Html$Styled$Attributes$css(
 									_List_fromArray(
-										[$author$project$Main$defaultMargin])),
+										[$author$project$Main$inputStyles])),
 									$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
 									$rtfeldman$elm_css$Html$Styled$Attributes$value(middleName),
 									$rtfeldman$elm_css$Html$Styled$Events$onInput(
@@ -11507,7 +11534,7 @@ var $author$project$Main$render = F2(
 								[
 									$rtfeldman$elm_css$Html$Styled$Attributes$css(
 									_List_fromArray(
-										[$author$project$Main$defaultMargin])),
+										[$author$project$Main$inputStyles])),
 									$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
 									$rtfeldman$elm_css$Html$Styled$Attributes$value(lastName),
 									$rtfeldman$elm_css$Html$Styled$Events$onInput(
@@ -11626,7 +11653,7 @@ var $author$project$Main$render = F2(
 												[
 													$rtfeldman$elm_css$Html$Styled$Attributes$css(
 													_List_fromArray(
-														[$author$project$Main$defaultMargin])),
+														[$author$project$Main$inputStyles])),
 													$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
 													$rtfeldman$elm_css$Html$Styled$Events$onInput(
 													function (r) {
@@ -11700,7 +11727,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11727,7 +11754,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11754,7 +11781,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11798,7 +11825,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11825,7 +11852,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11852,7 +11879,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11896,7 +11923,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -11923,7 +11950,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12045,7 +12072,7 @@ var $author$project$Main$render = F2(
 									$rtfeldman$elm_css$Html$Styled$Attributes$css(
 									_List_fromArray(
 										[
-											$author$project$Main$defaultMargin,
+											$author$project$Main$inputStyles,
 											$rtfeldman$elm_css$Css$alignSelf($rtfeldman$elm_css$Css$flexStart),
 											$rtfeldman$elm_css$Css$minWidth(
 											$rtfeldman$elm_css$Css$pc(20))
@@ -12090,7 +12117,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12117,7 +12144,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12144,7 +12171,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12188,7 +12215,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12215,7 +12242,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12242,7 +12269,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12287,7 +12314,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12314,7 +12341,7 @@ var $author$project$Main$render = F2(
 											$rtfeldman$elm_css$Html$Styled$Attributes$css(
 											_List_fromArray(
 												[
-													$author$project$Main$defaultMargin,
+													$author$project$Main$inputStyles,
 													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
 												])),
 											$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
@@ -12772,22 +12799,22 @@ var $author$project$Main$SetLanguage = function (a) {
 	return {$: 'SetLanguage', a: a};
 };
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
-var $rtfeldman$elm_css$Css$absolute = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'absolute'};
-var $rtfeldman$elm_css$Css$Structure$PseudoElement = function (a) {
-	return {$: 'PseudoElement', a: a};
-};
-var $rtfeldman$elm_css$Css$Preprocess$WithPseudoElement = F2(
-	function (a, b) {
-		return {$: 'WithPseudoElement', a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$pseudoElement = function (element) {
-	return $rtfeldman$elm_css$Css$Preprocess$WithPseudoElement(
-		$rtfeldman$elm_css$Css$Structure$PseudoElement(element));
-};
-var $rtfeldman$elm_css$Css$after = $rtfeldman$elm_css$Css$pseudoElement('after');
 var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
 var $rtfeldman$elm_css$Css$borderBox = {backgroundClip: $rtfeldman$elm_css$Css$Structure$Compatible, boxSizing: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'border-box'};
 var $rtfeldman$elm_css$Css$boxSizing = $rtfeldman$elm_css$Css$prop1('box-sizing');
+var $author$project$Main$dropdownStyles = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+			$rtfeldman$elm_css$Css$borderRadius(
+			$rtfeldman$elm_css$Css$px(5)),
+			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(5)),
+			$rtfeldman$elm_css$Css$boxSizing($rtfeldman$elm_css$Css$borderBox)
+		]));
 var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
 };
@@ -12821,8 +12848,6 @@ var $author$project$Main$navContainerStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$start)
 		]));
 var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
-var $rtfeldman$elm_css$Css$RemUnits = {$: 'RemUnits'};
-var $rtfeldman$elm_css$Css$rem = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$RemUnits, 'rem');
 var $rtfeldman$elm_css$Html$Styled$select = $rtfeldman$elm_css$Html$Styled$node('select');
 var $rtfeldman$elm_css$Html$Styled$Attributes$selected = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('selected');
 var $author$project$Main$webNav = function (model) {
@@ -12910,66 +12935,30 @@ var $author$project$Main$webNav = function (model) {
 								A2($author$project$Main$i18n, model, 'contact-us'))
 							])),
 						A2(
-						$rtfeldman$elm_css$Html$Styled$div,
+						$rtfeldman$elm_css$Html$Styled$select,
 						_List_fromArray(
 							[
+								$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$SetLanguage),
 								$rtfeldman$elm_css$Html$Styled$Attributes$css(
 								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
-										$rtfeldman$elm_css$Css$after(
-										_List_fromArray(
-											[
-												A2($rtfeldman$elm_css$Css$property, 'content', '\"▼\"'),
-												$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-												$rtfeldman$elm_css$Css$top(
-												$rtfeldman$elm_css$Css$px(3)),
-												$rtfeldman$elm_css$Css$left(
-												$rtfeldman$elm_css$Css$px(24)),
-												$rtfeldman$elm_css$Css$fontSize(
-												$rtfeldman$elm_css$Css$rem(0.75))
-											]))
-									]))
+									[$author$project$Main$dropdownStyles]))
 							]),
-						_List_fromArray(
-							[
-								A2(
-								$rtfeldman$elm_css$Html$Styled$select,
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$SetLanguage),
-										$rtfeldman$elm_css$Html$Styled$Attributes$css(
-										_List_fromArray(
-											[
-												A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
-												A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
-												$rtfeldman$elm_css$Css$borderRadius(
-												$rtfeldman$elm_css$Css$px(5)),
-												$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
-												$rtfeldman$elm_css$Css$padding(
-												$rtfeldman$elm_css$Css$px(1)),
-												$rtfeldman$elm_css$Css$boxSizing($rtfeldman$elm_css$Css$borderBox),
-												$rtfeldman$elm_css$Css$width(
-												$rtfeldman$elm_css$Css$px(40))
-											]))
-									]),
-								A2(
-									$elm$core$List$map,
-									function (r) {
-										return A2(
-											$rtfeldman$elm_css$Html$Styled$option,
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-													_Utils_eq(r, model.language))
-												]),
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Html$Styled$text(r)
-												]));
-									},
-									$author$project$I18n$languages(model.languageDict)))
-							]))
+						A2(
+							$elm$core$List$map,
+							function (r) {
+								return A2(
+									$rtfeldman$elm_css$Html$Styled$option,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+											_Utils_eq(r, model.language))
+										]),
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(r)
+										]));
+							},
+							$author$project$I18n$languages(model.languageDict)))
 					]))
 			]));
 };

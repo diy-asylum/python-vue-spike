@@ -814,7 +814,15 @@ render e model =
             centerWrap
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "first-name-entry") ]
-                , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value firstName, onInput (\r -> SetPersonalData { d | firstName = r }) ] []
+                , input
+                    [ css
+                        [ inputStyles
+                        ]
+                    , type_ "input"
+                    , Html.Styled.Attributes.value firstName
+                    , onInput (\r -> SetPersonalData { d | firstName = r })
+                    ]
+                    []
                 , nextButton model
                 ]
 
@@ -829,7 +837,7 @@ render e model =
             centerWrap
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "middle-name-entry") ]
-                , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value middleName, onInput (\r -> SetPersonalData { d | middleName = r }) ] []
+                , input [ css [ inputStyles ], type_ "input", Html.Styled.Attributes.value middleName, onInput (\r -> SetPersonalData { d | middleName = r }) ] []
                 , nextButton model
                 ]
 
@@ -844,7 +852,7 @@ render e model =
             centerWrap
                 [ backButton model
                 , div [ css [ defaultMargin ] ] [ text (i18n model "last-name-entry") ]
-                , input [ css [ defaultMargin ], type_ "input", Html.Styled.Attributes.value lastName, onInput (\r -> SetPersonalData { d | lastName = r }) ] []
+                , input [ css [ inputStyles ], type_ "input", Html.Styled.Attributes.value lastName, onInput (\r -> SetPersonalData { d | lastName = r }) ] []
                 , nextButton model
                 ]
 
@@ -896,7 +904,7 @@ render e model =
                 , form [ onSubmit (SetPersonalData { d | currentAliasInput = "", aliases = newAliases }) ]
                     [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
                         [ input
-                            [ css [ defaultMargin ], type_ "text", onInput (\r -> SetPersonalData { d | currentAliasInput = r }), Html.Styled.Attributes.value currentInput ]
+                            [ css [ inputStyles ], type_ "text", onInput (\r -> SetPersonalData { d | currentAliasInput = r }), Html.Styled.Attributes.value currentInput ]
                             []
                         , button [ type_ "submit" ] [ text (i18n model "add") ]
                         ]
@@ -918,7 +926,7 @@ render e model =
                 , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "home-address-entry") ]
                 , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center, alignSelf flexStart ] ]
                     [ input
-                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        [ css [ inputStyles, property "grid-column" "1/2" ]
                         , Html.Styled.Attributes.placeholder (i18n model "street-number")
                         , Html.Styled.Attributes.value h.streetNumber
                         , type_ "text"
@@ -926,7 +934,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        [ css [ inputStyles, property "grid-column" "2/3" ]
                         , Html.Styled.Attributes.placeholder (i18n model "street-name")
                         , Html.Styled.Attributes.value h.streetName
                         , type_ "text"
@@ -934,7 +942,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        [ css [ inputStyles, property "grid-column" "3/4" ]
                         , Html.Styled.Attributes.placeholder (i18n model "apt-number")
                         , Html.Styled.Attributes.value h.apartmentNumber
                         , type_ "text"
@@ -944,7 +952,7 @@ render e model =
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "2fr 2fr 1fr", alignItems center, justifyContent center ] ]
                     [ input
-                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        [ css [ inputStyles, property "grid-column" "1/2" ]
                         , Html.Styled.Attributes.placeholder (i18n model "city")
                         , Html.Styled.Attributes.value h.city
                         , type_ "text"
@@ -952,7 +960,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        [ css [ inputStyles, property "grid-column" "2/3" ]
                         , Html.Styled.Attributes.placeholder (i18n model "state")
                         , Html.Styled.Attributes.value h.state
                         , type_ "text"
@@ -960,7 +968,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        [ css [ inputStyles, property "grid-column" "3/4" ]
                         , Html.Styled.Attributes.placeholder (i18n model "zip-code")
                         , Html.Styled.Attributes.value h.zipCode
                         , type_ "text"
@@ -970,7 +978,7 @@ render e model =
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left ] ]
                     [ input
-                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        [ css [ inputStyles, property "grid-column" "1/2" ]
                         , Html.Styled.Attributes.placeholder (i18n model "area-code")
                         , Html.Styled.Attributes.value h.areaCode
                         , type_ "text"
@@ -978,7 +986,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        [ css [ inputStyles, property "grid-column" "2/3" ]
                         , Html.Styled.Attributes.placeholder (i18n model "phone-number")
                         , Html.Styled.Attributes.value h.phoneNumber
                         , type_ "text"
@@ -1030,7 +1038,7 @@ render e model =
                 [ backButton model
                 , div [ css [ defaultMargin, textAlign center ] ] [ text (i18n model "mailing-address-entry") ]
                 , input
-                    [ css [ defaultMargin, alignSelf flexStart, minWidth (pc 20) ]
+                    [ css [ inputStyles, alignSelf flexStart, minWidth (pc 20) ]
                     , Html.Styled.Attributes.placeholder (i18n model "in-care-of")
                     , Html.Styled.Attributes.value h.inCareOf
                     , type_ "text"
@@ -1039,7 +1047,7 @@ render e model =
                     []
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center ] ]
                     [ input
-                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        [ css [ inputStyles, property "grid-column" "1/2" ]
                         , Html.Styled.Attributes.placeholder (i18n model "street-number")
                         , Html.Styled.Attributes.value h.streetNumber
                         , type_ "text"
@@ -1047,7 +1055,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        [ css [ inputStyles, property "grid-column" "2/3" ]
                         , Html.Styled.Attributes.placeholder (i18n model "street-name")
                         , Html.Styled.Attributes.value h.streetName
                         , type_ "text"
@@ -1055,7 +1063,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        [ css [ inputStyles, property "grid-column" "3/4" ]
                         , Html.Styled.Attributes.placeholder (i18n model "apt-number")
                         , Html.Styled.Attributes.value h.apartmentNumber
                         , type_ "text"
@@ -1065,7 +1073,7 @@ render e model =
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "2fr 2fr 1fr", alignItems center, justifyContent center ] ]
                     [ input
-                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        [ css [ inputStyles, property "grid-column" "1/2" ]
                         , Html.Styled.Attributes.placeholder (i18n model "city")
                         , Html.Styled.Attributes.value h.city
                         , type_ "text"
@@ -1073,7 +1081,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        [ css [ inputStyles, property "grid-column" "2/3" ]
                         , Html.Styled.Attributes.placeholder (i18n model "state")
                         , Html.Styled.Attributes.value h.state
                         , type_ "text"
@@ -1081,7 +1089,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "3/4" ]
+                        [ css [ inputStyles, property "grid-column" "3/4" ]
                         , Html.Styled.Attributes.placeholder (i18n model "zip-code")
                         , Html.Styled.Attributes.value h.zipCode
                         , type_ "text"
@@ -1091,7 +1099,7 @@ render e model =
                     ]
                 , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr", alignItems left, justifyContent left, alignSelf flexStart ] ]
                     [ input
-                        [ css [ defaultMargin, property "grid-column" "1/2" ]
+                        [ css [ inputStyles, property "grid-column" "1/2" ]
                         , Html.Styled.Attributes.placeholder (i18n model "area-code")
                         , Html.Styled.Attributes.value h.areaCode
                         , type_ "text"
@@ -1099,7 +1107,7 @@ render e model =
                         ]
                         []
                     , input
-                        [ css [ defaultMargin, property "grid-column" "2/3" ]
+                        [ css [ inputStyles, property "grid-column" "2/3" ]
                         , Html.Styled.Attributes.placeholder (i18n model "phone-number")
                         , Html.Styled.Attributes.value h.phoneNumber
                         , type_ "text"
@@ -1439,32 +1447,13 @@ webNav model =
             , a [ href "/i589", css [ linkStyles, marginLeft auto ] ] [ text (i18n model "get-started") ]
             , a [ href "/about", css [ linkStyles ] ] [ text (i18n model "about-us") ]
             , a [ href "/contact", css [ linkStyles ] ] [ text (i18n model "contact-us") ]
-            , div
-                [ css
-                    [ position relative
-                    , after
-                        [ property "content" "\"▼\""
-                        , position absolute
-                        , top (px 3)
-                        , left (px 24)
-                        , fontSize (rem 0.75)
-                        ]
+            , select
+                [ onInput SetLanguage
+                , css
+                    [ dropdownStyles
                     ]
                 ]
-                [ select
-                    [ onInput SetLanguage
-                    , css
-                        [ property "appearance" "none"
-                        , property "-webkit-appearance" "none"
-                        , borderRadius (px 5)
-                        , outline zero
-                        , padding (px 1)
-                        , boxSizing borderBox
-                        , width (px 40)
-                        ]
-                    ]
-                    (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) (languages model.languageDict))
-                ]
+                (List.map (\r -> option [ Html.Styled.Attributes.selected (r == model.language) ] [ text r ]) (languages model.languageDict))
             ]
         ]
 
@@ -1505,6 +1494,35 @@ navContainerStyles =
 defaultMargin : Style
 defaultMargin =
     margin (px 10)
+
+
+dropdownStyles : Style
+dropdownStyles =
+    Css.batch
+        [ property "appearance" "none"
+        , property "-webkit-appearance" "none"
+        , borderRadius (px 5)
+        , borderStyle solid
+        , outline zero
+        , padding (px 5)
+        , boxSizing borderBox
+        ]
+
+
+inputStyles : Style
+inputStyles =
+    Css.batch
+        [ defaultMargin
+        , property "appearance" "none"
+        , property "-webkit-appearance" "none"
+        , borderRadius (px 3)
+        , outline zero
+        , borderWidth (px 2)
+        , borderStyle solid
+        , borderColor transparent
+        , focus [ borderColor highlight ]
+        , padding (px 7)
+        ]
 
 
 activeButtonStyles : Style
@@ -1617,6 +1635,11 @@ bold =
 neutral : Color
 neutral =
     hex "3C474B"
+
+
+highlight : Color
+highlight =
+    hex "f06e11"
 
 
 gray : Color
