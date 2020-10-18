@@ -177,5 +177,104 @@ var translations = {
 	},
 	"year": {
 		"en": "Year"
+	},
+	"country-of-birth": {
+		"en": "Country of Birth"
+	},
+	"country-of-birth-entry": {
+		"en": "In what country were you born?"
+	},
+	"city-of-birth": {
+		"en": "City of Birth"
+	},
+	"city-of-birth-entry": {
+		"en": "In what city were you born?"
+	},
+	"present-nationality": {
+		"en": "Present Nationality"
+	},
+	"present-nationality-entry": {
+		"en": "What is your current nationality (citizenship)?"
+	},
+	"nationality-at-birth": {
+		"en": "Nationality At Birth"
+	},
+	"nationality-at-birth-entry": {
+		"en": "What was your nationality (citizenship) at birth?"
+	},
+	"race-ethnicity": {
+		"en": "Race or Ethnicity"
+	},
+	"race-ethnicity-entry": {
+		"en": "To what race, ethnicity, or tribal group do you belong?"
+	},
+	"religion": {
+		"en": "Religion"
+	},
+	"religion-entry": {
+		"en": "To what religion do you belong? If you do not belong to a religion, please leave this field blank."
+	},
+	"native-language": {
+		"en": "Native Language"
+	},
+	"native-language-entry": {
+		"en": "What is your native language?"
+	},
+	"fluent-in-english": {
+		"en": "English Fluency"
+	},
+	"fluent-in-english-entry": {
+		"en": "Are you fluent in English?"
+	},
+	"other-languages": {
+		"en": "Fluent Languages"
+	},
+	"other-languages-entry": {
+		"en": "Besides your native language, what other languages do you speak fluently? Please create an entry below for each additional language."
+	},
+	"immigration-court-history": {
+		"en": "Immigration Court History"
+	},
+	"immigration-court-history-entry": {
+		"en": "Which of the following describes your history with immigration court proceedings in the US?"
+	},
+	"court-history-never": {
+		"en": "I have never been involved in US immigration court proceedings."
+	},
+	"court-history-currently": {
+		"en": "I am currently involved in US immigration court proceedings."
+	},
+	"court-history-past": {
+		"en": "I am not currently involved in US immigration court proceedings, but I have been in the past."
+	},
+	"i94": {
+		"en": "I94 Number"
+	},
+	"i94-entry": {
+		"en": "Please enter your i94 number. If you do not have an i94 number, leave this field blank."
+	},
+	"alien-registration": {
+		"en": "Alien Registration Number"
+	},
+	"alien-registration-entry": {
+		"en": "Please enter your alien registration number. If you do not have an alien registration number, leave this field blank."
+	},
+	"ssn": {
+		"en": "Social Security Number"
+	},
+	"ssn-entry": {
+		"en": "Please enter your US social security number. If you do not have a social security number, leave this field blank."
+	},
+	"uscis": {
+		"en": "USCIS Account Number"
+	},
+	"uscis-entry": {
+		"en": "Please enter your USCIS account number. If you do not have a USCIS account, leave this field blank."
+	},
+	"left-home-country": {
+		"en": "Last Left Home Country"
+	},
+	"left-home-country-entry": {
+		"en": "When did you last leave your home country?"
 	}
 }

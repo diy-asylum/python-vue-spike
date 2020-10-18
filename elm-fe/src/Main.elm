@@ -107,6 +107,24 @@ type alias PersonalData =
     , yearOfBirth : String
     , dayOfBirth : String
     , monthOfBirth : String
+    , cityOfBirth : String
+    , countryOfBirth : String
+    , presentNationality : String
+    , nationalityAtBirth : String
+    , raceEthnicOrTribalGroup : String
+    , religion : String
+    , nativeLanguage : String
+    , fluentInEnglish : Maybe Bool
+    , otherLanguages : List String
+    , currentLanguagesInput : String
+    , immigrationCourtHistory : Maybe ImmigrationCourtHistory
+    , i94Number : String
+    , alienRegistrationNumber : String
+    , socialSecurityNumber : String
+    , uscisAccountNumber : String
+    , lastLeftHomeCountryDay : String
+    , lastLeftHomeCountryMonth : String
+    , lastLeftHomeCountryYear : String
     }
 
 
@@ -132,6 +150,24 @@ defaultPersonalData =
     , yearOfBirth = ""
     , monthOfBirth = ""
     , dayOfBirth = ""
+    , cityOfBirth = ""
+    , countryOfBirth = ""
+    , presentNationality = ""
+    , nationalityAtBirth = ""
+    , raceEthnicOrTribalGroup = ""
+    , religion = ""
+    , nativeLanguage = ""
+    , fluentInEnglish = Nothing
+    , otherLanguages = []
+    , currentLanguagesInput = ""
+    , immigrationCourtHistory = Nothing
+    , i94Number = ""
+    , alienRegistrationNumber = ""
+    , socialSecurityNumber = ""
+    , uscisAccountNumber = ""
+    , lastLeftHomeCountryDay = ""
+    , lastLeftHomeCountryMonth = ""
+    , lastLeftHomeCountryYear = ""
     }
 
 
@@ -149,6 +185,21 @@ type FormEntryElement
     | EnterGender
     | EnterMaritalStatus
     | DateOfBirth
+    | CountryOfBirth
+    | CityOfBirth
+    | PresentNationality
+    | NationalityAtBirth
+    | RaceEthnicity
+    | Religion
+    | NativeLanguage
+    | FluentInEnglish
+    | OtherLanguages
+    | ImmigrationCourtHistoryEntry
+    | I94
+    | AlienRegistration
+    | SSN
+    | USCISAccount
+    | LeftHomeCountry
 
 
 type SectionTitle
@@ -459,7 +510,52 @@ getNext entry model =
             DateOfBirth
 
         DateOfBirth ->
-            DateOfBirth
+            CountryOfBirth
+
+        CountryOfBirth ->
+            CityOfBirth
+
+        CityOfBirth ->
+            PresentNationality
+
+        PresentNationality ->
+            NationalityAtBirth
+
+        NationalityAtBirth ->
+            RaceEthnicity
+
+        RaceEthnicity ->
+            Religion
+
+        Religion ->
+            NativeLanguage
+
+        NativeLanguage ->
+            FluentInEnglish
+
+        FluentInEnglish ->
+            OtherLanguages
+
+        OtherLanguages ->
+            ImmigrationCourtHistoryEntry
+
+        ImmigrationCourtHistoryEntry ->
+            I94
+
+        I94 ->
+            AlienRegistration
+
+        AlienRegistration ->
+            SSN
+
+        SSN ->
+            USCISAccount
+
+        USCISAccount ->
+            LeftHomeCountry
+
+        LeftHomeCountry ->
+            LeftHomeCountry
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -514,6 +610,51 @@ getBack entry model =
         DateOfBirth ->
             EnterMaritalStatus
 
+        CountryOfBirth ->
+            DateOfBirth
+
+        CityOfBirth ->
+            CountryOfBirth
+
+        PresentNationality ->
+            CityOfBirth
+
+        NationalityAtBirth ->
+            PresentNationality
+
+        RaceEthnicity ->
+            NationalityAtBirth
+
+        Religion ->
+            RaceEthnicity
+
+        NativeLanguage ->
+            Religion
+
+        FluentInEnglish ->
+            NativeLanguage
+
+        OtherLanguages ->
+            FluentInEnglish
+
+        ImmigrationCourtHistoryEntry ->
+            OtherLanguages
+
+        I94 ->
+            ImmigrationCourtHistoryEntry
+
+        AlienRegistration ->
+            I94
+
+        SSN ->
+            AlienRegistration
+
+        USCISAccount ->
+            SSN
+
+        LeftHomeCountry ->
+            USCISAccount
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -557,16 +698,64 @@ getSectionFromElement element =
         DateOfBirth ->
             PersonalInfo
 
+        CountryOfBirth ->
+            PersonalInfo
+
+        CityOfBirth ->
+            PersonalInfo
+
+        PresentNationality ->
+            PersonalInfo
+
+        NationalityAtBirth ->
+            PersonalInfo
+
+        RaceEthnicity ->
+            PersonalInfo
+
+        Religion ->
+            PersonalInfo
+
+        NativeLanguage ->
+            PersonalInfo
+
+        FluentInEnglish ->
+            PersonalInfo
+
+        OtherLanguages ->
+            PersonalInfo
+
+        ImmigrationCourtHistoryEntry ->
+            PersonalInfo
+
+        I94 ->
+            PersonalInfo
+
+        AlienRegistration ->
+            PersonalInfo
+
+        SSN ->
+            PersonalInfo
+
+        USCISAccount ->
+            PersonalInfo
+
+        LeftHomeCountry ->
+            PersonalInfo
+
 
 validate : Model -> Bool
 validate model =
+    let
+        elig =
+            model.state.eligibility
+
+        d =
+            model.state.personal
+    in
     if not model.debug then
         case model.focusedEntry of
             CurrentlyInUS ->
-                let
-                    elig =
-                        model.state.eligibility
-                in
                 case elig.currentlyInUS of
                     Nothing ->
                         False
@@ -575,10 +764,6 @@ validate model =
                         True
 
             InUSLessThanOneYear ->
-                let
-                    elig =
-                        model.state.eligibility
-                in
                 case elig.lessThanOneYear of
                     Nothing ->
                         False
@@ -590,13 +775,13 @@ validate model =
                 False
 
             FirstName ->
-                model.state.personal.firstName /= ""
+                d.firstName /= ""
 
             MiddleName ->
                 True
 
             LastName ->
-                model.state.personal.lastName /= ""
+                d.lastName /= ""
 
             Aliases ->
                 True
@@ -604,7 +789,7 @@ validate model =
             HomeAddress ->
                 let
                     address =
-                        model.state.personal.homeAddress
+                        d.homeAddress
 
                     validStreetNumber =
                         address.streetNumber /= ""
@@ -632,7 +817,7 @@ validate model =
             EnterMailingAddress ->
                 let
                     address =
-                        model.state.personal.mailingAddress
+                        d.mailingAddress
 
                     validStreetNumber =
                         address.streetNumber /= ""
@@ -658,16 +843,61 @@ validate model =
                 validStreetNumber && validStreetName && validCity && validState && validZip && validAreaCode && validPhone
 
             HomeMailingSame ->
-                model.state.personal.homeMailingSame /= Nothing
+                d.homeMailingSame /= Nothing
 
             EnterGender ->
-                model.state.personal.gender /= Nothing
+                d.gender /= Nothing
 
             EnterMaritalStatus ->
-                model.state.personal.maritalStatus /= Nothing
+                d.maritalStatus /= Nothing
 
             DateOfBirth ->
-                model.state.personal.yearOfBirth /= "" && model.state.personal.monthOfBirth /= "" && model.state.personal.dayOfBirth /= ""
+                d.yearOfBirth /= "" && d.monthOfBirth /= "" && d.dayOfBirth /= ""
+
+            CountryOfBirth ->
+                d.countryOfBirth /= ""
+
+            CityOfBirth ->
+                d.cityOfBirth /= ""
+
+            PresentNationality ->
+                d.presentNationality /= ""
+
+            NationalityAtBirth ->
+                d.nationalityAtBirth /= ""
+
+            RaceEthnicity ->
+                d.raceEthnicOrTribalGroup /= ""
+
+            Religion ->
+                True
+
+            NativeLanguage ->
+                d.nativeLanguage /= ""
+
+            FluentInEnglish ->
+                d.fluentInEnglish /= Nothing
+
+            OtherLanguages ->
+                True
+
+            ImmigrationCourtHistoryEntry ->
+                d.immigrationCourtHistory /= Nothing
+
+            I94 ->
+                True
+
+            AlienRegistration ->
+                True
+
+            SSN ->
+                True
+
+            USCISAccount ->
+                True
+
+            LeftHomeCountry ->
+                d.lastLeftHomeCountryDay /= "" && d.lastLeftHomeCountryMonth /= "" && d.lastLeftHomeCountryYear /= ""
 
     else
         True
@@ -738,58 +968,18 @@ formEntryView model =
     render model.focusedEntry model
 
 
-setMaybe : Bool -> x -> Maybe x
-setMaybe isAlreadyChecked x =
-    if isAlreadyChecked then
-        Nothing
-
-    else
-        Just x
-
-
-backButton : Model -> Html Msg
-backButton model =
-    button [ css [ activeButtonStyles ], onClick Back ] [ text (i18n model "back") ]
-
-
-nextButton : Model -> Html Msg
-nextButton model =
-    if validate model then
-        button
-            [ css [ activeButtonStyles ]
-            , onClick Next
-            ]
-            [ text (i18n model "next") ]
-
-    else
-        button
-            [ css [ disabledButtonStyles ]
-            ]
-            [ text (i18n model "next") ]
-
-
-centerWrap : List (Html Msg) -> Html Msg
-centerWrap list =
-    div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center ] ]
-        [ div
-            [ css [ displayFlex, flexDirection column, backgroundColor accent, justifyContent center, alignItems center, padding (px 10) ] ]
-            list
-        ]
-
-
-nextBackWrap : Model -> List (Html Msg) -> Html Msg
-nextBackWrap model content =
-    centerWrap (List.concat [ [ backButton model ], content, [ nextButton model ] ])
-
-
 render : FormEntryElement -> Model -> Html Msg
 render e model =
+    let
+        elig =
+            model.state.eligibility
+
+        d =
+            model.state.personal
+    in
     case e of
         CurrentlyInUS ->
             let
-                elig =
-                    model.state.eligibility
-
                 yesChecked =
                     Maybe.withDefault False elig.currentlyInUS
 
@@ -812,9 +1002,6 @@ render e model =
 
         InUSLessThanOneYear ->
             let
-                elig =
-                    model.state.eligibility
-
                 yesChecked =
                     Maybe.withDefault False elig.lessThanOneYear
 
@@ -838,107 +1025,24 @@ render e model =
             centerWrap [ prompt model [] "not-eligible-explanation", backButton model ]
 
         FirstName ->
-            let
-                d =
-                    model.state.personal
-
-                firstName =
-                    d.firstName
-            in
-            nextBackWrap model
-                [ prompt model [] "first-name-entry"
-                , textInput firstName "" [] (\r -> SetPersonalData { d | firstName = r })
-                ]
+            singleTextEntry model "first-name-entry" d.firstName (\r -> SetPersonalData { d | firstName = r })
 
         MiddleName ->
-            let
-                d =
-                    model.state.personal
-
-                middleName =
-                    d.middleName
-            in
-            nextBackWrap model
-                [ prompt model [] "middle-name-entry"
-                , textInput middleName "" [] (\r -> SetPersonalData { d | middleName = r })
-                ]
+            singleTextEntry model "middle-name-entry" d.middleName (\r -> SetPersonalData { d | middleName = r })
 
         LastName ->
-            let
-                d =
-                    model.state.personal
-
-                lastName =
-                    d.lastName
-            in
-            nextBackWrap model
-                [ prompt model [] "last-name-entry"
-                , textInput lastName "" [] (\r -> SetPersonalData { d | lastName = r })
-                ]
+            singleTextEntry model "last-name-entry" d.lastName (\r -> SetPersonalData { d | lastName = r })
 
         Aliases ->
-            let
-                d =
-                    model.state.personal
-
-                currentInput =
-                    d.currentAliasInput
-
-                newAliases =
-                    if currentInput /= "" then
-                        currentInput :: d.aliases
-
-                    else
-                        d.aliases
-
-                numAliases =
-                    List.length d.aliases
-
-                gridRows =
-                    String.repeat (numAliases + 1) "1fr "
-
-                aliasList =
-                    case numAliases of
-                        0 ->
-                            div [] []
-
-                        _ ->
-                            div
-                                [ css
-                                    [ property "display" "grid"
-                                    , property "grid-template-columns" "1fr 1fr"
-                                    , property "grid-template-rows" gridRows
-                                    , alignItems center
-                                    , justifyContent center
-                                    ]
-                                ]
-                                (h4 [ css [ property "grid-column" "1/3", property "grid-row" "1", textAlign center ] ] [ text (i18n model "aliases") ]
-                                    :: List.append
-                                        (List.indexedMap aliasElement d.aliases)
-                                        (List.indexedMap (aliasRemoveButton model) d.aliases)
-                                )
-            in
-            nextBackWrap model
-                [ prompt model [ textAlign center ] "aliases-entry"
-                , form [ onSubmit (SetPersonalData { d | currentAliasInput = "", aliases = newAliases }) ]
-                    [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
-                        [ textInput currentInput "" [] (\r -> SetPersonalData { d | currentAliasInput = r })
-                        , button [ type_ "submit", css [ activeButtonStyles ] ] [ text (i18n model "add") ]
-                        ]
-                    ]
-                , aliasList
-                ]
+            multiTextEntry model d.currentAliasInput d.aliases "aliases-entry" "aliases" (\r -> SetPersonalData { d | currentAliasInput = r }) (\r -> SetPersonalData { d | currentAliasInput = "", aliases = r }) (\r -> SetPersonalData { d | aliases = r })
 
         HomeAddress ->
             let
-                d =
-                    model.state.personal
-
                 h =
                     d.homeAddress
             in
             nextBackWrap model
-                [ prompt model [ textAlign center ] "home-address-entry"
+                [ prompt model [] "home-address-entry"
                 , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr 1fr", alignItems center, justifyContent center, alignSelf flexStart ] ]
                     [ textInput h.streetNumber (i18n model "street-number") [ property "grid-column" "1/2" ] (\r -> SetPersonalData { d | homeAddress = { h | streetNumber = r } })
                     , textInput h.streetName (i18n model "street-name") [ property "grid-column" "2/3" ] (\r -> SetPersonalData { d | homeAddress = { h | streetName = r } })
@@ -957,9 +1061,6 @@ render e model =
 
         HomeMailingSame ->
             let
-                d =
-                    model.state.personal
-
                 same =
                     d.homeMailingSame
 
@@ -984,9 +1085,6 @@ render e model =
 
         EnterMailingAddress ->
             let
-                d =
-                    model.state.personal
-
                 h =
                     d.mailingAddress
             in
@@ -1011,9 +1109,6 @@ render e model =
 
         EnterGender ->
             let
-                d =
-                    model.state.personal
-
                 gender =
                     d.gender
 
@@ -1043,9 +1138,6 @@ render e model =
 
         EnterMaritalStatus ->
             let
-                d =
-                    model.state.personal
-
                 status =
                     d.maritalStatus
 
@@ -1093,17 +1185,14 @@ render e model =
 
         DateOfBirth ->
             let
-                d =
-                    model.state.personal
-
                 month =
-                    model.state.personal.monthOfBirth
+                    d.monthOfBirth
 
                 day =
-                    model.state.personal.dayOfBirth
+                    d.dayOfBirth
 
                 year =
-                    model.state.personal.yearOfBirth
+                    d.yearOfBirth
             in
             nextBackWrap model
                 [ prompt model [] "date-of-birth-entry"
@@ -1141,8 +1230,146 @@ render e model =
                     ]
                 ]
 
+        CountryOfBirth ->
+            singleTextEntry model "country-of-birth-entry" d.countryOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
+
+        CityOfBirth ->
+            singleTextEntry model "city-of-birth-entry" d.cityOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
+
+        PresentNationality ->
+            singleTextEntry model "present-nationality-entry" d.presentNationality (\r -> SetPersonalData { d | presentNationality = r })
+
+        NationalityAtBirth ->
+            singleTextEntry model "nationality-at-birth-entry" d.nationalityAtBirth (\r -> SetPersonalData { d | nationalityAtBirth = r })
+
+        RaceEthnicity ->
+            singleTextEntry model "race-ethnicity-entry" d.raceEthnicOrTribalGroup (\r -> SetPersonalData { d | raceEthnicOrTribalGroup = r })
+
+        Religion ->
+            singleTextEntry model "religion-entry" d.religion (\r -> SetPersonalData { d | religion = r })
+
+        NativeLanguage ->
+            singleTextEntry model "native-language-entry" d.nativeLanguage (\r -> SetPersonalData { d | nativeLanguage = r })
+
+        FluentInEnglish ->
+            let
+                yesChecked =
+                    Maybe.withDefault False d.fluentInEnglish
+
+                noChecked =
+                    case d.fluentInEnglish of
+                        Just b ->
+                            not b
+
+                        Nothing ->
+                            False
+            in
+            nextBackWrap model
+                [ prompt model [] "fluent-in-english-entry"
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+                    [ checkBox model yesChecked "yes" SetPersonalData { d | fluentInEnglish = setMaybe yesChecked True }
+                    , checkBox model noChecked "no" SetPersonalData { d | fluentInEnglish = setMaybe noChecked False }
+                    ]
+                ]
+
+        OtherLanguages ->
+            let
+                updateFunction =
+                    \r -> SetPersonalData { d | currentLanguagesInput = r }
+
+                addFunction =
+                    \r -> SetPersonalData { d | currentLanguagesInput = "", otherLanguages = r }
+
+                removeFunction =
+                    \r -> SetPersonalData { d | otherLanguages = r }
+            in
+            multiTextEntry model d.currentLanguagesInput d.otherLanguages "other-languages-entry" "other-languages" updateFunction addFunction removeFunction
+
+        ImmigrationCourtHistoryEntry ->
+            let
+                history =
+                    d.immigrationCourtHistory
+
+                neverChecked =
+                    history == Just NEVER
+
+                currentlyChecked =
+                    history == Just CURRENTLY
+
+                pastChecked =
+                    history == Just NOT_NOW_BUT_IN_THE_PAST
+            in
+            nextBackWrap model
+                [ prompt model [] "immigration-court-history-entry"
+                , div [ css [ displayFlex, flexDirection column, justifyContent flexStart, defaultMargin ] ]
+                    [ checkBox model neverChecked "court-history-never" SetPersonalData { d | immigrationCourtHistory = setMaybe neverChecked NEVER }
+                    , checkBox model currentlyChecked "court-history-currently" SetPersonalData { d | immigrationCourtHistory = setMaybe currentlyChecked CURRENTLY }
+                    , checkBox model pastChecked "court-history-past" SetPersonalData { d | immigrationCourtHistory = setMaybe pastChecked NOT_NOW_BUT_IN_THE_PAST }
+                    ]
+                ]
+
+        I94 ->
+            singleTextEntry model "i94-entry" d.i94Number (\r -> SetPersonalData { d | i94Number = r })
+
+        AlienRegistration ->
+            singleTextEntry model "alien-registration-entry" d.alienRegistrationNumber (\r -> SetPersonalData { d | alienRegistrationNumber = r })
+
+        SSN ->
+            singleTextEntry model "ssn-entry" d.socialSecurityNumber (\r -> SetPersonalData { d | socialSecurityNumber = r })
+
+        USCISAccount ->
+            singleTextEntry model "uscis-entry" d.uscisAccountNumber (\r -> SetPersonalData { d | uscisAccountNumber = r })
+
+        LeftHomeCountry ->
+            let
+                month =
+                    d.lastLeftHomeCountryMonth
+
+                day =
+                    d.lastLeftHomeCountryDay
+
+                year =
+                    d.lastLeftHomeCountryYear
+            in
+            nextBackWrap model
+                [ prompt model [] "left-home-country-entry"
+                , div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
+                    [ div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+                        [ text (i18n model "month")
+                        , select
+                            [ onInput (\r -> SetPersonalData { d | lastLeftHomeCountryMonth = r })
+                            , css
+                                [ dropdownStyles
+                                ]
+                            ]
+                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == month) ] [ text r ]) monthList)
+                        ]
+                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+                        [ text (i18n model "day")
+                        , select
+                            [ onInput (\r -> SetPersonalData { d | lastLeftHomeCountryDay = r })
+                            , css
+                                [ dropdownStyles
+                                ]
+                            ]
+                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == day) ] [ text r ]) dayList)
+                        ]
+                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+                        [ text (i18n model "year")
+                        , select
+                            [ onInput (\r -> SetPersonalData { d | lastLeftHomeCountryYear = r })
+                            , css
+                                [ dropdownStyles
+                                ]
+                            ]
+                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == year) ] [ text r ]) (yearList model.currentYear))
+                        ]
+                    ]
+                ]
 
 
+
+-- View end
 -- Misc
 
 
@@ -1194,16 +1421,68 @@ yearList currentYear =
         year =
             Maybe.withDefault 2020 currentYear
     in
-    "" :: List.map (\r -> String.fromInt (year - r)) (List.range 0 99)
+    "" :: List.map (\r -> String.fromInt (year - r)) (List.range 0 120)
 
 
 
 -- Generic views
 
 
+setMaybe : Bool -> x -> Maybe x
+setMaybe isAlreadyChecked x =
+    if isAlreadyChecked then
+        Nothing
+
+    else
+        Just x
+
+
+backButton : Model -> Html Msg
+backButton model =
+    button [ css [ activeButtonStyles ], onClick Back ] [ text (i18n model "back") ]
+
+
+nextButton : Model -> Html Msg
+nextButton model =
+    if validate model then
+        button
+            [ css [ activeButtonStyles ]
+            , onClick Next
+            ]
+            [ text (i18n model "next") ]
+
+    else
+        button
+            [ css [ disabledButtonStyles ]
+            ]
+            [ text (i18n model "next") ]
+
+
+centerWrap : List (Html Msg) -> Html Msg
+centerWrap list =
+    div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center ] ]
+        [ div
+            [ css [ displayFlex, flexDirection column, backgroundColor accent, justifyContent center, alignItems center, padding (px 10) ] ]
+            list
+        ]
+
+
+nextBackWrap : Model -> List (Html Msg) -> Html Msg
+nextBackWrap model content =
+    centerWrap (List.concat [ [ backButton model ], content, [ nextButton model ] ])
+
+
+singleTextEntry : Model -> String -> String -> (String -> Msg) -> Html Msg
+singleTextEntry model promptTextId value updateFunction =
+    nextBackWrap model
+        [ prompt model [] promptTextId
+        , textInput value "" [] updateFunction
+        ]
+
+
 prompt : Model -> List Style -> String -> Html Msg
 prompt model additionalStyles textId =
-    div [ css [ defaultMargin, Css.batch additionalStyles ] ] [ text (i18n model textId) ]
+    p [ css [ textAlign center, maxWidth (px 500), defaultMargin, Css.batch additionalStyles ] ] [ text (i18n model textId) ]
 
 
 checkBox : Model -> Bool -> String -> (x -> Msg) -> x -> Html Msg
@@ -1250,28 +1529,18 @@ textInput value placeholder additionalStyles updateFunction =
         []
 
 
-
--- Alias views
-
-
-aliasRemoveButton : Model -> Int -> String -> Html Msg
-aliasRemoveButton model index alias_ =
+multiEntryRemoveButton : Model -> List String -> (List String -> Msg) -> Int -> String -> Html Msg
+multiEntryRemoveButton model currentList removeFunction index alias_ =
     let
-        d =
-            model.state.personal
-
-        aliases =
-            d.aliases
-
-        newAliases =
-            List.Extra.removeAt index aliases
+        newList =
+            List.Extra.removeAt index currentList
     in
     form
         [ css
             [ property "grid-column" "2"
             , property "grid-row" (String.fromInt (index + 2))
             ]
-        , onSubmit (SetPersonalData { d | aliases = newAliases })
+        , onSubmit (removeFunction newList)
         ]
         [ button
             [ type_ "submit"
@@ -1281,15 +1550,64 @@ aliasRemoveButton model index alias_ =
         ]
 
 
-aliasElement : Int -> String -> Html Msg
-aliasElement index alias_ =
+multiEntryElement : Int -> String -> Html Msg
+multiEntryElement index entry =
     div
         [ css
             [ property "grid-column" "1"
             , property "grid-row" (String.fromInt (index + 2))
             ]
         ]
-        [ text alias_ ]
+        [ text entry ]
+
+
+multiTextEntry : Model -> String -> List String -> String -> String -> (String -> Msg) -> (List String -> Msg) -> (List String -> Msg) -> Html Msg
+multiTextEntry model currentInput currentList promptTextId listNameId updateFunction addFunction removeFunction =
+    let
+        newList =
+            if currentInput /= "" then
+                currentInput :: currentList
+
+            else
+                currentList
+
+        numEntries =
+            List.length currentList
+
+        gridRows =
+            String.repeat (numEntries + 1) "1fr "
+
+        entryList =
+            case numEntries of
+                0 ->
+                    div [] []
+
+                _ ->
+                    div
+                        [ css
+                            [ property "display" "grid"
+                            , property "grid-template-columns" "1fr 1fr"
+                            , property "grid-template-rows" gridRows
+                            , alignItems center
+                            , justifyContent center
+                            ]
+                        ]
+                        (h4 [ css [ property "grid-column" "1/3", property "grid-row" "1", textAlign center ] ] [ text (i18n model listNameId) ]
+                            :: List.append
+                                (List.indexedMap multiEntryElement currentList)
+                                (List.indexedMap (multiEntryRemoveButton model currentList removeFunction) currentList)
+                        )
+    in
+    nextBackWrap model
+        [ prompt model [] promptTextId
+        , form [ onSubmit (addFunction newList) ]
+            [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
+                [ textInput currentInput "" [] updateFunction
+                , button [ type_ "submit", css [ activeButtonStyles ] ] [ text (i18n model "add") ]
+                ]
+            ]
+        , entryList
+        ]
 
 
 
@@ -1298,7 +1616,7 @@ aliasElement index alias_ =
 
 progressView : Model -> Html Msg
 progressView model =
-    div [ css [ property "grid-column" "1", displayFlex, flexDirection column, alignItems top, margin (Css.em 1) ] ]
+    div [ css [ property "grid-column" "1", displayFlex, flexDirection column, alignItems top, margin (Css.em 3) ] ]
         (List.append
             [ h2 [ css [ textAlign center ] ] [ text (i18n model "progress") ] ]
             (getProgressList model)
@@ -1363,10 +1681,10 @@ titleHtml title elementLink clickable model =
 
         html =
             if clickable then
-                h3 [ onClick (SetFormEntryElement elementLink) ] [ text description ]
+                h3 [ onClick (SetFormEntryElement elementLink), css [ marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
 
             else
-                h3 [ css [ color gray ] ] [ text description ]
+                h3 [ css [ color gray, marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
     in
     html
 
@@ -1379,10 +1697,10 @@ elementNameHtml element clickable model =
 
         html =
             if clickable then
-                div [ onClick (SetFormEntryElement element) ] [ text description ]
+                div [ onClick (SetFormEntryElement element), css [ marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
 
             else
-                div [ css [ color gray ] ] [ text description ]
+                div [ css [ color gray, marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
     in
     html
 
@@ -1439,6 +1757,51 @@ formElementToDescription element model =
         DateOfBirth ->
             i18n model "date-of-birth"
 
+        CountryOfBirth ->
+            i18n model "country-of-birth"
+
+        CityOfBirth ->
+            i18n model "city-of-birth"
+
+        PresentNationality ->
+            i18n model "present-nationality"
+
+        NationalityAtBirth ->
+            i18n model "nationality-at-birth"
+
+        RaceEthnicity ->
+            i18n model "race-ethnicity"
+
+        Religion ->
+            i18n model "religion"
+
+        NativeLanguage ->
+            i18n model "native-language"
+
+        FluentInEnglish ->
+            i18n model "fluent-in-english"
+
+        OtherLanguages ->
+            i18n model "other-languages"
+
+        ImmigrationCourtHistoryEntry ->
+            i18n model "immigration-court-history"
+
+        I94 ->
+            i18n model "i94"
+
+        AlienRegistration ->
+            i18n model "alien-registration"
+
+        SSN ->
+            i18n model "ssn"
+
+        USCISAccount ->
+            i18n model "uscis"
+
+        LeftHomeCountry ->
+            i18n model "left-home-country"
+
 
 
 -- Help view
@@ -1446,10 +1809,14 @@ formElementToDescription element model =
 
 helpView : Model -> Html Msg
 helpView model =
-    div [ css [ property "grid-column" "3", displayFlex, flexDirection column, alignItems top, margin (Css.em 1) ] ]
+    div [ css [ property "grid-column" "3", displayFlex, flexDirection column, alignItems top, margin (Css.em 3) ] ]
         [ h2 [ css [ textAlign center ] ] [ text (i18n model "help") ]
         , text (i18n model "help-description")
         ]
+
+
+
+-- Nav
 
 
 webNav : Model -> Html Msg
@@ -1471,6 +1838,10 @@ webNav model =
         ]
 
 
+
+-- footer
+
+
 footer : Html msg
 footer =
     div [ css [ gridStyles, standardStyles, alignItems center, backgroundColor dark, color background, minHeight (Css.em 2.5), padding (px 10) ] ]
@@ -1486,7 +1857,7 @@ footer =
 
 standardStyles : Style
 standardStyles =
-    batch [ fontSize (vmin 2.15), fontFamilies [ "Lato", "sans-serif" ], color dark ]
+    batch [ fontSize (px 15), fontFamilies [ "Lato", "sans-serif" ], color dark ]
 
 
 gridStyles : Style
