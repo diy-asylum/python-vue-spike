@@ -5596,7 +5596,7 @@ var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
 var $author$project$DataTypes$defaultMailingAddress = {apartmentNumber: '', areaCode: '', city: '', inCareOf: '', phoneNumber: '', state: '', streetName: '', streetNumber: '', zipCode: ''};
 var $author$project$Main$defaultTravelEvent = {day: '', month: '', place: '', status: '', year: ''};
-var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentEntryDay: '', currentEntryMonth: '', currentEntryPlace: '', currentEntryStatus: '', currentEntryYear: '', currentLanguagesInput: '', dayOfBirth: '', entryExpirationDay: '', entryExpirationMonth: '', entryExpirationYear: '', firstName: '', fluentInEnglish: $elm$core$Maybe$Nothing, gender: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, i94Number: '', immigrationCourtHistory: $elm$core$Maybe$Nothing, lastLeftHomeCountryDay: '', lastLeftHomeCountryMonth: '', lastLeftHomeCountryYear: '', lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, maritalStatus: $elm$core$Maybe$Nothing, middleName: '', monthOfBirth: '', mostRecentEntry: $author$project$Main$defaultTravelEvent, nationalityAtBirth: '', nativeLanguage: '', otherEntries: _List_Nil, otherLanguages: _List_Nil, presentNationality: '', raceEthnicOrTribalGroup: '', religion: '', socialSecurityNumber: '', uscisAccountNumber: '', yearOfBirth: ''};
+var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentEntryDay: '', currentEntryMonth: '', currentEntryPlace: '', currentEntryStatus: '', currentEntryYear: '', currentLanguagesInput: '', dayOfBirth: '', entryExpirationDay: '', entryExpirationMonth: '', entryExpirationYear: '', firstName: '', fluentInEnglish: $elm$core$Maybe$Nothing, gender: $elm$core$Maybe$Nothing, hasOtherTravelDoc: $elm$core$Maybe$Nothing, hasPassport: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, i94Number: '', immigrationCourtHistory: $elm$core$Maybe$Nothing, lastLeftHomeCountryDay: '', lastLeftHomeCountryMonth: '', lastLeftHomeCountryYear: '', lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, maritalStatus: $elm$core$Maybe$Nothing, middleName: '', monthOfBirth: '', mostRecentEntry: $author$project$Main$defaultTravelEvent, nationalityAtBirth: '', nativeLanguage: '', otherEntries: _List_Nil, otherLanguages: _List_Nil, presentNationality: '', raceEthnicOrTribalGroup: '', religion: '', socialSecurityNumber: '', travelDocCountry: '', travelDocExpirationDay: '', travelDocExpirationMonth: '', travelDocExpirationYear: '', travelDocNumber: '', uscisAccountNumber: '', yearOfBirth: ''};
 var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -7673,6 +7673,8 @@ var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
 var $author$project$Main$EnterMaritalStatus = {$: 'EnterMaritalStatus'};
 var $author$project$Main$FirstName = {$: 'FirstName'};
 var $author$project$Main$FluentInEnglish = {$: 'FluentInEnglish'};
+var $author$project$Main$HasOtherTravelDoc = {$: 'HasOtherTravelDoc'};
+var $author$project$Main$HasPassport = {$: 'HasPassport'};
 var $author$project$Main$HomeAddress = {$: 'HomeAddress'};
 var $author$project$Main$HomeMailingSame = {$: 'HomeMailingSame'};
 var $author$project$Main$I94 = {$: 'I94'};
@@ -7680,16 +7682,22 @@ var $author$project$Main$ImmigrationCourtHistoryEntry = {$: 'ImmigrationCourtHis
 var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
 var $author$project$Main$LastName = {$: 'LastName'};
 var $author$project$Main$LeftHomeCountry = {$: 'LeftHomeCountry'};
+var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
 var $author$project$Main$MiddleName = {$: 'MiddleName'};
 var $author$project$Main$MostRecentEntry = {$: 'MostRecentEntry'};
 var $author$project$Main$MostRecentEntryExpiration = {$: 'MostRecentEntryExpiration'};
 var $author$project$Main$NationalityAtBirth = {$: 'NationalityAtBirth'};
 var $author$project$Main$NativeLanguage = {$: 'NativeLanguage'};
+var $author$project$Main$OtherEntries = {$: 'OtherEntries'};
 var $author$project$Main$OtherLanguages = {$: 'OtherLanguages'};
 var $author$project$Main$PresentNationality = {$: 'PresentNationality'};
 var $author$project$Main$RaceEthnicity = {$: 'RaceEthnicity'};
 var $author$project$Main$Religion = {$: 'Religion'};
 var $author$project$Main$SSN = {$: 'SSN'};
+var $author$project$Main$SpouseName = {$: 'SpouseName'};
+var $author$project$Main$TravelDocCountry = {$: 'TravelDocCountry'};
+var $author$project$Main$TravelDocExpiration = {$: 'TravelDocExpiration'};
+var $author$project$Main$TravelDocNumber = {$: 'TravelDocNumber'};
 var $author$project$Main$USCISAccount = {$: 'USCISAccount'};
 var $author$project$Main$getBack = F2(
 	function (entry, model) {
@@ -7764,12 +7772,34 @@ var $author$project$Main$getBack = F2(
 				return $author$project$Main$LeftHomeCountry;
 			case 'MostRecentEntryExpiration':
 				return $author$project$Main$MostRecentEntry;
-			default:
+			case 'OtherEntries':
 				return $author$project$Main$MostRecentEntryExpiration;
+			case 'HasPassport':
+				return $author$project$Main$OtherEntries;
+			case 'HasOtherTravelDoc':
+				return $author$project$Main$HasPassport;
+			case 'TravelDocCountry':
+				return _Utils_eq(
+					model.state.personal.hasPassport,
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$HasPassport : $author$project$Main$HasOtherTravelDoc;
+			case 'TravelDocNumber':
+				return $author$project$Main$TravelDocCountry;
+			case 'TravelDocExpiration':
+				return $author$project$Main$TravelDocNumber;
+			case 'SpouseName':
+				return (_Utils_eq(
+					model.state.personal.hasPassport,
+					$elm$core$Maybe$Just(false)) && _Utils_eq(
+					model.state.personal.hasOtherTravelDoc,
+					$elm$core$Maybe$Just(false))) ? $author$project$Main$HasOtherTravelDoc : $author$project$Main$TravelDocExpiration;
+			default:
+				return _Utils_eq(
+					model.state.personal.maritalStatus,
+					$elm$core$Maybe$Just($author$project$DataTypes$MARRIED)) ? $author$project$Main$SpouseName : $author$project$Main$TravelDocExpiration;
 		}
 	});
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
-var $author$project$Main$OtherEntries = {$: 'OtherEntries'};
+var $author$project$Main$NumberOfChildren = {$: 'NumberOfChildren'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -7865,12 +7895,36 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$MostRecentEntryExpiration;
 			case 'MostRecentEntryExpiration':
 				return $author$project$Main$OtherEntries;
+			case 'OtherEntries':
+				return $author$project$Main$HasPassport;
+			case 'HasPassport':
+				return _Utils_eq(
+					model.state.personal.hasPassport,
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$TravelDocCountry : $author$project$Main$HasOtherTravelDoc;
+			case 'HasOtherTravelDoc':
+				return _Utils_eq(
+					model.state.personal.hasOtherTravelDoc,
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$TravelDocCountry : (_Utils_eq(
+					model.state.personal.maritalStatus,
+					$elm$core$Maybe$Just($author$project$DataTypes$MARRIED)) ? $author$project$Main$SpouseName : $author$project$Main$NumberOfChildren);
+			case 'TravelDocCountry':
+				return $author$project$Main$TravelDocNumber;
+			case 'TravelDocNumber':
+				return $author$project$Main$TravelDocExpiration;
+			case 'TravelDocExpiration':
+				return _Utils_eq(
+					model.state.personal.maritalStatus,
+					$elm$core$Maybe$Just($author$project$DataTypes$MARRIED)) ? $author$project$Main$SpouseName : $author$project$Main$NumberOfChildren;
+			case 'SpouseName':
+				return $author$project$Main$SpouseName;
 			default:
-				return $author$project$Main$OtherEntries;
+				return $author$project$Main$NumberOfChildren;
 		}
 	});
+var $author$project$Main$ChildInfo = {$: 'ChildInfo'};
 var $author$project$Main$ImmigrationInfo = {$: 'ImmigrationInfo'};
 var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
+var $author$project$Main$SpouseInfo = {$: 'SpouseInfo'};
 var $author$project$Main$getSectionFromElement = function (element) {
 	switch (element.$) {
 		case 'CurrentlyInUS':
@@ -7933,8 +7987,22 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$ImmigrationInfo;
 		case 'MostRecentEntryExpiration':
 			return $author$project$Main$ImmigrationInfo;
-		default:
+		case 'OtherEntries':
 			return $author$project$Main$ImmigrationInfo;
+		case 'HasPassport':
+			return $author$project$Main$ImmigrationInfo;
+		case 'HasOtherTravelDoc':
+			return $author$project$Main$ImmigrationInfo;
+		case 'TravelDocCountry':
+			return $author$project$Main$ImmigrationInfo;
+		case 'TravelDocNumber':
+			return $author$project$Main$ImmigrationInfo;
+		case 'TravelDocExpiration':
+			return $author$project$Main$ImmigrationInfo;
+		case 'SpouseName':
+			return $author$project$Main$SpouseInfo;
+		default:
+			return $author$project$Main$ChildInfo;
 	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -8020,7 +8088,6 @@ var $author$project$DataTypes$RACE = {$: 'RACE'};
 var $author$project$DataTypes$RELIGION = {$: 'RELIGION'};
 var $author$project$DataTypes$addressWithDatesMock = {cityOrTown: 'Boston', country: 'USA', departmentProvinceOrState: 'MA', fromDate: '03/12/1988', streetName: 'Mulberry St', streetNumber: '123', toDate: '03/15/1988'};
 var $author$project$DataTypes$MALE = {$: 'MALE'};
-var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
 var $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST = {$: 'NOT_NOW_BUT_IN_THE_PAST'};
 var $author$project$DataTypes$mailingAddressMock = {apartmentNumber: '1', areaCode: '202', city: 'Washington', inCareOf: 'Albert Einstein', phoneNumber: '123-4567', state: 'DC', streetName: 'Mulberry St', streetNumber: '456', zipCode: '20000'};
 var $author$project$DataTypes$applicantInfoMock = {
@@ -11156,7 +11223,7 @@ var $author$project$Main$activeButtonStyles = $rtfeldman$elm_css$Css$batch(
 			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
 			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
 			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(7)),
+			$rtfeldman$elm_css$Css$px(8)),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
 			$rtfeldman$elm_css$Css$active(
 			_List_fromArray(
@@ -11421,7 +11488,7 @@ var $author$project$Main$dropdownStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
 			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(7)),
+			$rtfeldman$elm_css$Css$px(8)),
 			$rtfeldman$elm_css$Css$boxSizing($rtfeldman$elm_css$Css$borderBox)
 		]));
 var $author$project$Main$monthList = _List_fromArray(
@@ -11847,6 +11914,20 @@ var $author$project$Main$validate = function (model) {
 				return (e.day !== '') && ((e.month !== '') && ((e.year !== '') && ((e.place !== '') && (e.status !== ''))));
 			case 'MostRecentEntryExpiration':
 				return (d.entryExpirationDay !== '') && ((d.entryExpirationMonth !== '') && (d.entryExpirationYear !== ''));
+			case 'OtherEntries':
+				return true;
+			case 'HasPassport':
+				return !_Utils_eq(d.hasPassport, $elm$core$Maybe$Nothing);
+			case 'HasOtherTravelDoc':
+				return true;
+			case 'TravelDocCountry':
+				return true;
+			case 'TravelDocNumber':
+				return true;
+			case 'TravelDocExpiration':
+				return true;
+			case 'SpouseName':
+				return true;
 			default:
 				return true;
 		}
@@ -13489,7 +13570,7 @@ var $author$project$Main$render = F2(
 							A3($author$project$Main$prompt, model, _List_Nil, 'status-expiration-prompt'),
 							A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate)
 						]));
-			default:
+			case 'OtherEntries':
 				var yearUpdate = function (r) {
 					return $author$project$Main$SetPersonalData(
 						_Utils_update(
@@ -13612,6 +13693,20 @@ var $author$project$Main$render = F2(
 									})
 								]))
 						]));
+			case 'HasPassport':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'HasOtherTravelDoc':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'TravelDocCountry':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'TravelDocNumber':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'TravelDocExpiration':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'SpouseName':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			default:
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {
@@ -13733,8 +13828,22 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'most-recent-entry');
 			case 'MostRecentEntryExpiration':
 				return A2($author$project$Main$i18n, model, 'status-expiration');
-			default:
+			case 'OtherEntries':
 				return A2($author$project$Main$i18n, model, 'other-entries');
+			case 'HasPassport':
+				return A2($author$project$Main$i18n, model, 'has-passport');
+			case 'HasOtherTravelDoc':
+				return A2($author$project$Main$i18n, model, 'has-other-travel-doc');
+			case 'TravelDocCountry':
+				return A2($author$project$Main$i18n, model, 'travel-doc-country');
+			case 'TravelDocNumber':
+				return A2($author$project$Main$i18n, model, 'travel-doc-number');
+			case 'TravelDocExpiration':
+				return A2($author$project$Main$i18n, model, 'travel-doc-expiration');
+			case 'SpouseName':
+				return A2($author$project$Main$i18n, model, 'spouse-name');
+			default:
+				return A2($author$project$Main$i18n, model, 'number-of-children');
 		}
 	});
 var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
@@ -13788,8 +13897,12 @@ var $author$project$Main$sectionToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'eligibility');
 			case 'PersonalInfo':
 				return A2($author$project$Main$i18n, model, 'personal-info');
-			default:
+			case 'ImmigrationInfo':
 				return A2($author$project$Main$i18n, model, 'immigration-info');
+			case 'SpouseInfo':
+				return A2($author$project$Main$i18n, model, 'spouse-info');
+			default:
+				return A2($author$project$Main$i18n, model, 'child-info');
 		}
 	});
 var $author$project$Main$titleHtml = F4(

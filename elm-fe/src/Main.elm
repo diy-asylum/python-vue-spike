@@ -135,6 +135,13 @@ type alias PersonalData =
     , currentEntryYear : String
     , currentEntryPlace : String
     , currentEntryStatus : String
+    , hasPassport : Maybe Bool
+    , hasOtherTravelDoc : Maybe Bool
+    , travelDocNumber : String
+    , travelDocExpirationDay : String
+    , travelDocExpirationMonth : String
+    , travelDocExpirationYear : String
+    , travelDocCountry : String
     }
 
 
@@ -188,6 +195,13 @@ defaultPersonalData =
     , currentEntryYear = ""
     , currentEntryPlace = ""
     , currentEntryStatus = ""
+    , hasPassport = Nothing
+    , hasOtherTravelDoc = Nothing
+    , travelDocNumber = ""
+    , travelDocExpirationDay = ""
+    , travelDocExpirationMonth = ""
+    , travelDocExpirationYear = ""
+    , travelDocCountry = ""
     }
 
 
@@ -242,12 +256,21 @@ type FormEntryElement
     | MostRecentEntry
     | MostRecentEntryExpiration
     | OtherEntries
+    | HasPassport
+    | HasOtherTravelDoc
+    | TravelDocCountry
+    | TravelDocNumber
+    | TravelDocExpiration
+    | SpouseName
+    | NumberOfChildren
 
 
 type SectionTitle
     = Eligibility
     | PersonalInfo
     | ImmigrationInfo
+    | SpouseInfo
+    | ChildInfo
 
 
 pathMatch : String -> Page
@@ -607,7 +630,43 @@ getNext entry model =
             OtherEntries
 
         OtherEntries ->
-            OtherEntries
+            HasPassport
+
+        HasPassport ->
+            if model.state.personal.hasPassport == Just True then
+                TravelDocCountry
+
+            else
+                HasOtherTravelDoc
+
+        HasOtherTravelDoc ->
+            if model.state.personal.hasOtherTravelDoc == Just True then
+                TravelDocCountry
+
+            else if model.state.personal.maritalStatus == Just MARRIED then
+                SpouseName
+
+            else
+                NumberOfChildren
+
+        TravelDocCountry ->
+            TravelDocNumber
+
+        TravelDocNumber ->
+            TravelDocExpiration
+
+        TravelDocExpiration ->
+            if model.state.personal.maritalStatus == Just MARRIED then
+                SpouseName
+
+            else
+                NumberOfChildren
+
+        SpouseName ->
+            SpouseName
+
+        NumberOfChildren ->
+            NumberOfChildren
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -716,6 +775,39 @@ getBack entry model =
         OtherEntries ->
             MostRecentEntryExpiration
 
+        HasPassport ->
+            OtherEntries
+
+        HasOtherTravelDoc ->
+            HasPassport
+
+        TravelDocCountry ->
+            if model.state.personal.hasPassport == Just True then
+                HasPassport
+
+            else
+                HasOtherTravelDoc
+
+        TravelDocNumber ->
+            TravelDocCountry
+
+        TravelDocExpiration ->
+            TravelDocNumber
+
+        SpouseName ->
+            if model.state.personal.hasPassport == Just False && model.state.personal.hasOtherTravelDoc == Just False then
+                HasOtherTravelDoc
+
+            else
+                TravelDocExpiration
+
+        NumberOfChildren ->
+            if model.state.personal.maritalStatus == Just MARRIED then
+                SpouseName
+
+            else
+                TravelDocExpiration
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -812,6 +904,27 @@ getSectionFromElement element =
 
         OtherEntries ->
             ImmigrationInfo
+
+        HasPassport ->
+            ImmigrationInfo
+
+        HasOtherTravelDoc ->
+            ImmigrationInfo
+
+        TravelDocCountry ->
+            ImmigrationInfo
+
+        TravelDocNumber ->
+            ImmigrationInfo
+
+        TravelDocExpiration ->
+            ImmigrationInfo
+
+        SpouseName ->
+            SpouseInfo
+
+        NumberOfChildren ->
+            ChildInfo
 
 
 validate : Model -> Bool
@@ -980,6 +1093,27 @@ validate model =
                 d.entryExpirationDay /= "" && d.entryExpirationMonth /= "" && d.entryExpirationYear /= ""
 
             OtherEntries ->
+                True
+
+            HasPassport ->
+                d.hasPassport /= Nothing
+
+            HasOtherTravelDoc ->
+                True
+
+            TravelDocCountry ->
+                True
+
+            TravelDocNumber ->
+                True
+
+            TravelDocExpiration ->
+                True
+
+            SpouseName ->
+                True
+
+            NumberOfChildren ->
                 True
 
     else
@@ -1531,6 +1665,27 @@ render element model =
                     ]
                 ]
 
+        HasPassport ->
+            div [] []
+
+        HasOtherTravelDoc ->
+            div [] []
+
+        TravelDocCountry ->
+            div [] []
+
+        TravelDocNumber ->
+            div [] []
+
+        TravelDocExpiration ->
+            div [] []
+
+        SpouseName ->
+            div [] []
+
+        NumberOfChildren ->
+            div [] []
+
 
 
 -- View end
@@ -1933,6 +2088,12 @@ sectionToDescription title model =
         ImmigrationInfo ->
             i18n model "immigration-info"
 
+        SpouseInfo ->
+            i18n model "spouse-info"
+
+        ChildInfo ->
+            i18n model "child-info"
+
 
 formElementToDescription : FormEntryElement -> Model -> String
 formElementToDescription element model =
@@ -2030,6 +2191,27 @@ formElementToDescription element model =
         OtherEntries ->
             i18n model "other-entries"
 
+        HasPassport ->
+            i18n model "has-passport"
+
+        HasOtherTravelDoc ->
+            i18n model "has-other-travel-doc"
+
+        TravelDocCountry ->
+            i18n model "travel-doc-country"
+
+        TravelDocNumber ->
+            i18n model "travel-doc-number"
+
+        TravelDocExpiration ->
+            i18n model "travel-doc-expiration"
+
+        SpouseName ->
+            i18n model "spouse-name"
+
+        NumberOfChildren ->
+            i18n model "number-of-children"
+
 
 
 -- Help view
@@ -2116,7 +2298,7 @@ dropdownStyles =
         , borderRadius (px 5)
         , borderStyle solid
         , outline zero
-        , padding (px 7)
+        , padding (px 8)
         , boxSizing borderBox
         ]
 
@@ -2151,7 +2333,7 @@ activeButtonStyles =
         , borderStyle solid
         , property "appearance" "none"
         , property "-webkit-appearance" "none"
-        , padding (px 7)
+        , padding (px 8)
         , outline zero
         , active
             [ focus

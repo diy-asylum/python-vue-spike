@@ -306,5 +306,32 @@ var translations = {
 	},
 	"us-entries": {
 		"en": "US Entries"
+	},
+	"spouse-info": {
+		"en": "Spouse Information"
+	},
+	"child-info": {
+		"en": "Child Information"
+	},
+	"has-passport": {
+		"en": "Passport"
+	},
+	"has-other-travel-doc": {
+		"en": "Alternate Travel Document"
+	},
+	"travel-doc-country": {
+		"en": "Travel Document Country"
+	},
+	"travel-doc-number": {
+		"en": "Travel Document Number"
+	},
+	"travel-doc-expiration": {
+		"en": "Travel Document Expiration"
+	},
+	"spouse-name": {
+		"en": "Spouse Name"
+	},
+	"number-of-children": {
+		"en": "Number of Children"
 	}
 }
