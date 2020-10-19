@@ -53,7 +53,7 @@ var translations = {
 		"en": "Eligibility"
 	},
 	"personal-info": {
-		"en": "Personal Info"
+		"en": "Personal Information"
 	},
 	"first-name": {
 		"en": "First Name"
@@ -276,5 +276,35 @@ var translations = {
 	},
 	"left-home-country-entry": {
 		"en": "When did you last leave your home country?"
+	},
+	"immigration-info": {
+		"en": "Immigration Information"
+	},
+	"most-recent-entry": {
+		"en": "Most Recent US Entry"
+	},
+	"most-recent-entry-prompt": {
+		"en": "List the date and place of your most recent entry to the US, as well as your current immigration status."
+	},
+	"status-expiration": {
+		"en": "Status Expiration"
+	},
+	"status-expiration-prompt": {
+		"en": "What is the expiration date of the immigration status issued upon your most recent entry into the US?"
+	},
+	"other-entries": {
+		"en": "Additional US Entries"
+	},
+	"other-entries-prompt": {
+		"en": "If you have ever entered the US before your most recent entry, list each instance below, including the date, place, and immigration status upon arrival."
+	},
+	"place": {
+		"en": "Place"
+	},
+	"immigration-status": {
+		"en": "Immigration Status"
+	},
+	"us-entries": {
+		"en": "US Entries"
 	}
 }

@@ -125,6 +125,16 @@ type alias PersonalData =
     , lastLeftHomeCountryDay : String
     , lastLeftHomeCountryMonth : String
     , lastLeftHomeCountryYear : String
+    , mostRecentEntry : ExpandableTravelEvent
+    , entryExpirationDay : String
+    , entryExpirationMonth : String
+    , entryExpirationYear : String
+    , otherEntries : List ExpandableTravelEvent
+    , currentEntryDay : String
+    , currentEntryMonth : String
+    , currentEntryYear : String
+    , currentEntryPlace : String
+    , currentEntryStatus : String
     }
 
 
@@ -168,6 +178,35 @@ defaultPersonalData =
     , lastLeftHomeCountryDay = ""
     , lastLeftHomeCountryMonth = ""
     , lastLeftHomeCountryYear = ""
+    , mostRecentEntry = defaultTravelEvent
+    , entryExpirationDay = ""
+    , entryExpirationMonth = ""
+    , entryExpirationYear = ""
+    , otherEntries = []
+    , currentEntryDay = ""
+    , currentEntryMonth = ""
+    , currentEntryYear = ""
+    , currentEntryPlace = ""
+    , currentEntryStatus = ""
+    }
+
+
+type alias ExpandableTravelEvent =
+    { day : String
+    , month : String
+    , year : String
+    , place : String
+    , status : String
+    }
+
+
+defaultTravelEvent : ExpandableTravelEvent
+defaultTravelEvent =
+    { day = ""
+    , month = ""
+    , year = ""
+    , place = ""
+    , status = ""
     }
 
 
@@ -200,11 +239,15 @@ type FormEntryElement
     | SSN
     | USCISAccount
     | LeftHomeCountry
+    | MostRecentEntry
+    | MostRecentEntryExpiration
+    | OtherEntries
 
 
 type SectionTitle
     = Eligibility
     | PersonalInfo
+    | ImmigrationInfo
 
 
 pathMatch : String -> Page
@@ -555,7 +598,16 @@ getNext entry model =
             LeftHomeCountry
 
         LeftHomeCountry ->
-            LeftHomeCountry
+            MostRecentEntry
+
+        MostRecentEntry ->
+            MostRecentEntryExpiration
+
+        MostRecentEntryExpiration ->
+            OtherEntries
+
+        OtherEntries ->
+            OtherEntries
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -655,6 +707,15 @@ getBack entry model =
         LeftHomeCountry ->
             USCISAccount
 
+        MostRecentEntry ->
+            LeftHomeCountry
+
+        MostRecentEntryExpiration ->
+            MostRecentEntry
+
+        OtherEntries ->
+            MostRecentEntryExpiration
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -726,22 +787,31 @@ getSectionFromElement element =
             PersonalInfo
 
         ImmigrationCourtHistoryEntry ->
-            PersonalInfo
+            ImmigrationInfo
 
         I94 ->
-            PersonalInfo
+            ImmigrationInfo
 
         AlienRegistration ->
-            PersonalInfo
+            ImmigrationInfo
 
         SSN ->
-            PersonalInfo
+            ImmigrationInfo
 
         USCISAccount ->
-            PersonalInfo
+            ImmigrationInfo
 
         LeftHomeCountry ->
-            PersonalInfo
+            ImmigrationInfo
+
+        MostRecentEntry ->
+            ImmigrationInfo
+
+        MostRecentEntryExpiration ->
+            ImmigrationInfo
+
+        OtherEntries ->
+            ImmigrationInfo
 
 
 validate : Model -> Bool
@@ -899,6 +969,19 @@ validate model =
             LeftHomeCountry ->
                 d.lastLeftHomeCountryDay /= "" && d.lastLeftHomeCountryMonth /= "" && d.lastLeftHomeCountryYear /= ""
 
+            MostRecentEntry ->
+                let
+                    e =
+                        d.mostRecentEntry
+                in
+                e.day /= "" && e.month /= "" && e.year /= "" && e.place /= "" && e.status /= ""
+
+            MostRecentEntryExpiration ->
+                d.entryExpirationDay /= "" && d.entryExpirationMonth /= "" && d.entryExpirationYear /= ""
+
+            OtherEntries ->
+                True
+
     else
         True
 
@@ -969,7 +1052,7 @@ formEntryView model =
 
 
 render : FormEntryElement -> Model -> Html Msg
-render e model =
+render element model =
     let
         elig =
             model.state.eligibility
@@ -977,7 +1060,7 @@ render e model =
         d =
             model.state.personal
     in
-    case e of
+    case element of
         CurrentlyInUS ->
             let
                 yesChecked =
@@ -1188,46 +1271,24 @@ render e model =
                 month =
                     d.monthOfBirth
 
+                monthUpdate =
+                    \r -> SetPersonalData { d | monthOfBirth = r }
+
                 day =
                     d.dayOfBirth
 
+                dayUpdate =
+                    \r -> SetPersonalData { d | dayOfBirth = r }
+
                 year =
                     d.yearOfBirth
+
+                yearUpdate =
+                    \r -> SetPersonalData { d | yearOfBirth = r }
             in
             nextBackWrap model
                 [ prompt model [] "date-of-birth-entry"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
-                    [ div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-                        [ text (i18n model "month")
-                        , select
-                            [ onInput (\r -> SetPersonalData { d | monthOfBirth = r })
-                            , css
-                                [ dropdownStyles
-                                ]
-                            ]
-                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == month) ] [ text r ]) monthList)
-                        ]
-                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-                        [ text (i18n model "day")
-                        , select
-                            [ onInput (\r -> SetPersonalData { d | dayOfBirth = r })
-                            , css
-                                [ dropdownStyles
-                                ]
-                            ]
-                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == day) ] [ text r ]) dayList)
-                        ]
-                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-                        [ text (i18n model "year")
-                        , select
-                            [ onInput (\r -> SetPersonalData { d | yearOfBirth = r })
-                            , css
-                                [ dropdownStyles
-                                ]
-                            ]
-                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == year) ] [ text r ]) (yearList model.currentYear))
-                        ]
-                    ]
+                , dateSelector model day dayUpdate month monthUpdate year yearUpdate
                 ]
 
         CountryOfBirth ->
@@ -1325,45 +1386,148 @@ render e model =
                 month =
                     d.lastLeftHomeCountryMonth
 
+                monthUpdate =
+                    \r -> SetPersonalData { d | lastLeftHomeCountryMonth = r }
+
                 day =
                     d.lastLeftHomeCountryDay
 
+                dayUpdate =
+                    \r -> SetPersonalData { d | lastLeftHomeCountryDay = r }
+
                 year =
                     d.lastLeftHomeCountryYear
+
+                yearUpdate =
+                    \r -> SetPersonalData { d | lastLeftHomeCountryYear = r }
             in
             nextBackWrap model
                 [ prompt model [] "left-home-country-entry"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
-                    [ div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-                        [ text (i18n model "month")
-                        , select
-                            [ onInput (\r -> SetPersonalData { d | lastLeftHomeCountryMonth = r })
-                            , css
-                                [ dropdownStyles
-                                ]
+                , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                ]
+
+        MostRecentEntry ->
+            let
+                e =
+                    d.mostRecentEntry
+
+                day =
+                    e.day
+
+                dayUpdate =
+                    \r -> SetPersonalData { d | mostRecentEntry = { e | day = r } }
+
+                month =
+                    e.month
+
+                monthUpdate =
+                    \r -> SetPersonalData { d | mostRecentEntry = { e | month = r } }
+
+                year =
+                    e.year
+
+                yearUpdate =
+                    \r -> SetPersonalData { d | mostRecentEntry = { e | year = r } }
+            in
+            nextBackWrap model
+                [ prompt model [] "most-recent-entry-prompt"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    , labeledTextInput model "place" e.place (\r -> SetPersonalData { d | mostRecentEntry = { e | place = r } })
+                    , labeledTextInput model "immigration-status" e.status (\r -> SetPersonalData { d | mostRecentEntry = { e | status = r } })
+                    ]
+                ]
+
+        MostRecentEntryExpiration ->
+            let
+                day =
+                    d.entryExpirationDay
+
+                dayUpdate =
+                    \r -> SetPersonalData { d | entryExpirationDay = r }
+
+                month =
+                    d.entryExpirationMonth
+
+                monthUpdate =
+                    \r -> SetPersonalData { d | entryExpirationMonth = r }
+
+                year =
+                    d.entryExpirationYear
+
+                yearUpdate =
+                    \r -> SetPersonalData { d | entryExpirationYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "status-expiration-prompt"
+                , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                ]
+
+        OtherEntries ->
+            let
+                day =
+                    d.currentEntryDay
+
+                dayUpdate =
+                    \r -> SetPersonalData { d | currentEntryDay = r }
+
+                month =
+                    d.currentEntryMonth
+
+                monthUpdate =
+                    \r -> SetPersonalData { d | currentEntryMonth = r }
+
+                year =
+                    d.currentEntryYear
+
+                yearUpdate =
+                    \r -> SetPersonalData { d | currentEntryYear = r }
+
+                place =
+                    d.currentEntryPlace
+
+                placeUpdate =
+                    \r -> SetPersonalData { d | currentEntryPlace = r }
+
+                status =
+                    d.currentEntryStatus
+
+                statusUpdate =
+                    \r -> SetPersonalData { d | currentEntryStatus = r }
+
+                updatedEntries =
+                    if day /= "" && month /= "" && year /= "" && place /= "" && status /= "" then
+                        List.append d.otherEntries
+                            [ { day = day
+                              , month = month
+                              , year = year
+                              , place = place
+                              , status = status
+                              }
                             ]
-                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == month) ] [ text r ]) monthList)
-                        ]
-                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-                        [ text (i18n model "day")
-                        , select
-                            [ onInput (\r -> SetPersonalData { d | lastLeftHomeCountryDay = r })
-                            , css
-                                [ dropdownStyles
+
+                    else
+                        d.otherEntries
+
+                submitFunction =
+                    SetPersonalData { d | otherEntries = updatedEntries, currentEntryDay = "", currentEntryMonth = "", currentEntryYear = "", currentEntryPlace = "", currentEntryStatus = "" }
+            in
+            nextBackWrap model
+                [ prompt model [] "other-entries-prompt"
+                , div [ css [ displayFlex, flexDirection column, alignItems center ] ]
+                    [ form [ onSubmit submitFunction ]
+                        [ div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                            [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                            , labeledTextInput model "place" place placeUpdate
+                            , labeledTextInput model "immigration-status" status statusUpdate
+                            , button
+                                [ type_ "submit"
+                                , css [ activeButtonStyles ]
                                 ]
+                                [ text (i18n model "add") ]
                             ]
-                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == day) ] [ text r ]) dayList)
                         ]
-                    , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-                        [ text (i18n model "year")
-                        , select
-                            [ onInput (\r -> SetPersonalData { d | lastLeftHomeCountryYear = r })
-                            , css
-                                [ dropdownStyles
-                                ]
-                            ]
-                            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == year) ] [ text r ]) (yearList model.currentYear))
-                        ]
+                    , removeList model d.otherEntries "us-entries" printEntry (\r -> SetPersonalData { d | otherEntries = r })
                     ]
                 ]
 
@@ -1371,6 +1535,11 @@ render e model =
 
 -- View end
 -- Misc
+
+
+printEntry : ExpandableTravelEvent -> String
+printEntry e =
+    String.concat [ e.place, ", ", e.month, "/", e.day, "/", e.year, ", ", e.status ]
 
 
 monthList : List String
@@ -1428,6 +1597,42 @@ yearList currentYear =
 -- Generic views
 
 
+dateSelector : Model -> String -> (String -> Msg) -> String -> (String -> Msg) -> String -> (String -> Msg) -> Html Msg
+dateSelector model dayValue dayInput monthValue monthInput yearValue yearInput =
+    div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
+        [ div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+            [ div [ css [ defaultMargin ] ] [ text (i18n model "month") ]
+            , select
+                [ onInput monthInput
+                , css
+                    [ dropdownStyles
+                    ]
+                ]
+                (List.map (\r -> option [ Html.Styled.Attributes.selected (r == monthValue) ] [ text r ]) monthList)
+            ]
+        , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+            [ div [ css [ defaultMargin ] ] [ text (i18n model "day") ]
+            , select
+                [ onInput dayInput
+                , css
+                    [ dropdownStyles
+                    ]
+                ]
+                (List.map (\r -> option [ Html.Styled.Attributes.selected (r == dayValue) ] [ text r ]) dayList)
+            ]
+        , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
+            [ div [ css [ defaultMargin ] ] [ text (i18n model "year") ]
+            , select
+                [ onInput yearInput
+                , css
+                    [ dropdownStyles
+                    ]
+                ]
+                (List.map (\r -> option [ Html.Styled.Attributes.selected (r == yearValue) ] [ text r ]) (yearList model.currentYear))
+            ]
+        ]
+
+
 setMaybe : Bool -> x -> Maybe x
 setMaybe isAlreadyChecked x =
     if isAlreadyChecked then
@@ -1480,6 +1685,12 @@ singleTextEntry model promptTextId value updateFunction =
         ]
 
 
+labeledTextInput : Model -> String -> String -> (String -> Msg) -> Html Msg
+labeledTextInput model labelId value updateFunction =
+    div [ css [ displayFlex, flexDirection column ] ]
+        [ div [ css [ marginLeft (px 10) ] ] [ text (i18n model labelId) ], textInput value "" [] updateFunction ]
+
+
 prompt : Model -> List Style -> String -> Html Msg
 prompt model additionalStyles textId =
     p [ css [ textAlign center, maxWidth (px 500), defaultMargin, Css.batch additionalStyles ] ] [ text (i18n model textId) ]
@@ -1529,8 +1740,8 @@ textInput value placeholder additionalStyles updateFunction =
         []
 
 
-multiEntryRemoveButton : Model -> List String -> (List String -> Msg) -> Int -> String -> Html Msg
-multiEntryRemoveButton model currentList removeFunction index alias_ =
+multiEntryRemoveButton : Model -> List x -> (List x -> Msg) -> Int -> x -> Html Msg
+multiEntryRemoveButton model currentList removeFunction index _ =
     let
         newList =
             List.Extra.removeAt index currentList
@@ -1544,7 +1755,7 @@ multiEntryRemoveButton model currentList removeFunction index alias_ =
         ]
         [ button
             [ type_ "submit"
-            , css [ activeButtonStyles ]
+            , css [ activeButtonStyles, defaultMargin ]
             ]
             [ text (i18n model "remove") ]
         ]
@@ -1556,6 +1767,8 @@ multiEntryElement index entry =
         [ css
             [ property "grid-column" "1"
             , property "grid-row" (String.fromInt (index + 2))
+            , defaultMargin
+            , textAlign center
             ]
         ]
         [ text entry ]
@@ -1570,33 +1783,6 @@ multiTextEntry model currentInput currentList promptTextId listNameId updateFunc
 
             else
                 currentList
-
-        numEntries =
-            List.length currentList
-
-        gridRows =
-            String.repeat (numEntries + 1) "1fr "
-
-        entryList =
-            case numEntries of
-                0 ->
-                    div [] []
-
-                _ ->
-                    div
-                        [ css
-                            [ property "display" "grid"
-                            , property "grid-template-columns" "1fr 1fr"
-                            , property "grid-template-rows" gridRows
-                            , alignItems center
-                            , justifyContent center
-                            ]
-                        ]
-                        (h4 [ css [ property "grid-column" "1/3", property "grid-row" "1", textAlign center ] ] [ text (i18n model listNameId) ]
-                            :: List.append
-                                (List.indexedMap multiEntryElement currentList)
-                                (List.indexedMap (multiEntryRemoveButton model currentList removeFunction) currentList)
-                        )
     in
     nextBackWrap model
         [ prompt model [] promptTextId
@@ -1606,8 +1792,38 @@ multiTextEntry model currentInput currentList promptTextId listNameId updateFunc
                 , button [ type_ "submit", css [ activeButtonStyles ] ] [ text (i18n model "add") ]
                 ]
             ]
-        , entryList
+        , removeList model currentList listNameId (\r -> r) removeFunction
         ]
+
+
+removeList : Model -> List x -> String -> (x -> String) -> (List x -> Msg) -> Html Msg
+removeList model currentList listNameId printFunction removeFunction =
+    let
+        numEntries =
+            List.length currentList
+
+        gridRows =
+            String.repeat (numEntries + 1) "1fr "
+    in
+    case numEntries of
+        0 ->
+            div [] []
+
+        _ ->
+            div
+                [ css
+                    [ property "display" "grid"
+                    , property "grid-template-columns" "1fr 1fr"
+                    , property "grid-template-rows" gridRows
+                    , alignItems center
+                    , justifyContent center
+                    ]
+                ]
+                (h4 [ css [ property "grid-column" "1/3", property "grid-row" "1", textAlign center ] ] [ text (i18n model listNameId) ]
+                    :: List.append
+                        (List.indexedMap multiEntryElement (List.map printFunction currentList))
+                        (List.indexedMap (multiEntryRemoveButton model currentList removeFunction) currentList)
+                )
 
 
 
@@ -1714,6 +1930,9 @@ sectionToDescription title model =
         PersonalInfo ->
             i18n model "personal-info"
 
+        ImmigrationInfo ->
+            i18n model "immigration-info"
+
 
 formElementToDescription : FormEntryElement -> Model -> String
 formElementToDescription element model =
@@ -1802,6 +2021,15 @@ formElementToDescription element model =
         LeftHomeCountry ->
             i18n model "left-home-country"
 
+        MostRecentEntry ->
+            i18n model "most-recent-entry"
+
+        MostRecentEntryExpiration ->
+            i18n model "status-expiration"
+
+        OtherEntries ->
+            i18n model "other-entries"
+
 
 
 -- Help view
@@ -1888,7 +2116,7 @@ dropdownStyles =
         , borderRadius (px 5)
         , borderStyle solid
         , outline zero
-        , padding (px 5)
+        , padding (px 7)
         , boxSizing borderBox
         ]
 
@@ -1923,7 +2151,7 @@ activeButtonStyles =
         , borderStyle solid
         , property "appearance" "none"
         , property "-webkit-appearance" "none"
-        , padding (px 4)
+        , padding (px 7)
         , outline zero
         , active
             [ focus
