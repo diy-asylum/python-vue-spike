@@ -12283,122 +12283,84 @@ var $author$project$Main$singleTextEntry = F4(
 				]));
 	});
 var $rtfeldman$elm_css$Css$wrap = {flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, flexWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'wrap'};
+var $author$project$Main$yesNoCheckBox = F4(
+	function (model, promptId, value, updateFunction) {
+		var yesChecked = A2($elm$core$Maybe$withDefault, false, value);
+		var noChecked = function () {
+			if (value.$ === 'Just') {
+				var b = value.a;
+				return !b;
+			} else {
+				return false;
+			}
+		}();
+		return A2(
+			$author$project$Main$nextBackWrap,
+			model,
+			_List_fromArray(
+				[
+					A3($author$project$Main$prompt, model, _List_Nil, promptId),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$displayFlex,
+									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+									$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+									$author$project$Main$defaultMargin
+								]))
+						]),
+					_List_fromArray(
+						[
+							A5(
+							$author$project$Main$checkBox,
+							model,
+							yesChecked,
+							'yes',
+							updateFunction,
+							A2($author$project$Main$setMaybe, yesChecked, true)),
+							A5(
+							$author$project$Main$checkBox,
+							model,
+							noChecked,
+							'no',
+							updateFunction,
+							A2($author$project$Main$setMaybe, noChecked, false))
+						]))
+				]));
+	});
 var $author$project$Main$render = F2(
 	function (element, model) {
 		var elig = model.state.eligibility;
 		var d = model.state.personal;
 		switch (element.$) {
 			case 'CurrentlyInUS':
-				var yesChecked = A2($elm$core$Maybe$withDefault, false, elig.currentlyInUS);
-				var noChecked = function () {
-					var _v1 = elig.currentlyInUS;
-					if (_v1.$ === 'Just') {
-						var b = _v1.a;
-						return !b;
-					} else {
-						return false;
-					}
-				}();
-				return $author$project$Main$centerWrap(
-					_List_fromArray(
-						[
-							A3($author$project$Main$prompt, model, _List_Nil, 'currently-in-us'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$author$project$Main$defaultMargin
-										]))
-								]),
-							_List_fromArray(
-								[
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									yesChecked,
-									'yes',
-									$author$project$Main$SetEligibility,
-									_Utils_update(
-										elig,
-										{
-											currentlyInUS: A2($author$project$Main$setMaybe, yesChecked, true)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									noChecked,
-									'no',
-									$author$project$Main$SetEligibility,
-									_Utils_update(
-										elig,
-										{
-											currentlyInUS: A2($author$project$Main$setMaybe, noChecked, false)
-										}))
-								])),
-							$author$project$Main$nextButton(model)
-						]));
-			case 'InUSLessThanOneYear':
-				var yesChecked = A2($elm$core$Maybe$withDefault, false, elig.lessThanOneYear);
-				var noChecked = function () {
-					var _v2 = elig.lessThanOneYear;
-					if (_v2.$ === 'Just') {
-						var b = _v2.a;
-						return !b;
-					} else {
-						return false;
-					}
-				}();
-				return A2(
-					$author$project$Main$nextBackWrap,
+				return A4(
+					$author$project$Main$yesNoCheckBox,
 					model,
-					_List_fromArray(
-						[
-							A3($author$project$Main$prompt, model, _List_Nil, 'less-than-one-year'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$author$project$Main$defaultMargin
-										]))
-								]),
-							_List_fromArray(
-								[
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									yesChecked,
-									'yes',
-									$author$project$Main$SetEligibility,
-									_Utils_update(
-										elig,
-										{
-											lessThanOneYear: A2($author$project$Main$setMaybe, yesChecked, true)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									noChecked,
-									'no',
-									$author$project$Main$SetEligibility,
-									_Utils_update(
-										elig,
-										{
-											lessThanOneYear: A2($author$project$Main$setMaybe, noChecked, false)
-										}))
-								]))
-						]));
+					'currently-in-us',
+					elig.currentlyInUS,
+					function (r) {
+						return $author$project$Main$SetEligibility(
+							_Utils_update(
+								elig,
+								{currentlyInUS: r}));
+					});
+			case 'InUSLessThanOneYear':
+				return A4(
+					$author$project$Main$yesNoCheckBox,
+					model,
+					'less-than-one-year',
+					elig.lessThanOneYear,
+					function (r) {
+						return $author$project$Main$SetEligibility(
+							_Utils_update(
+								elig,
+								{lessThanOneYear: r}));
+					});
 			case 'NotEligible':
 				return $author$project$Main$centerWrap(
 					_List_fromArray(
@@ -12673,61 +12635,17 @@ var $author$project$Main$render = F2(
 								]))
 						]));
 			case 'HomeMailingSame':
-				var same = d.homeMailingSame;
-				var yesChecked = A2($elm$core$Maybe$withDefault, false, same);
-				var noChecked = function () {
-					if (same.$ === 'Just') {
-						var b = same.a;
-						return !b;
-					} else {
-						return false;
-					}
-				}();
-				return A2(
-					$author$project$Main$nextBackWrap,
+				return A4(
+					$author$project$Main$yesNoCheckBox,
 					model,
-					_List_fromArray(
-						[
-							A3($author$project$Main$prompt, model, _List_Nil, 'home-mailing-same-text'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$author$project$Main$defaultMargin
-										]))
-								]),
-							_List_fromArray(
-								[
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									yesChecked,
-									'yes',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											homeMailingSame: A2($author$project$Main$setMaybe, yesChecked, true)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									noChecked,
-									'no',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											homeMailingSame: A2($author$project$Main$setMaybe, noChecked, false)
-										}))
-								]))
-						]));
+					'home-mailing-same-text',
+					d.homeMailingSame,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{homeMailingSame: r}));
+					});
 			case 'EnterMailingAddress':
 				var h = d.mailingAddress;
 				return A2(
@@ -12956,7 +12874,7 @@ var $author$project$Main$render = F2(
 				var gender = d.gender;
 				var maleChecked = function () {
 					if ((gender.$ === 'Just') && (gender.a.$ === 'MALE')) {
-						var _v7 = gender.a;
+						var _v4 = gender.a;
 						return true;
 					} else {
 						return false;
@@ -12964,7 +12882,7 @@ var $author$project$Main$render = F2(
 				}();
 				var femaleChecked = function () {
 					if ((gender.$ === 'Just') && (gender.a.$ === 'FEMALE')) {
-						var _v5 = gender.a;
+						var _v2 = gender.a;
 						return true;
 					} else {
 						return false;
@@ -13019,7 +12937,7 @@ var $author$project$Main$render = F2(
 				var status = d.maritalStatus;
 				var widowedChecked = function () {
 					if ((status.$ === 'Just') && (status.a.$ === 'WIDOWED')) {
-						var _v15 = status.a;
+						var _v12 = status.a;
 						return true;
 					} else {
 						return false;
@@ -13027,7 +12945,7 @@ var $author$project$Main$render = F2(
 				}();
 				var singleChecked = function () {
 					if ((status.$ === 'Just') && (status.a.$ === 'SINGLE')) {
-						var _v13 = status.a;
+						var _v10 = status.a;
 						return true;
 					} else {
 						return false;
@@ -13035,7 +12953,7 @@ var $author$project$Main$render = F2(
 				}();
 				var marriedChecked = function () {
 					if ((status.$ === 'Just') && (status.a.$ === 'MARRIED')) {
-						var _v11 = status.a;
+						var _v8 = status.a;
 						return true;
 					} else {
 						return false;
@@ -13043,7 +12961,7 @@ var $author$project$Main$render = F2(
 				}();
 				var divorcedChecked = function () {
 					if ((status.$ === 'Just') && (status.a.$ === 'DIVORCED')) {
-						var _v9 = status.a;
+						var _v6 = status.a;
 						return true;
 					} else {
 						return false;
@@ -13231,61 +13149,17 @@ var $author$project$Main$render = F2(
 								{nativeLanguage: r}));
 					});
 			case 'FluentInEnglish':
-				var yesChecked = A2($elm$core$Maybe$withDefault, false, d.fluentInEnglish);
-				var noChecked = function () {
-					var _v16 = d.fluentInEnglish;
-					if (_v16.$ === 'Just') {
-						var b = _v16.a;
-						return !b;
-					} else {
-						return false;
-					}
-				}();
-				return A2(
-					$author$project$Main$nextBackWrap,
+				return A4(
+					$author$project$Main$yesNoCheckBox,
 					model,
-					_List_fromArray(
-						[
-							A3($author$project$Main$prompt, model, _List_Nil, 'fluent-in-english-entry'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$author$project$Main$defaultMargin
-										]))
-								]),
-							_List_fromArray(
-								[
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									yesChecked,
-									'yes',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											fluentInEnglish: A2($author$project$Main$setMaybe, yesChecked, true)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									noChecked,
-									'no',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											fluentInEnglish: A2($author$project$Main$setMaybe, noChecked, false)
-										}))
-								]))
-						]));
+					'fluent-in-english-entry',
+					d.fluentInEnglish,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{fluentInEnglish: r}));
+					});
 			case 'OtherLanguages':
 				var updateFunction = function (r) {
 					return $author$project$Main$SetPersonalData(
@@ -13694,15 +13568,92 @@ var $author$project$Main$render = F2(
 								]))
 						]));
 			case 'HasPassport':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				return A4(
+					$author$project$Main$yesNoCheckBox,
+					model,
+					'has-passport-entry',
+					d.hasPassport,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{hasPassport: r}));
+					});
 			case 'HasOtherTravelDoc':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				return A4(
+					$author$project$Main$yesNoCheckBox,
+					model,
+					'has-other-travel-doc-entry',
+					d.hasOtherTravelDoc,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{hasOtherTravelDoc: r}));
+					});
 			case 'TravelDocCountry':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var promptId = _Utils_eq(
+					d.hasPassport,
+					$elm$core$Maybe$Just(true)) ? 'passport-country-entry' : 'travel-doc-country-entry';
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					promptId,
+					d.travelDocCountry,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{travelDocCountry: r}));
+					});
 			case 'TravelDocNumber':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var promptId = _Utils_eq(
+					d.hasPassport,
+					$elm$core$Maybe$Just(true)) ? 'passport-number-entry' : 'travel-doc-number-entry';
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					promptId,
+					d.travelDocNumber,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{travelDocNumber: r}));
+					});
 			case 'TravelDocExpiration':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var yearUpdate = function (r) {
+					return $author$project$Main$SetPersonalData(
+						_Utils_update(
+							d,
+							{travelDocExpirationYear: r}));
+				};
+				var year = d.travelDocExpirationYear;
+				var promptId = _Utils_eq(
+					d.hasPassport,
+					$elm$core$Maybe$Just(true)) ? 'passport-expiration-entry' : 'travel-doc-expiration-entry';
+				var monthUpdate = function (r) {
+					return $author$project$Main$SetPersonalData(
+						_Utils_update(
+							d,
+							{travelDocExpirationMonth: r}));
+				};
+				var month = d.travelDocExpirationMonth;
+				var dayUpdate = function (r) {
+					return $author$project$Main$SetPersonalData(
+						_Utils_update(
+							d,
+							{travelDocExpirationDay: r}));
+				};
+				var day = d.travelDocExpirationDay;
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, promptId),
+							A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate)
+						]));
 			case 'SpouseName':
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 			default:

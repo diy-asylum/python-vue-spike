@@ -316,17 +316,41 @@ var translations = {
 	"has-passport": {
 		"en": "Passport"
 	},
+	"has-passport-entry": {
+		"en": "Do you have a passport?"
+	},
 	"has-other-travel-doc": {
 		"en": "Alternate Travel Document"
+	},
+	"has-other-travel-doc-entry": {
+		"en": "Do you have a different travel document commonly used for identification purposes?"
 	},
 	"travel-doc-country": {
 		"en": "Travel Document Country"
 	},
+	"travel-doc-country-entry": {
+		"en": "What country issued your travel document?"
+	},
+	"passport-country-entry": {
+		"en": "What country issued your passport?"
+	},
 	"travel-doc-number": {
 		"en": "Travel Document Number"
 	},
+	"travel-doc-number-entry": {
+		"en": "What is your travel document number?"
+	},
+	"passport-number-entry": {
+		"en": "What is your passport number?"
+	},
 	"travel-doc-expiration": {
 		"en": "Travel Document Expiration"
+	},
+	"travel-doc-expiration-entry": {
+		"en": "On what date does your travel document expire?"
+	},
+	"passport-expiration-entry": {
+		"en": "On what date does your passport expire?"
 	},
 	"spouse-name": {
 		"en": "Spouse Name"

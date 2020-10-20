@@ -1196,47 +1196,10 @@ render element model =
     in
     case element of
         CurrentlyInUS ->
-            let
-                yesChecked =
-                    Maybe.withDefault False elig.currentlyInUS
-
-                noChecked =
-                    case elig.currentlyInUS of
-                        Just b ->
-                            not b
-
-                        Nothing ->
-                            False
-            in
-            centerWrap
-                [ prompt model [] "currently-in-us"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ checkBox model yesChecked "yes" SetEligibility { elig | currentlyInUS = setMaybe yesChecked True }
-                    , checkBox model noChecked "no" SetEligibility { elig | currentlyInUS = setMaybe noChecked False }
-                    ]
-                , nextButton model
-                ]
+            yesNoCheckBox model "currently-in-us" elig.currentlyInUS (\r -> SetEligibility { elig | currentlyInUS = r })
 
         InUSLessThanOneYear ->
-            let
-                yesChecked =
-                    Maybe.withDefault False elig.lessThanOneYear
-
-                noChecked =
-                    case elig.lessThanOneYear of
-                        Just b ->
-                            not b
-
-                        Nothing ->
-                            False
-            in
-            nextBackWrap model
-                [ prompt model [] "less-than-one-year"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ checkBox model yesChecked "yes" SetEligibility { elig | lessThanOneYear = setMaybe yesChecked True }
-                    , checkBox model noChecked "no" SetEligibility { elig | lessThanOneYear = setMaybe noChecked False }
-                    ]
-                ]
+            yesNoCheckBox model "less-than-one-year" elig.lessThanOneYear (\r -> SetEligibility { elig | lessThanOneYear = r })
 
         NotEligible ->
             centerWrap [ prompt model [] "not-eligible-explanation", backButton model ]
@@ -1277,28 +1240,7 @@ render element model =
                 ]
 
         HomeMailingSame ->
-            let
-                same =
-                    d.homeMailingSame
-
-                yesChecked =
-                    Maybe.withDefault False same
-
-                noChecked =
-                    case same of
-                        Just b ->
-                            not b
-
-                        Nothing ->
-                            False
-            in
-            nextBackWrap model
-                [ prompt model [] "home-mailing-same-text"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ checkBox model yesChecked "yes" SetPersonalData { d | homeMailingSame = setMaybe yesChecked True }
-                    , checkBox model noChecked "no" SetPersonalData { d | homeMailingSame = setMaybe noChecked False }
-                    ]
-                ]
+            yesNoCheckBox model "home-mailing-same-text" d.homeMailingSame (\r -> SetPersonalData { d | homeMailingSame = r })
 
         EnterMailingAddress ->
             let
@@ -1447,25 +1389,7 @@ render element model =
             singleTextEntry model "native-language-entry" d.nativeLanguage (\r -> SetPersonalData { d | nativeLanguage = r })
 
         FluentInEnglish ->
-            let
-                yesChecked =
-                    Maybe.withDefault False d.fluentInEnglish
-
-                noChecked =
-                    case d.fluentInEnglish of
-                        Just b ->
-                            not b
-
-                        Nothing ->
-                            False
-            in
-            nextBackWrap model
-                [ prompt model [] "fluent-in-english-entry"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ checkBox model yesChecked "yes" SetPersonalData { d | fluentInEnglish = setMaybe yesChecked True }
-                    , checkBox model noChecked "no" SetPersonalData { d | fluentInEnglish = setMaybe noChecked False }
-                    ]
-                ]
+            yesNoCheckBox model "fluent-in-english-entry" d.fluentInEnglish (\r -> SetPersonalData { d | fluentInEnglish = r })
 
         OtherLanguages ->
             let
@@ -1666,19 +1590,64 @@ render element model =
                 ]
 
         HasPassport ->
-            div [] []
+            yesNoCheckBox model "has-passport-entry" d.hasPassport (\r -> SetPersonalData { d | hasPassport = r })
 
         HasOtherTravelDoc ->
-            div [] []
+            yesNoCheckBox model "has-other-travel-doc-entry" d.hasOtherTravelDoc (\r -> SetPersonalData { d | hasOtherTravelDoc = r })
 
         TravelDocCountry ->
-            div [] []
+            let
+                promptId =
+                    if d.hasPassport == Just True then
+                        "passport-country-entry"
+
+                    else
+                        "travel-doc-country-entry"
+            in
+            singleTextEntry model promptId d.travelDocCountry (\r -> SetPersonalData { d | travelDocCountry = r })
 
         TravelDocNumber ->
-            div [] []
+            let
+                promptId =
+                    if d.hasPassport == Just True then
+                        "passport-number-entry"
+
+                    else
+                        "travel-doc-number-entry"
+            in
+            singleTextEntry model promptId d.travelDocNumber (\r -> SetPersonalData { d | travelDocNumber = r })
 
         TravelDocExpiration ->
-            div [] []
+            let
+                promptId =
+                    if d.hasPassport == Just True then
+                        "passport-expiration-entry"
+
+                    else
+                        "travel-doc-expiration-entry"
+
+                day =
+                    d.travelDocExpirationDay
+
+                dayUpdate =
+                    \r -> SetPersonalData { d | travelDocExpirationDay = r }
+
+                month =
+                    d.travelDocExpirationMonth
+
+                monthUpdate =
+                    \r -> SetPersonalData { d | travelDocExpirationMonth = r }
+
+                year =
+                    d.travelDocExpirationYear
+
+                yearUpdate =
+                    \r -> SetPersonalData { d | travelDocExpirationYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] promptId
+                , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                ]
 
         SpouseName ->
             div [] []
@@ -1750,6 +1719,29 @@ yearList currentYear =
 
 
 -- Generic views
+
+
+yesNoCheckBox : Model -> String -> Maybe Bool -> (Maybe Bool -> Msg) -> Html Msg
+yesNoCheckBox model promptId value updateFunction =
+    let
+        yesChecked =
+            Maybe.withDefault False value
+
+        noChecked =
+            case value of
+                Just b ->
+                    not b
+
+                Nothing ->
+                    False
+    in
+    nextBackWrap model
+        [ prompt model [] promptId
+        , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+            [ checkBox model yesChecked "yes" updateFunction (setMaybe yesChecked True)
+            , checkBox model noChecked "no" updateFunction (setMaybe noChecked False)
+            ]
+        ]
 
 
 dateSelector : Model -> String -> (String -> Msg) -> String -> (String -> Msg) -> String -> (String -> Msg) -> Html Msg
