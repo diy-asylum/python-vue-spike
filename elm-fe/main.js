@@ -5597,7 +5597,8 @@ var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Mayb
 var $author$project$DataTypes$defaultMailingAddress = {apartmentNumber: '', areaCode: '', city: '', inCareOf: '', phoneNumber: '', state: '', streetName: '', streetNumber: '', zipCode: ''};
 var $author$project$Main$defaultTravelEvent = {day: '', month: '', place: '', status: '', year: ''};
 var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentEntryDay: '', currentEntryMonth: '', currentEntryPlace: '', currentEntryStatus: '', currentEntryYear: '', currentLanguagesInput: '', dayOfBirth: '', entryExpirationDay: '', entryExpirationMonth: '', entryExpirationYear: '', firstName: '', fluentInEnglish: $elm$core$Maybe$Nothing, gender: $elm$core$Maybe$Nothing, hasOtherTravelDoc: $elm$core$Maybe$Nothing, hasPassport: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, i94Number: '', immigrationCourtHistory: $elm$core$Maybe$Nothing, lastLeftHomeCountryDay: '', lastLeftHomeCountryMonth: '', lastLeftHomeCountryYear: '', lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, maritalStatus: $elm$core$Maybe$Nothing, middleName: '', monthOfBirth: '', mostRecentEntry: $author$project$Main$defaultTravelEvent, nationalityAtBirth: '', nativeLanguage: '', otherEntries: _List_Nil, otherLanguages: _List_Nil, presentNationality: '', raceEthnicOrTribalGroup: '', religion: '', socialSecurityNumber: '', travelDocCountry: '', travelDocExpirationDay: '', travelDocExpirationMonth: '', travelDocExpirationYear: '', travelDocNumber: '', uscisAccountNumber: '', yearOfBirth: ''};
-var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData};
+var $author$project$Main$defaultSpouseData = {firstName: '', lastName: '', middleName: ''};
+var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData, spouse: $author$project$Main$defaultSpouseData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Dict$Black = {$: 'Black'};
@@ -7671,7 +7672,6 @@ var $author$project$Main$DateOfBirth = {$: 'DateOfBirth'};
 var $author$project$Main$EnterGender = {$: 'EnterGender'};
 var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
 var $author$project$Main$EnterMaritalStatus = {$: 'EnterMaritalStatus'};
-var $author$project$Main$FirstName = {$: 'FirstName'};
 var $author$project$Main$FluentInEnglish = {$: 'FluentInEnglish'};
 var $author$project$Main$HasOtherTravelDoc = {$: 'HasOtherTravelDoc'};
 var $author$project$Main$HasPassport = {$: 'HasPassport'};
@@ -7680,12 +7680,11 @@ var $author$project$Main$HomeMailingSame = {$: 'HomeMailingSame'};
 var $author$project$Main$I94 = {$: 'I94'};
 var $author$project$Main$ImmigrationCourtHistoryEntry = {$: 'ImmigrationCourtHistoryEntry'};
 var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
-var $author$project$Main$LastName = {$: 'LastName'};
 var $author$project$Main$LeftHomeCountry = {$: 'LeftHomeCountry'};
 var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
-var $author$project$Main$MiddleName = {$: 'MiddleName'};
 var $author$project$Main$MostRecentEntry = {$: 'MostRecentEntry'};
 var $author$project$Main$MostRecentEntryExpiration = {$: 'MostRecentEntryExpiration'};
+var $author$project$Main$Name = {$: 'Name'};
 var $author$project$Main$NationalityAtBirth = {$: 'NationalityAtBirth'};
 var $author$project$Main$NativeLanguage = {$: 'NativeLanguage'};
 var $author$project$Main$OtherEntries = {$: 'OtherEntries'};
@@ -7713,14 +7712,10 @@ var $author$project$Main$getBack = F2(
 				} else {
 					return $author$project$Main$CurrentlyInUS;
 				}
-			case 'FirstName':
+			case 'Name':
 				return $author$project$Main$InUSLessThanOneYear;
-			case 'LastName':
-				return $author$project$Main$FirstName;
-			case 'MiddleName':
-				return $author$project$Main$LastName;
 			case 'Aliases':
-				return $author$project$Main$MiddleName;
+				return $author$project$Main$Name;
 			case 'HomeAddress':
 				return $author$project$Main$Aliases;
 			case 'HomeMailingSame':
@@ -7824,7 +7819,7 @@ var $author$project$Main$getNext = F2(
 					var _v2 = model.state.eligibility.lessThanOneYear;
 					if (_v2.$ === 'Just') {
 						if (_v2.a) {
-							return $author$project$Main$FirstName;
+							return $author$project$Main$Name;
 						} else {
 							return $author$project$Main$NotEligible;
 						}
@@ -7832,15 +7827,11 @@ var $author$project$Main$getNext = F2(
 						return $author$project$Main$InUSLessThanOneYear;
 					}
 				} else {
-					return $author$project$Main$FirstName;
+					return $author$project$Main$Name;
 				}
 			case 'NotEligible':
 				return $author$project$Main$NotEligible;
-			case 'FirstName':
-				return $author$project$Main$LastName;
-			case 'LastName':
-				return $author$project$Main$MiddleName;
-			case 'MiddleName':
+			case 'Name':
 				return $author$project$Main$Aliases;
 			case 'Aliases':
 				return $author$project$Main$HomeAddress;
@@ -7933,11 +7924,7 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$Eligibility;
 		case 'NotEligible':
 			return $author$project$Main$Eligibility;
-		case 'FirstName':
-			return $author$project$Main$PersonalInfo;
-		case 'MiddleName':
-			return $author$project$Main$PersonalInfo;
-		case 'LastName':
+		case 'Name':
 			return $author$project$Main$PersonalInfo;
 		case 'Aliases':
 			return $author$project$Main$PersonalInfo;
@@ -8337,12 +8324,23 @@ var $author$project$Main$update = F2(
 						model,
 						{state: newS}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'SetPersonalData':
 				var d = msg.a;
 				var s = model.state;
 				var newS = _Utils_update(
 					s,
 					{personal: d});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var d = msg.a;
+				var s = model.state;
+				var newS = _Utils_update(
+					s,
+					{spouse: d});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -11171,6 +11169,9 @@ var $author$project$Main$SetEligibility = function (a) {
 var $author$project$Main$SetPersonalData = function (a) {
 	return {$: 'SetPersonalData', a: a};
 };
+var $author$project$Main$SetSpouseData = function (a) {
+	return {$: 'SetSpouseData', a: a};
+};
 var $author$project$DataTypes$WIDOWED = {$: 'WIDOWED'};
 var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
 	function (a, b) {
@@ -11822,6 +11823,7 @@ var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero)
 		]));
 var $author$project$Main$validate = function (model) {
+	var s = model.state.spouse;
 	var elig = model.state.eligibility;
 	var d = model.state.personal;
 	if (!model.debug) {
@@ -11843,12 +11845,8 @@ var $author$project$Main$validate = function (model) {
 				}
 			case 'NotEligible':
 				return false;
-			case 'FirstName':
-				return d.firstName !== '';
-			case 'MiddleName':
-				return true;
-			case 'LastName':
-				return d.lastName !== '';
+			case 'Name':
+				return (d.firstName !== '') && (d.lastName !== '');
 			case 'Aliases':
 				return true;
 			case 'HomeAddress':
@@ -11919,15 +11917,15 @@ var $author$project$Main$validate = function (model) {
 			case 'HasPassport':
 				return !_Utils_eq(d.hasPassport, $elm$core$Maybe$Nothing);
 			case 'HasOtherTravelDoc':
-				return true;
+				return !_Utils_eq(d.hasOtherTravelDoc, $elm$core$Maybe$Nothing);
 			case 'TravelDocCountry':
-				return true;
+				return d.travelDocCountry !== '';
 			case 'TravelDocNumber':
-				return true;
+				return d.travelDocNumber !== '';
 			case 'TravelDocExpiration':
-				return true;
+				return (d.travelDocExpirationDay !== '') && ((d.travelDocExpirationMonth !== '') && (d.travelDocExpirationYear !== ''));
 			case 'SpouseName':
-				return true;
+				return (s.firstName !== '') && (s.lastName !== '');
 			default:
 				return true;
 		}
@@ -12334,6 +12332,7 @@ var $author$project$Main$yesNoCheckBox = F4(
 	});
 var $author$project$Main$render = F2(
 	function (element, model) {
+		var s = model.state.spouse;
 		var elig = model.state.eligibility;
 		var d = model.state.personal;
 		switch (element.$) {
@@ -12368,42 +12367,63 @@ var $author$project$Main$render = F2(
 							A3($author$project$Main$prompt, model, _List_Nil, 'not-eligible-explanation'),
 							$author$project$Main$backButton(model)
 						]));
-			case 'FirstName':
-				return A4(
-					$author$project$Main$singleTextEntry,
+			case 'Name':
+				return A2(
+					$author$project$Main$nextBackWrap,
 					model,
-					'first-name-entry',
-					d.firstName,
-					function (r) {
-						return $author$project$Main$SetPersonalData(
-							_Utils_update(
-								d,
-								{firstName: r}));
-					});
-			case 'MiddleName':
-				return A4(
-					$author$project$Main$singleTextEntry,
-					model,
-					'middle-name-entry',
-					d.middleName,
-					function (r) {
-						return $author$project$Main$SetPersonalData(
-							_Utils_update(
-								d,
-								{middleName: r}));
-					});
-			case 'LastName':
-				return A4(
-					$author$project$Main$singleTextEntry,
-					model,
-					'last-name-entry',
-					d.lastName,
-					function (r) {
-						return $author$project$Main$SetPersonalData(
-							_Utils_update(
-								d,
-								{lastName: r}));
-					});
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'name-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'first-name',
+									d.firstName,
+									function (r) {
+										return $author$project$Main$SetPersonalData(
+											_Utils_update(
+												d,
+												{firstName: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'middle-name',
+									d.middleName,
+									function (r) {
+										return $author$project$Main$SetPersonalData(
+											_Utils_update(
+												d,
+												{middleName: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'last-name',
+									d.lastName,
+									function (r) {
+										return $author$project$Main$SetPersonalData(
+											_Utils_update(
+												d,
+												{lastName: r}));
+									})
+								]))
+						]));
 			case 'Aliases':
 				return A8(
 					$author$project$Main$multiTextEntry,
@@ -13655,7 +13675,62 @@ var $author$project$Main$render = F2(
 							A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate)
 						]));
 			case 'SpouseName':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'spouse-name-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'first-name',
+									s.firstName,
+									function (r) {
+										return $author$project$Main$SetSpouseData(
+											_Utils_update(
+												s,
+												{firstName: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'middle-name',
+									s.middleName,
+									function (r) {
+										return $author$project$Main$SetSpouseData(
+											_Utils_update(
+												s,
+												{middleName: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'last-name',
+									s.lastName,
+									function (r) {
+										return $author$project$Main$SetSpouseData(
+											_Utils_update(
+												s,
+												{lastName: r}));
+									})
+								]))
+						]));
 			default:
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 		}
@@ -13725,12 +13800,8 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'length-of-stay');
 			case 'NotEligible':
 				return A2($author$project$Main$i18n, model, 'not-eligible');
-			case 'FirstName':
-				return A2($author$project$Main$i18n, model, 'first-name');
-			case 'LastName':
-				return A2($author$project$Main$i18n, model, 'last-name');
-			case 'MiddleName':
-				return A2($author$project$Main$i18n, model, 'middle-name');
+			case 'Name':
+				return A2($author$project$Main$i18n, model, 'name');
 			case 'Aliases':
 				return A2($author$project$Main$i18n, model, 'aliases');
 			case 'HomeAddress':
@@ -13792,7 +13863,7 @@ var $author$project$Main$formElementToDescription = F2(
 			case 'TravelDocExpiration':
 				return A2($author$project$Main$i18n, model, 'travel-doc-expiration');
 			case 'SpouseName':
-				return A2($author$project$Main$i18n, model, 'spouse-name');
+				return A2($author$project$Main$i18n, model, 'name');
 			default:
 				return A2($author$project$Main$i18n, model, 'number-of-children');
 		}

@@ -55,6 +55,9 @@ var translations = {
 	"personal-info": {
 		"en": "Personal Information"
 	},
+	"name": {
+		"en": "Name"
+	},
 	"first-name": {
 		"en": "First Name"
 	},
@@ -67,14 +70,8 @@ var translations = {
 	"less-than-one-year": {
 		"en": "Have you been in the US for less than one year since your most recent entry?"
 	},
-	"first-name-entry": {
-		"en": "What is your first name?"
-	},
-	"middle-name-entry": {
-		"en": "What is your middle name? If you do not have a middle name, leave this field blank."
-	},
-	"last-name-entry": {
-		"en": "What is your last name?"
+	"name-entry": {
+		"en": "Please enter your name."
 	},
 	"aliases": {
 		"en": "Aliases"
@@ -354,6 +351,9 @@ var translations = {
 	},
 	"spouse-name": {
 		"en": "Spouse Name"
+	},
+	"spouse-name-entry": {
+		"en": "Please enter your spouse's name."
 	},
 	"number-of-children": {
 		"en": "Number of Children"

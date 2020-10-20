@@ -77,6 +77,7 @@ i18n model key =
 type alias FormState =
     { eligibility : EligibilityData
     , personal : PersonalData
+    , spouse : SpouseData
     }
 
 
@@ -84,6 +85,7 @@ defaultFormState : FormState
 defaultFormState =
     { eligibility = defaultEligibilityData
     , personal = defaultPersonalData
+    , spouse = defaultSpouseData
     }
 
 
@@ -224,13 +226,26 @@ defaultTravelEvent =
     }
 
 
+type alias SpouseData =
+    { firstName : String
+    , lastName : String
+    , middleName : String
+    }
+
+
+defaultSpouseData : SpouseData
+defaultSpouseData =
+    { firstName = ""
+    , middleName = ""
+    , lastName = ""
+    }
+
+
 type FormEntryElement
     = CurrentlyInUS
     | InUSLessThanOneYear
     | NotEligible
-    | FirstName
-    | MiddleName
-    | LastName
+    | Name
     | Aliases
     | HomeAddress
     | HomeMailingSame
@@ -351,6 +366,7 @@ type Msg
     | Back
     | SetEligibility EligibilityData
     | SetPersonalData PersonalData
+    | SetSpouseData SpouseData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -506,6 +522,16 @@ update msg model =
             in
             ( { model | state = newS }, Cmd.none )
 
+        SetSpouseData d ->
+            let
+                s =
+                    model.state
+
+                newS =
+                    { s | spouse = d }
+            in
+            ( { model | state = newS }, Cmd.none )
+
 
 getNext : FormEntryElement -> Model -> FormEntryElement
 getNext entry model =
@@ -529,7 +555,7 @@ getNext entry model =
             if not model.debug then
                 case model.state.eligibility.lessThanOneYear of
                     Just True ->
-                        FirstName
+                        Name
 
                     Just False ->
                         NotEligible
@@ -538,18 +564,12 @@ getNext entry model =
                         InUSLessThanOneYear
 
             else
-                FirstName
+                Name
 
         NotEligible ->
             NotEligible
 
-        FirstName ->
-            LastName
-
-        LastName ->
-            MiddleName
-
-        MiddleName ->
+        Name ->
             Aliases
 
         Aliases ->
@@ -686,17 +706,11 @@ getBack entry model =
                 _ ->
                     CurrentlyInUS
 
-        FirstName ->
+        Name ->
             InUSLessThanOneYear
 
-        LastName ->
-            FirstName
-
-        MiddleName ->
-            LastName
-
         Aliases ->
-            MiddleName
+            Name
 
         HomeAddress ->
             Aliases
@@ -821,13 +835,7 @@ getSectionFromElement element =
         NotEligible ->
             Eligibility
 
-        FirstName ->
-            PersonalInfo
-
-        MiddleName ->
-            PersonalInfo
-
-        LastName ->
+        Name ->
             PersonalInfo
 
         Aliases ->
@@ -935,6 +943,9 @@ validate model =
 
         d =
             model.state.personal
+
+        s =
+            model.state.spouse
     in
     if not model.debug then
         case model.focusedEntry of
@@ -957,14 +968,8 @@ validate model =
             NotEligible ->
                 False
 
-            FirstName ->
-                d.firstName /= ""
-
-            MiddleName ->
-                True
-
-            LastName ->
-                d.lastName /= ""
+            Name ->
+                d.firstName /= "" && d.lastName /= ""
 
             Aliases ->
                 True
@@ -1099,19 +1104,19 @@ validate model =
                 d.hasPassport /= Nothing
 
             HasOtherTravelDoc ->
-                True
+                d.hasOtherTravelDoc /= Nothing
 
             TravelDocCountry ->
-                True
+                d.travelDocCountry /= ""
 
             TravelDocNumber ->
-                True
+                d.travelDocNumber /= ""
 
             TravelDocExpiration ->
-                True
+                d.travelDocExpirationDay /= "" && d.travelDocExpirationMonth /= "" && d.travelDocExpirationYear /= ""
 
             SpouseName ->
-                True
+                s.firstName /= "" && s.lastName /= ""
 
             NumberOfChildren ->
                 True
@@ -1193,6 +1198,9 @@ render element model =
 
         d =
             model.state.personal
+
+        s =
+            model.state.spouse
     in
     case element of
         CurrentlyInUS ->
@@ -1204,14 +1212,15 @@ render element model =
         NotEligible ->
             centerWrap [ prompt model [] "not-eligible-explanation", backButton model ]
 
-        FirstName ->
-            singleTextEntry model "first-name-entry" d.firstName (\r -> SetPersonalData { d | firstName = r })
-
-        MiddleName ->
-            singleTextEntry model "middle-name-entry" d.middleName (\r -> SetPersonalData { d | middleName = r })
-
-        LastName ->
-            singleTextEntry model "last-name-entry" d.lastName (\r -> SetPersonalData { d | lastName = r })
+        Name ->
+            nextBackWrap model
+                [ prompt model [] "name-entry"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "first-name" d.firstName (\r -> SetPersonalData { d | firstName = r })
+                    , labeledTextInput model "middle-name" d.middleName (\r -> SetPersonalData { d | middleName = r })
+                    , labeledTextInput model "last-name" d.lastName (\r -> SetPersonalData { d | lastName = r })
+                    ]
+                ]
 
         Aliases ->
             multiTextEntry model d.currentAliasInput d.aliases "aliases-entry" "aliases" (\r -> SetPersonalData { d | currentAliasInput = r }) (\r -> SetPersonalData { d | currentAliasInput = "", aliases = r }) (\r -> SetPersonalData { d | aliases = r })
@@ -1650,7 +1659,14 @@ render element model =
                 ]
 
         SpouseName ->
-            div [] []
+            nextBackWrap model
+                [ prompt model [] "spouse-name-entry"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "first-name" s.firstName (\r -> SetSpouseData { s | firstName = r })
+                    , labeledTextInput model "middle-name" s.middleName (\r -> SetSpouseData { s | middleName = r })
+                    , labeledTextInput model "last-name" s.lastName (\r -> SetSpouseData { s | lastName = r })
+                    ]
+                ]
 
         NumberOfChildren ->
             div [] []
@@ -2099,14 +2115,8 @@ formElementToDescription element model =
         NotEligible ->
             i18n model "not-eligible"
 
-        FirstName ->
-            i18n model "first-name"
-
-        LastName ->
-            i18n model "last-name"
-
-        MiddleName ->
-            i18n model "middle-name"
+        Name ->
+            i18n model "name"
 
         Aliases ->
             i18n model "aliases"
@@ -2199,7 +2209,7 @@ formElementToDescription element model =
             i18n model "travel-doc-expiration"
 
         SpouseName ->
-            i18n model "spouse-name"
+            i18n model "name"
 
         NumberOfChildren ->
             i18n model "number-of-children"
