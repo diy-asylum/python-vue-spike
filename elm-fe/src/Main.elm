@@ -230,6 +230,40 @@ type alias SpouseData =
     { firstName : String
     , lastName : String
     , middleName : String
+    , aliases : List String
+    , currentAliasInput : String
+    , dayOfBirth : String
+    , monthOfBirth : String
+    , yearOfBirth : String
+    , cityOfBirth : String
+    , countryOfBirth : String
+    , nationality : String
+    , gender : Maybe Gender
+    , raceEthnicityOrTribalGroup : String
+    , alienRegistrationNumber : String
+    , travelDocNumber : String
+    , socialSecurityNumber : String
+    , marriageDay : String
+    , marriageMonth : String
+    , marriageYear : String
+    , placeOfMarriage : String
+    , inUS : Maybe Bool
+    , currentLocation : String
+    , lastEntryDay : String
+    , lastEntryMonth : String
+    , lastEntryYear : String
+    , lastEntryPlace : String
+    , i94Number : String
+    , statusOnLastAdmission : String
+    , currentStatus : String
+    , statusExpirationDay : String
+    , statusExpirationMonth : String
+    , statusExpirationYear : String
+    , previousEntryDay : String
+    , previousEntryMonth : String
+    , previousEntryYear : String
+    , inImmigrationCourt : Maybe Bool
+    , includedInApplication : Maybe Bool
     }
 
 
@@ -238,6 +272,40 @@ defaultSpouseData =
     { firstName = ""
     , middleName = ""
     , lastName = ""
+    , aliases = []
+    , currentAliasInput = ""
+    , dayOfBirth = ""
+    , monthOfBirth = ""
+    , yearOfBirth = ""
+    , cityOfBirth = ""
+    , countryOfBirth = ""
+    , nationality = ""
+    , gender = Nothing
+    , raceEthnicityOrTribalGroup = ""
+    , alienRegistrationNumber = ""
+    , travelDocNumber = ""
+    , socialSecurityNumber = ""
+    , marriageDay = ""
+    , marriageMonth = ""
+    , marriageYear = ""
+    , placeOfMarriage = ""
+    , inUS = Nothing
+    , currentLocation = ""
+    , lastEntryDay = ""
+    , lastEntryMonth = ""
+    , lastEntryYear = ""
+    , lastEntryPlace = ""
+    , i94Number = ""
+    , statusOnLastAdmission = ""
+    , currentStatus = ""
+    , statusExpirationDay = ""
+    , statusExpirationMonth = ""
+    , statusExpirationYear = ""
+    , previousEntryDay = ""
+    , previousEntryMonth = ""
+    , previousEntryYear = ""
+    , inImmigrationCourt = Nothing
+    , includedInApplication = Nothing
     }
 
 
@@ -252,9 +320,7 @@ type FormEntryElement
     | EnterMailingAddress
     | EnterGender
     | EnterMaritalStatus
-    | DateOfBirth
-    | CountryOfBirth
-    | CityOfBirth
+    | BirthInfo
     | PresentNationality
     | NationalityAtBirth
     | RaceEthnicity
@@ -277,6 +343,23 @@ type FormEntryElement
     | TravelDocNumber
     | TravelDocExpiration
     | SpouseName
+    | SpouseAliases
+    | SpouseBirth
+    | SpouseNationality
+    | SpouseGender
+    | SpouseRaceEthnicity
+    | SpouseAlienRegistration
+    | SpouseTravelDoc
+    | SpouseSSN
+    | MarriageInfo
+    | SpouseInUS
+    | SpouseLocation
+    | SpouseLastEntry
+    | SpouseI94
+    | SpouseCurrentStatus
+    | SpousePreviousArrival
+    | SpouseImmigrationCourt
+    | SpouseIncluded
     | NumberOfChildren
 
 
@@ -593,15 +676,9 @@ getNext entry model =
             EnterMaritalStatus
 
         EnterMaritalStatus ->
-            DateOfBirth
+            BirthInfo
 
-        DateOfBirth ->
-            CountryOfBirth
-
-        CountryOfBirth ->
-            CityOfBirth
-
-        CityOfBirth ->
+        BirthInfo ->
             PresentNationality
 
         PresentNationality ->
@@ -683,7 +760,62 @@ getNext entry model =
                 NumberOfChildren
 
         SpouseName ->
-            SpouseName
+            SpouseAliases
+
+        SpouseAliases ->
+            SpouseBirth
+
+        SpouseBirth ->
+            SpouseNationality
+
+        SpouseNationality ->
+            SpouseGender
+
+        SpouseGender ->
+            SpouseRaceEthnicity
+
+        SpouseRaceEthnicity ->
+            SpouseAlienRegistration
+
+        SpouseAlienRegistration ->
+            SpouseTravelDoc
+
+        SpouseTravelDoc ->
+            SpouseSSN
+
+        SpouseSSN ->
+            MarriageInfo
+
+        MarriageInfo ->
+            SpouseInUS
+
+        SpouseInUS ->
+            if model.state.spouse.inUS == Just False then
+                SpouseLocation
+
+            else
+                SpouseLastEntry
+
+        SpouseLocation ->
+            NumberOfChildren
+
+        SpouseLastEntry ->
+            SpouseI94
+
+        SpouseI94 ->
+            SpouseCurrentStatus
+
+        SpouseCurrentStatus ->
+            SpousePreviousArrival
+
+        SpousePreviousArrival ->
+            SpouseImmigrationCourt
+
+        SpouseImmigrationCourt ->
+            SpouseIncluded
+
+        SpouseIncluded ->
+            NumberOfChildren
 
         NumberOfChildren ->
             NumberOfChildren
@@ -732,17 +864,11 @@ getBack entry model =
         EnterMaritalStatus ->
             EnterGender
 
-        DateOfBirth ->
+        BirthInfo ->
             EnterMaritalStatus
 
-        CountryOfBirth ->
-            DateOfBirth
-
-        CityOfBirth ->
-            CountryOfBirth
-
         PresentNationality ->
-            CityOfBirth
+            BirthInfo
 
         NationalityAtBirth ->
             PresentNationality
@@ -815,9 +941,64 @@ getBack entry model =
             else
                 TravelDocExpiration
 
+        SpouseAliases ->
+            SpouseName
+
+        SpouseBirth ->
+            SpouseAliases
+
+        SpouseNationality ->
+            SpouseBirth
+
+        SpouseGender ->
+            SpouseNationality
+
+        SpouseRaceEthnicity ->
+            SpouseGender
+
+        SpouseAlienRegistration ->
+            SpouseRaceEthnicity
+
+        SpouseTravelDoc ->
+            SpouseAlienRegistration
+
+        SpouseSSN ->
+            SpouseTravelDoc
+
+        MarriageInfo ->
+            SpouseSSN
+
+        SpouseInUS ->
+            MarriageInfo
+
+        SpouseLocation ->
+            SpouseInUS
+
+        SpouseLastEntry ->
+            SpouseInUS
+
+        SpouseI94 ->
+            SpouseLastEntry
+
+        SpouseCurrentStatus ->
+            SpouseI94
+
+        SpousePreviousArrival ->
+            SpouseCurrentStatus
+
+        SpouseImmigrationCourt ->
+            SpousePreviousArrival
+
+        SpouseIncluded ->
+            SpouseImmigrationCourt
+
         NumberOfChildren ->
             if model.state.personal.maritalStatus == Just MARRIED then
-                SpouseName
+                if model.state.spouse.inUS == Just False then
+                    SpouseLocation
+
+                else
+                    SpouseIncluded
 
             else
                 TravelDocExpiration
@@ -856,13 +1037,7 @@ getSectionFromElement element =
         EnterMaritalStatus ->
             PersonalInfo
 
-        DateOfBirth ->
-            PersonalInfo
-
-        CountryOfBirth ->
-            PersonalInfo
-
-        CityOfBirth ->
+        BirthInfo ->
             PersonalInfo
 
         PresentNationality ->
@@ -929,6 +1104,57 @@ getSectionFromElement element =
             ImmigrationInfo
 
         SpouseName ->
+            SpouseInfo
+
+        SpouseAliases ->
+            SpouseInfo
+
+        SpouseBirth ->
+            SpouseInfo
+
+        SpouseNationality ->
+            SpouseInfo
+
+        SpouseGender ->
+            SpouseInfo
+
+        SpouseRaceEthnicity ->
+            SpouseInfo
+
+        SpouseAlienRegistration ->
+            SpouseInfo
+
+        SpouseTravelDoc ->
+            SpouseInfo
+
+        SpouseSSN ->
+            SpouseInfo
+
+        MarriageInfo ->
+            SpouseInfo
+
+        SpouseInUS ->
+            SpouseInfo
+
+        SpouseLocation ->
+            SpouseInfo
+
+        SpouseLastEntry ->
+            SpouseInfo
+
+        SpouseI94 ->
+            SpouseInfo
+
+        SpouseCurrentStatus ->
+            SpouseInfo
+
+        SpousePreviousArrival ->
+            SpouseInfo
+
+        SpouseImmigrationCourt ->
+            SpouseInfo
+
+        SpouseIncluded ->
             SpouseInfo
 
         NumberOfChildren ->
@@ -1039,14 +1265,8 @@ validate model =
             EnterMaritalStatus ->
                 d.maritalStatus /= Nothing
 
-            DateOfBirth ->
-                d.yearOfBirth /= "" && d.monthOfBirth /= "" && d.dayOfBirth /= ""
-
-            CountryOfBirth ->
-                d.countryOfBirth /= ""
-
-            CityOfBirth ->
-                d.cityOfBirth /= ""
+            BirthInfo ->
+                d.yearOfBirth /= "" && d.monthOfBirth /= "" && d.dayOfBirth /= "" && d.countryOfBirth /= "" && d.cityOfBirth /= ""
 
             PresentNationality ->
                 d.presentNationality /= ""
@@ -1117,6 +1337,57 @@ validate model =
 
             SpouseName ->
                 s.firstName /= "" && s.lastName /= ""
+
+            SpouseAliases ->
+                True
+
+            SpouseBirth ->
+                s.cityOfBirth /= "" && s.countryOfBirth /= "" && s.dayOfBirth /= "" && s.monthOfBirth /= "" && s.yearOfBirth /= ""
+
+            SpouseNationality ->
+                s.nationality /= ""
+
+            SpouseGender ->
+                s.gender /= Nothing
+
+            SpouseRaceEthnicity ->
+                s.raceEthnicityOrTribalGroup /= ""
+
+            SpouseAlienRegistration ->
+                True
+
+            SpouseTravelDoc ->
+                True
+
+            SpouseSSN ->
+                True
+
+            MarriageInfo ->
+                s.placeOfMarriage /= "" && s.marriageDay /= "" && s.marriageMonth /= "" && s.marriageYear /= ""
+
+            SpouseInUS ->
+                s.inUS /= Nothing
+
+            SpouseLocation ->
+                s.currentLocation /= ""
+
+            SpouseLastEntry ->
+                s.lastEntryDay /= "" && s.lastEntryMonth /= "" && s.lastEntryYear /= "" && s.lastEntryPlace /= "" && s.statusOnLastAdmission /= ""
+
+            SpouseI94 ->
+                True
+
+            SpouseCurrentStatus ->
+                s.currentStatus /= ""
+
+            SpousePreviousArrival ->
+                True
+
+            SpouseImmigrationCourt ->
+                s.inImmigrationCourt /= Nothing
+
+            SpouseIncluded ->
+                s.includedInApplication /= Nothing
 
             NumberOfChildren ->
                 True
@@ -1276,33 +1547,7 @@ render element model =
                 ]
 
         EnterGender ->
-            let
-                gender =
-                    d.gender
-
-                maleChecked =
-                    case gender of
-                        Just MALE ->
-                            True
-
-                        _ ->
-                            False
-
-                femaleChecked =
-                    case gender of
-                        Just FEMALE ->
-                            True
-
-                        _ ->
-                            False
-            in
-            nextBackWrap model
-                [ prompt model [] "enter-gender"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ checkBox model maleChecked "male" SetPersonalData { d | gender = setMaybe maleChecked MALE }
-                    , checkBox model femaleChecked "female" SetPersonalData { d | gender = setMaybe femaleChecked FEMALE }
-                    ]
-                ]
+            genderSelector model d.gender "enter-gender" (\r -> SetPersonalData { d | gender = r })
 
         EnterMaritalStatus ->
             let
@@ -1351,7 +1596,7 @@ render element model =
                     ]
                 ]
 
-        DateOfBirth ->
+        BirthInfo ->
             let
                 month =
                     d.monthOfBirth
@@ -1372,15 +1617,13 @@ render element model =
                     \r -> SetPersonalData { d | yearOfBirth = r }
             in
             nextBackWrap model
-                [ prompt model [] "date-of-birth-entry"
-                , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                [ prompt model [] "birth-prompt"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    , labeledTextInput model "city" d.cityOfBirth (\r -> SetPersonalData { d | cityOfBirth = r })
+                    , labeledTextInput model "country" d.countryOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
+                    ]
                 ]
-
-        CountryOfBirth ->
-            singleTextEntry model "country-of-birth-entry" d.countryOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
-
-        CityOfBirth ->
-            singleTextEntry model "city-of-birth-entry" d.cityOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
 
         PresentNationality ->
             singleTextEntry model "present-nationality-entry" d.presentNationality (\r -> SetPersonalData { d | presentNationality = r })
@@ -1668,6 +1911,183 @@ render element model =
                     ]
                 ]
 
+        SpouseAliases ->
+            multiTextEntry model s.currentAliasInput s.aliases "spouse-aliases-entry" "aliases" (\r -> SetSpouseData { s | currentAliasInput = r }) (\r -> SetSpouseData { s | currentAliasInput = "", aliases = r }) (\r -> SetSpouseData { s | aliases = r })
+
+        SpouseBirth ->
+            let
+                day =
+                    s.dayOfBirth
+
+                dayUpdate =
+                    \r -> SetSpouseData { s | dayOfBirth = r }
+
+                month =
+                    s.monthOfBirth
+
+                monthUpdate =
+                    \r -> SetSpouseData { s | monthOfBirth = r }
+
+                year =
+                    s.yearOfBirth
+
+                yearUpdate =
+                    \r -> SetSpouseData { s | yearOfBirth = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "spouse-birth"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    , labeledTextInput model "city" s.cityOfBirth (\r -> SetSpouseData { s | cityOfBirth = r })
+                    , labeledTextInput model "country" s.countryOfBirth (\r -> SetSpouseData { s | countryOfBirth = r })
+                    ]
+                ]
+
+        SpouseNationality ->
+            singleTextEntry model "spouse-nationality" s.nationality (\r -> SetSpouseData { s | nationality = r })
+
+        SpouseGender ->
+            genderSelector model s.gender "spouse-enter-gender" (\r -> SetSpouseData { s | gender = r })
+
+        SpouseRaceEthnicity ->
+            singleTextEntry model "spouse-race-ethnicity" s.raceEthnicityOrTribalGroup (\r -> SetSpouseData { s | raceEthnicityOrTribalGroup = r })
+
+        SpouseAlienRegistration ->
+            singleTextEntry model "spouse-alien-registration" s.alienRegistrationNumber (\r -> SetSpouseData { s | alienRegistrationNumber = r })
+
+        SpouseTravelDoc ->
+            singleTextEntry model "spouse-travel-number" s.travelDocNumber (\r -> SetSpouseData { s | travelDocNumber = r })
+
+        SpouseSSN ->
+            singleTextEntry model "spouse-ssn" s.socialSecurityNumber (\r -> SetSpouseData { s | socialSecurityNumber = r })
+
+        MarriageInfo ->
+            let
+                day =
+                    s.marriageDay
+
+                dayUpdate =
+                    \r -> SetSpouseData { s | marriageDay = r }
+
+                month =
+                    s.marriageMonth
+
+                monthUpdate =
+                    \r -> SetSpouseData { s | marriageMonth = r }
+
+                year =
+                    s.marriageYear
+
+                yearUpdate =
+                    \r -> SetSpouseData { s | marriageYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "marriage-info-entry"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "place" s.placeOfMarriage (\r -> SetSpouseData { s | placeOfMarriage = r })
+                    , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    ]
+                ]
+
+        SpouseInUS ->
+            yesNoCheckBox model "spouse-in-us-prompt" s.inUS (\r -> SetSpouseData { s | inUS = r })
+
+        SpouseLocation ->
+            singleTextEntry model "spouse-location-entry" s.currentLocation (\r -> SetSpouseData { s | currentLocation = r })
+
+        SpouseLastEntry ->
+            let
+                day =
+                    s.lastEntryDay
+
+                dayUpdate =
+                    \r -> SetSpouseData { s | lastEntryDay = r }
+
+                month =
+                    s.lastEntryMonth
+
+                monthUpdate =
+                    \r -> SetSpouseData { s | lastEntryMonth = r }
+
+                year =
+                    s.lastEntryYear
+
+                yearUpdate =
+                    \r -> SetSpouseData { s | lastEntryYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "spouse-last-entry"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "place" s.lastEntryPlace (\r -> SetSpouseData { s | lastEntryPlace = r })
+                    , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    , labeledTextInput model "immigration-status" s.statusOnLastAdmission (\r -> SetSpouseData { s | statusOnLastAdmission = r })
+                    ]
+                ]
+
+        SpouseI94 ->
+            singleTextEntry model "spouse-i94-entry" s.i94Number (\r -> SetSpouseData { s | i94Number = r })
+
+        SpouseCurrentStatus ->
+            let
+                day =
+                    s.statusExpirationDay
+
+                dayUpdate =
+                    \r -> SetSpouseData { s | statusExpirationDay = r }
+
+                month =
+                    s.statusExpirationMonth
+
+                monthUpdate =
+                    \r -> SetSpouseData { s | statusExpirationMonth = r }
+
+                year =
+                    s.statusExpirationYear
+
+                yearUpdate =
+                    \r -> SetSpouseData { s | statusExpirationYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "spouse-current-status"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "immigration-status" s.currentStatus (\r -> SetSpouseData { s | currentStatus = r })
+                    , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    ]
+                ]
+
+        SpousePreviousArrival ->
+            let
+                day =
+                    s.previousEntryDay
+
+                dayUpdate =
+                    \r -> SetSpouseData { s | previousEntryDay = r }
+
+                month =
+                    s.previousEntryMonth
+
+                monthUpdate =
+                    \r -> SetSpouseData { s | previousEntryMonth = r }
+
+                year =
+                    s.previousEntryYear
+
+                yearUpdate =
+                    \r -> SetSpouseData { s | previousEntryYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "previous-entry-prompt"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    ]
+                ]
+
+        SpouseImmigrationCourt ->
+            yesNoCheckBox model "spouse-in-court" s.inImmigrationCourt (\r -> SetSpouseData { s | inImmigrationCourt = r })
+
+        SpouseIncluded ->
+            yesNoCheckBox model "spouse-include" s.includedInApplication (\r -> SetSpouseData { s | includedInApplication = r })
+
         NumberOfChildren ->
             div [] []
 
@@ -1735,6 +2155,34 @@ yearList currentYear =
 
 
 -- Generic views
+
+
+genderSelector : Model -> Maybe Gender -> String -> (Maybe Gender -> Msg) -> Html Msg
+genderSelector model currentGender promptId updateFunction =
+    let
+        maleChecked =
+            case currentGender of
+                Just MALE ->
+                    True
+
+                _ ->
+                    False
+
+        femaleChecked =
+            case currentGender of
+                Just FEMALE ->
+                    True
+
+                _ ->
+                    False
+    in
+    nextBackWrap model
+        [ prompt model [] promptId
+        , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+            [ checkBox model maleChecked "male" updateFunction (setMaybe maleChecked MALE)
+            , checkBox model femaleChecked "female" updateFunction (setMaybe femaleChecked FEMALE)
+            ]
+        ]
 
 
 yesNoCheckBox : Model -> String -> Maybe Bool -> (Maybe Bool -> Msg) -> Html Msg
@@ -2136,14 +2584,8 @@ formElementToDescription element model =
         EnterMaritalStatus ->
             i18n model "marital-status"
 
-        DateOfBirth ->
-            i18n model "date-of-birth"
-
-        CountryOfBirth ->
-            i18n model "country-of-birth"
-
-        CityOfBirth ->
-            i18n model "city-of-birth"
+        BirthInfo ->
+            i18n model "birth-info"
 
         PresentNationality ->
             i18n model "present-nationality"
@@ -2210,6 +2652,57 @@ formElementToDescription element model =
 
         SpouseName ->
             i18n model "name"
+
+        SpouseAliases ->
+            i18n model "aliases"
+
+        SpouseBirth ->
+            i18n model "birth-info"
+
+        SpouseNationality ->
+            i18n model "present-nationality"
+
+        SpouseGender ->
+            i18n model "gender"
+
+        SpouseRaceEthnicity ->
+            i18n model "race-ethnicity"
+
+        SpouseAlienRegistration ->
+            i18n model "alien-registration"
+
+        SpouseTravelDoc ->
+            i18n model "travel-doc-info"
+
+        SpouseSSN ->
+            i18n model "ssn"
+
+        MarriageInfo ->
+            i18n model "marriage-info"
+
+        SpouseInUS ->
+            i18n model "spouse-in-us"
+
+        SpouseLocation ->
+            i18n model "spouse-location"
+
+        SpouseLastEntry ->
+            i18n model "last-entry"
+
+        SpouseI94 ->
+            i18n model "i94"
+
+        SpouseCurrentStatus ->
+            i18n model "immigration-status"
+
+        SpousePreviousArrival ->
+            i18n model "previous-arrival"
+
+        SpouseImmigrationCourt ->
+            i18n model "immigration-court"
+
+        SpouseIncluded ->
+            i18n model "include-in-application"
 
         NumberOfChildren ->
             i18n model "number-of-children"

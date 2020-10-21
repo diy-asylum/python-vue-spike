@@ -79,6 +79,9 @@ var translations = {
 	"aliases-entry": {
 		"en": "Have you used any other names or aliases, including maiden names? Create an entry for each alias below."
 	},
+	"spouse-aliases-entry": {
+		"en": "Has your spouse used any other names or aliases, including maiden names? Create an entry for each alias below."
+	},
 	"add": {
 		"en": "Add"
 	},
@@ -160,12 +163,6 @@ var translations = {
 	"widowed": {
 		"en": "Widowed"
 	},
-	"date-of-birth": {
-		"en": "Date of Birth"
-	},
-	"date-of-birth-entry": {
-		"en": "Please enter your date of birth."
-	},
 	"month": {
 		"en": "Month"
 	},
@@ -175,17 +172,8 @@ var translations = {
 	"year": {
 		"en": "Year"
 	},
-	"country-of-birth": {
-		"en": "Country of Birth"
-	},
-	"country-of-birth-entry": {
-		"en": "In what country were you born?"
-	},
-	"city-of-birth": {
-		"en": "City of Birth"
-	},
-	"city-of-birth-entry": {
-		"en": "In what city were you born?"
+	"country": {
+		"en": "Country"
 	},
 	"present-nationality": {
 		"en": "Present Nationality"
@@ -232,6 +220,9 @@ var translations = {
 	"immigration-court-history": {
 		"en": "Immigration Court History"
 	},
+	"immigration-court": {
+		"en": "Immigration Court"
+	},
 	"immigration-court-history-entry": {
 		"en": "Which of the following describes your history with immigration court proceedings in the US?"
 	},
@@ -255,6 +246,9 @@ var translations = {
 	},
 	"alien-registration-entry": {
 		"en": "Please enter your alien registration number. If you do not have an alien registration number, leave this field blank."
+	},
+	"spouse-alien-registration": {
+		"en": "Please enter your spouse's alien registration number. If they do not have an alien registration number, leave this field blank."
 	},
 	"ssn": {
 		"en": "Social Security Number"
@@ -357,5 +351,77 @@ var translations = {
 	},
 	"number-of-children": {
 		"en": "Number of Children"
+	},
+	"birth-info": {
+		"en": "Birth Information"
+	},
+	"birth-prompt": {
+		"en": "Please enter your date of birth, as well as the city and country where you were born."
+	},
+	"travel-doc-info": {
+		"en": "Travel Document Information"
+	},
+	"marriage-info": {
+		"en": "Marriage Information"
+	},
+	"spouse-in-us": {
+		"en": "Spouse in US"
+	},
+	"spouse-location": {
+		"en": "Spouse Location"
+	},
+	"last-entry": {
+		"en": "Last Entry"
+	},
+	"previous-arrival": {
+		"en": "Previous Arrival"
+	},
+	"include-in-application": {
+		"en": "Include in Application"
+	},
+	"spouse-birth": {
+		"en": "Please enter your spouse's date of birth, as well as the city and country where they were born."
+	},
+	"spouse-enter-gender": {
+		"en": "Please enter your spouse's gender."
+	},
+	"spouse-nationality": {
+		"en": "Please enter your spouse's current nationality (citizenship)."
+	},
+	"spouse-race-ethnicity": {
+		"en": "To what race, ethnicity, or tribal group does your spouse belong?"
+	},
+	"spouse-travel-number": {
+		"en": "Please enter the number on your spouse's passport. If your spouse does not have a passport, list the number from any other travel document. If your spouse does not have a travel document, leave this field blank."
+	},
+	"spouse-ssn": {
+		"en": "Please enter your spouse's US social security number. If your spouse does not have a social security number, leave this field blank."
+	},
+	"marriage-info-entry": {
+		"en": "Please enter the place and date of your marriage."
+	},
+	"spouse-in-us-prompt": {
+		"en": "Is your spouse currently located in the US?"
+	},
+	"spouse-location-entry": {
+		"en": "Where is your spouse currently located?"
+	},
+	"spouse-i94-entry": {
+		"en": "What is your spouse's I94 number? If your spouse does not have an I94 number, leave this field blank."
+	},
+	"spouse-current-status": {
+		"en": "Please list your spouse's current immigration status along with its expiration date."
+	},
+	"previous-entry-prompt": {
+		"en": "If your spouse has entered the US prior to their most recent entry, enter the date of the entry which occurred immediately prior to their most recent one. If your spouse has never entered the US prior to their most recent entry, leave these fields blank."
+	},
+	"spouse-in-court": {
+		"en": "Is your spouse currently involved in US immigration court?"
+	},
+	"spouse-include": {
+		"en": "Is you spouse to be included in this application?"
+	},
+	"spouse-last-entry": {
+		"en": "Please enter the place, date, and immigration status of your spouse's most recent entry into the US."
 	}
 }
