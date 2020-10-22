@@ -304,6 +304,9 @@ var translations = {
 	"child-info": {
 		"en": "Child Information"
 	},
+	"child": {
+		"en": "Child"
+	},
 	"has-passport": {
 		"en": "Passport"
 	},
@@ -371,7 +374,7 @@ var translations = {
 		"en": "Spouse Location"
 	},
 	"last-entry": {
-		"en": "Last Entry"
+		"en": "Most Recent Entry"
 	},
 	"previous-arrival": {
 		"en": "Previous Arrival"
@@ -423,5 +426,20 @@ var translations = {
 	},
 	"spouse-last-entry": {
 		"en": "Please enter the place, date, and immigration status of your spouse's most recent entry into the US."
+	},
+	"address-info": {
+		"en": "Address Information"
+	},
+	"last-address-before-us": {
+		"en": "Last Address Before US"
+	},
+	"number-of-children-prompt": {
+		"en": "Please select the number of children you have."
+	},
+	"child-name-entry": {
+		"en": "Please enter your child's name."
+	},
+	"child-birth": {
+		"en": "Please enter your child's date of birth, as well as the city and country where they were born."
 	}
 }

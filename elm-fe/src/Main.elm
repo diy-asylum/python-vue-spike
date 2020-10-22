@@ -78,6 +78,9 @@ type alias FormState =
     { eligibility : EligibilityData
     , personal : PersonalData
     , spouse : SpouseData
+    , numberOfChildren : Maybe Int
+    , children : List ChildData
+    , addresses : AddressData
     }
 
 
@@ -86,6 +89,9 @@ defaultFormState =
     { eligibility = defaultEligibilityData
     , personal = defaultPersonalData
     , spouse = defaultSpouseData
+    , numberOfChildren = Nothing
+    , children = []
+    , addresses = defaultAddressData
     }
 
 
@@ -309,6 +315,69 @@ defaultSpouseData =
     }
 
 
+type alias ChildData =
+    { firstName : String
+    , middleName : String
+    , lastName : String
+    , dayOfBirth : String
+    , monthOfBirth : String
+    , yearOfBirth : String
+    , cityOfBirth : String
+    , countryOfBirth : String
+    }
+
+
+defaultChildData : ChildData
+defaultChildData =
+    { firstName = ""
+    , middleName = ""
+    , lastName = ""
+    , dayOfBirth = ""
+    , monthOfBirth = ""
+    , yearOfBirth = ""
+    , cityOfBirth = ""
+    , countryOfBirth = ""
+    }
+
+
+type alias AddressData =
+    { lastAddressBeforeUS : GranularAddressWithDates
+    }
+
+
+defaultAddressData : AddressData
+defaultAddressData =
+    { lastAddressBeforeUS = defaultGranularAddressWithDates
+    }
+
+
+type alias GranularAddressWithDates =
+    { streetName : String
+    , streetNumber : String
+    , cityOrTown : String
+    , departmentProvinceOrState : String
+    , country : String
+    , fromDay : String
+    , fromMonth : String
+    , toDay : String
+    , toMonth : String
+    }
+
+
+defaultGranularAddressWithDates : GranularAddressWithDates
+defaultGranularAddressWithDates =
+    { streetName = ""
+    , streetNumber = ""
+    , cityOrTown = ""
+    , departmentProvinceOrState = ""
+    , country = ""
+    , fromDay = ""
+    , fromMonth = ""
+    , toDay = ""
+    , toMonth = ""
+    }
+
+
 type FormEntryElement
     = CurrentlyInUS
     | InUSLessThanOneYear
@@ -361,6 +430,9 @@ type FormEntryElement
     | SpouseImmigrationCourt
     | SpouseIncluded
     | NumberOfChildren
+    | ChildName Int
+    | ChildBirth Int
+    | LastAddressBeforeUS
 
 
 type SectionTitle
@@ -368,7 +440,8 @@ type SectionTitle
     | PersonalInfo
     | ImmigrationInfo
     | SpouseInfo
-    | ChildInfo
+    | ChildInfo (Maybe Int)
+    | AddressInfo
 
 
 pathMatch : String -> Page
@@ -450,6 +523,8 @@ type Msg
     | SetEligibility EligibilityData
     | SetPersonalData PersonalData
     | SetSpouseData SpouseData
+    | SetNumChildren String
+    | SetChildData Int ChildData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -612,6 +687,61 @@ update msg model =
 
                 newS =
                     { s | spouse = d }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetNumChildren n ->
+            let
+                s =
+                    model.state
+
+                newNumChildren =
+                    String.toInt n
+
+                oldNumChildren =
+                    model.state.numberOfChildren
+
+                newChildList =
+                    case newNumChildren of
+                        Just newNum ->
+                            case oldNumChildren of
+                                Just oldNum ->
+                                    if newNum > oldNum then
+                                        List.append model.state.children (List.repeat (newNum - oldNum) defaultChildData)
+
+                                    else if oldNum > newNum then
+                                        List.take newNum model.state.children
+
+                                    else
+                                        model.state.children
+
+                                _ ->
+                                    List.repeat newNum defaultChildData
+
+                        _ ->
+                            []
+
+                newS =
+                    { s | numberOfChildren = newNumChildren, children = newChildList }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetChildData n newChild ->
+            let
+                c =
+                    model.state.children
+
+                index =
+                    n - 1
+
+                updated =
+                    List.Extra.setAt index newChild c
+
+                s =
+                    model.state
+
+                newS =
+                    { s | children = updated }
             in
             ( { model | state = newS }, Cmd.none )
 
@@ -818,7 +948,34 @@ getNext entry model =
             NumberOfChildren
 
         NumberOfChildren ->
-            NumberOfChildren
+            case model.state.numberOfChildren of
+                Just n ->
+                    if n > 0 then
+                        ChildName 1
+
+                    else
+                        LastAddressBeforeUS
+
+                _ ->
+                    LastAddressBeforeUS
+
+        ChildName n ->
+            ChildBirth n
+
+        ChildBirth n ->
+            case model.state.numberOfChildren of
+                Just numChildren ->
+                    if numChildren > n then
+                        ChildName (n + 1)
+
+                    else
+                        LastAddressBeforeUS
+
+                _ ->
+                    LastAddressBeforeUS
+
+        LastAddressBeforeUS ->
+            LastAddressBeforeUS
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -1003,6 +1160,28 @@ getBack entry model =
             else
                 TravelDocExpiration
 
+        ChildName n ->
+            if n <= 1 then
+                NumberOfChildren
+
+            else
+                ChildBirth (n - 1)
+
+        ChildBirth n ->
+            ChildName n
+
+        LastAddressBeforeUS ->
+            case model.state.numberOfChildren of
+                Just n ->
+                    if n > 0 then
+                        ChildBirth n
+
+                    else
+                        NumberOfChildren
+
+                _ ->
+                    NumberOfChildren
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -1158,7 +1337,16 @@ getSectionFromElement element =
             SpouseInfo
 
         NumberOfChildren ->
-            ChildInfo
+            ChildInfo Nothing
+
+        ChildName n ->
+            ChildInfo (Just n)
+
+        ChildBirth n ->
+            ChildInfo (Just n)
+
+        LastAddressBeforeUS ->
+            AddressInfo
 
 
 validate : Model -> Bool
@@ -1172,6 +1360,9 @@ validate model =
 
         s =
             model.state.spouse
+
+        c =
+            model.state.children
     in
     if not model.debug then
         case model.focusedEntry of
@@ -1392,6 +1583,33 @@ validate model =
             NumberOfChildren ->
                 True
 
+            ChildName n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.firstName /= "" && child.lastName /= ""
+
+                    _ ->
+                        True
+
+            ChildBirth n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.cityOfBirth /= "" && child.countryOfBirth /= "" && child.dayOfBirth /= "" && child.monthOfBirth /= "" && child.yearOfBirth /= ""
+
+                    _ ->
+                        True
+
+            LastAddressBeforeUS ->
+                True
+
     else
         True
 
@@ -1472,6 +1690,9 @@ render element model =
 
         s =
             model.state.spouse
+
+        c =
+            model.state.children
     in
     case element of
         CurrentlyInUS ->
@@ -2089,6 +2310,74 @@ render element model =
             yesNoCheckBox model "spouse-include" s.includedInApplication (\r -> SetSpouseData { s | includedInApplication = r })
 
         NumberOfChildren ->
+            let
+                numChildren =
+                    Maybe.withDefault "" (Maybe.map String.fromInt model.state.numberOfChildren)
+            in
+            nextBackWrap model
+                [ prompt model [] "number-of-children-prompt"
+                , select
+                    [ onInput SetNumChildren
+                    , css
+                        [ dropdownStyles
+                        ]
+                    ]
+                    (List.map (\r -> option [ Html.Styled.Attributes.selected (r == numChildren) ] [ text r ]) numChildrenList)
+                ]
+
+        ChildName n ->
+            let
+                index =
+                    n - 1
+
+                child =
+                    Maybe.withDefault defaultChildData (List.Extra.getAt index c)
+            in
+            nextBackWrap model
+                [ prompt model [] "child-name-entry"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "first-name" child.firstName (\r -> SetChildData n { child | firstName = r })
+                    , labeledTextInput model "middle-name" child.middleName (\r -> SetChildData n { child | middleName = r })
+                    , labeledTextInput model "last-name" child.lastName (\r -> SetChildData n { child | lastName = r })
+                    ]
+                ]
+
+        ChildBirth n ->
+            let
+                index =
+                    n - 1
+
+                child =
+                    Maybe.withDefault defaultChildData (List.Extra.getAt index c)
+
+                day =
+                    child.dayOfBirth
+
+                dayUpdate =
+                    \r -> SetChildData n { child | dayOfBirth = r }
+
+                month =
+                    child.monthOfBirth
+
+                monthUpdate =
+                    \r -> SetChildData n { child | monthOfBirth = r }
+
+                year =
+                    child.yearOfBirth
+
+                yearUpdate =
+                    \r -> SetChildData n { child | yearOfBirth = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "child-birth"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    , labeledTextInput model "city" child.cityOfBirth (\r -> SetChildData n { child | cityOfBirth = r })
+                    , labeledTextInput model "country" child.countryOfBirth (\r -> SetChildData n { child | countryOfBirth = r })
+                    ]
+                ]
+
+        LastAddressBeforeUS ->
             div [] []
 
 
@@ -2105,6 +2394,11 @@ printEntry e =
 monthList : List String
 monthList =
     [ "", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ]
+
+
+numChildrenList : List String
+numChildrenList =
+    "" :: List.map String.fromInt (List.range 0 20)
 
 
 dayList : List String
@@ -2508,10 +2802,10 @@ titleHtml title elementLink clickable model =
 
         html =
             if clickable then
-                h3 [ onClick (SetFormEntryElement elementLink), css [ marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
+                h3 [ onClick (SetFormEntryElement elementLink), css [ fontSize (px 12), marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
 
             else
-                h3 [ css [ color gray, marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
+                h3 [ css [ color gray, fontSize (px 10), marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
     in
     html
 
@@ -2524,10 +2818,10 @@ elementNameHtml element clickable model =
 
         html =
             if clickable then
-                div [ onClick (SetFormEntryElement element), css [ marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
+                div [ onClick (SetFormEntryElement element), css [ fontSize (px 10), marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
 
             else
-                div [ css [ color gray, marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
+                div [ css [ color gray, fontSize (px 12), marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
     in
     html
 
@@ -2547,8 +2841,16 @@ sectionToDescription title model =
         SpouseInfo ->
             i18n model "spouse-info"
 
-        ChildInfo ->
-            i18n model "child-info"
+        ChildInfo maybeNumChildren ->
+            case maybeNumChildren of
+                Just n ->
+                    String.concat [ i18n model "child", " ", String.fromInt n ]
+
+                _ ->
+                    i18n model "child-info"
+
+        AddressInfo ->
+            i18n model "address-info"
 
 
 formElementToDescription : FormEntryElement -> Model -> String
@@ -2706,6 +3008,15 @@ formElementToDescription element model =
 
         NumberOfChildren ->
             i18n model "number-of-children"
+
+        ChildName _ ->
+            i18n model "name"
+
+        ChildBirth _ ->
+            i18n model "birth-info"
+
+        LastAddressBeforeUS ->
+            i18n model "last-address-before-us"
 
 
 

@@ -5593,12 +5593,14 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 	};
 };
 var $elm$json$Json$Decode$decodeValue = _Json_run;
+var $author$project$Main$defaultGranularAddressWithDates = {cityOrTown: '', country: '', departmentProvinceOrState: '', fromDay: '', fromMonth: '', streetName: '', streetNumber: '', toDay: '', toMonth: ''};
+var $author$project$Main$defaultAddressData = {lastAddressBeforeUS: $author$project$Main$defaultGranularAddressWithDates};
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
 var $author$project$DataTypes$defaultMailingAddress = {apartmentNumber: '', areaCode: '', city: '', inCareOf: '', phoneNumber: '', state: '', streetName: '', streetNumber: '', zipCode: ''};
 var $author$project$Main$defaultTravelEvent = {day: '', month: '', place: '', status: '', year: ''};
 var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentEntryDay: '', currentEntryMonth: '', currentEntryPlace: '', currentEntryStatus: '', currentEntryYear: '', currentLanguagesInput: '', dayOfBirth: '', entryExpirationDay: '', entryExpirationMonth: '', entryExpirationYear: '', firstName: '', fluentInEnglish: $elm$core$Maybe$Nothing, gender: $elm$core$Maybe$Nothing, hasOtherTravelDoc: $elm$core$Maybe$Nothing, hasPassport: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, i94Number: '', immigrationCourtHistory: $elm$core$Maybe$Nothing, lastLeftHomeCountryDay: '', lastLeftHomeCountryMonth: '', lastLeftHomeCountryYear: '', lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, maritalStatus: $elm$core$Maybe$Nothing, middleName: '', monthOfBirth: '', mostRecentEntry: $author$project$Main$defaultTravelEvent, nationalityAtBirth: '', nativeLanguage: '', otherEntries: _List_Nil, otherLanguages: _List_Nil, presentNationality: '', raceEthnicOrTribalGroup: '', religion: '', socialSecurityNumber: '', travelDocCountry: '', travelDocExpirationDay: '', travelDocExpirationMonth: '', travelDocExpirationYear: '', travelDocNumber: '', uscisAccountNumber: '', yearOfBirth: ''};
 var $author$project$Main$defaultSpouseData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentLocation: '', currentStatus: '', dayOfBirth: '', firstName: '', gender: $elm$core$Maybe$Nothing, i94Number: '', inImmigrationCourt: $elm$core$Maybe$Nothing, inUS: $elm$core$Maybe$Nothing, includedInApplication: $elm$core$Maybe$Nothing, lastEntryDay: '', lastEntryMonth: '', lastEntryPlace: '', lastEntryYear: '', lastName: '', marriageDay: '', marriageMonth: '', marriageYear: '', middleName: '', monthOfBirth: '', nationality: '', placeOfMarriage: '', previousEntryDay: '', previousEntryMonth: '', previousEntryYear: '', raceEthnicityOrTribalGroup: '', socialSecurityNumber: '', statusExpirationDay: '', statusExpirationMonth: '', statusExpirationYear: '', statusOnLastAdmission: '', travelDocNumber: '', yearOfBirth: ''};
-var $author$project$Main$defaultFormState = {eligibility: $author$project$Main$defaultEligibilityData, personal: $author$project$Main$defaultPersonalData, spouse: $author$project$Main$defaultSpouseData};
+var $author$project$Main$defaultFormState = {addresses: $author$project$Main$defaultAddressData, children: _List_Nil, eligibility: $author$project$Main$defaultEligibilityData, numberOfChildren: $elm$core$Maybe$Nothing, personal: $author$project$Main$defaultPersonalData, spouse: $author$project$Main$defaultSpouseData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Dict$Black = {$: 'Black'};
@@ -6408,6 +6410,15 @@ var $author$project$Main$subscriptions = function (model) {
 						{height: height, width: width}));
 			}));
 };
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $author$project$Main$defaultChildData = {cityOfBirth: '', countryOfBirth: '', dayOfBirth: '', firstName: '', lastName: '', middleName: '', monthOfBirth: '', yearOfBirth: ''};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Ports$description = _Platform_outgoingPort('description', $elm$json$Json$Encode$string);
 var $author$project$Main$FinishDownload = function (a) {
@@ -7667,6 +7678,12 @@ var $author$project$Main$downloadFilledForm = function (data) {
 var $author$project$Main$Aliases = {$: 'Aliases'};
 var $author$project$Main$AlienRegistration = {$: 'AlienRegistration'};
 var $author$project$Main$BirthInfo = {$: 'BirthInfo'};
+var $author$project$Main$ChildBirth = function (a) {
+	return {$: 'ChildBirth', a: a};
+};
+var $author$project$Main$ChildName = function (a) {
+	return {$: 'ChildName', a: a};
+};
 var $author$project$Main$EnterGender = {$: 'EnterGender'};
 var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
 var $author$project$Main$EnterMaritalStatus = {$: 'EnterMaritalStatus'};
@@ -7686,6 +7703,7 @@ var $author$project$Main$MostRecentEntryExpiration = {$: 'MostRecentEntryExpirat
 var $author$project$Main$Name = {$: 'Name'};
 var $author$project$Main$NationalityAtBirth = {$: 'NationalityAtBirth'};
 var $author$project$Main$NativeLanguage = {$: 'NativeLanguage'};
+var $author$project$Main$NumberOfChildren = {$: 'NumberOfChildren'};
 var $author$project$Main$OtherEntries = {$: 'OtherEntries'};
 var $author$project$Main$OtherLanguages = {$: 'OtherLanguages'};
 var $author$project$Main$PresentNationality = {$: 'PresentNationality'};
@@ -7832,16 +7850,30 @@ var $author$project$Main$getBack = F2(
 				return $author$project$Main$SpousePreviousArrival;
 			case 'SpouseIncluded':
 				return $author$project$Main$SpouseImmigrationCourt;
-			default:
+			case 'NumberOfChildren':
 				return _Utils_eq(
 					model.state.personal.maritalStatus,
 					$elm$core$Maybe$Just($author$project$DataTypes$MARRIED)) ? (_Utils_eq(
 					model.state.spouse.inUS,
 					$elm$core$Maybe$Just(false)) ? $author$project$Main$SpouseLocation : $author$project$Main$SpouseIncluded) : $author$project$Main$TravelDocExpiration;
+			case 'ChildName':
+				var n = entry.a;
+				return (n <= 1) ? $author$project$Main$NumberOfChildren : $author$project$Main$ChildBirth(n - 1);
+			case 'ChildBirth':
+				var n = entry.a;
+				return $author$project$Main$ChildName(n);
+			default:
+				var _v3 = model.state.numberOfChildren;
+				if (_v3.$ === 'Just') {
+					var n = _v3.a;
+					return (n > 0) ? $author$project$Main$ChildBirth(n) : $author$project$Main$NumberOfChildren;
+				} else {
+					return $author$project$Main$NumberOfChildren;
+				}
 		}
 	});
+var $author$project$Main$LastAddressBeforeUS = {$: 'LastAddressBeforeUS'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
-var $author$project$Main$NumberOfChildren = {$: 'NumberOfChildren'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -7987,11 +8019,34 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$SpouseIncluded;
 			case 'SpouseIncluded':
 				return $author$project$Main$NumberOfChildren;
+			case 'NumberOfChildren':
+				var _v4 = model.state.numberOfChildren;
+				if (_v4.$ === 'Just') {
+					var n = _v4.a;
+					return (n > 0) ? $author$project$Main$ChildName(1) : $author$project$Main$LastAddressBeforeUS;
+				} else {
+					return $author$project$Main$LastAddressBeforeUS;
+				}
+			case 'ChildName':
+				var n = entry.a;
+				return $author$project$Main$ChildBirth(n);
+			case 'ChildBirth':
+				var n = entry.a;
+				var _v5 = model.state.numberOfChildren;
+				if (_v5.$ === 'Just') {
+					var numChildren = _v5.a;
+					return (_Utils_cmp(numChildren, n) > 0) ? $author$project$Main$ChildName(n + 1) : $author$project$Main$LastAddressBeforeUS;
+				} else {
+					return $author$project$Main$LastAddressBeforeUS;
+				}
 			default:
-				return $author$project$Main$NumberOfChildren;
+				return $author$project$Main$LastAddressBeforeUS;
 		}
 	});
-var $author$project$Main$ChildInfo = {$: 'ChildInfo'};
+var $author$project$Main$AddressInfo = {$: 'AddressInfo'};
+var $author$project$Main$ChildInfo = function (a) {
+	return {$: 'ChildInfo', a: a};
+};
 var $author$project$Main$ImmigrationInfo = {$: 'ImmigrationInfo'};
 var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
 var $author$project$Main$SpouseInfo = {$: 'SpouseInfo'};
@@ -8097,8 +8152,18 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$SpouseInfo;
 		case 'SpouseIncluded':
 			return $author$project$Main$SpouseInfo;
+		case 'NumberOfChildren':
+			return $author$project$Main$ChildInfo($elm$core$Maybe$Nothing);
+		case 'ChildName':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildBirth':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
 		default:
-			return $author$project$Main$ChildInfo;
+			return $author$project$Main$AddressInfo;
 	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -8122,6 +8187,27 @@ var $author$project$Main$pageToDescription = function (page) {
 	return description;
 };
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
 var $elm$file$File$Download$bytes = F3(
 	function (name, mime, content) {
 		return A2(
@@ -8136,6 +8222,185 @@ var $elm$file$File$Download$bytes = F3(
 var $author$project$Main$savePdf = function (bytes) {
 	return A3($elm$file$File$Download$bytes, 'completed-i589.pdf', 'application/pdf', bytes);
 };
+var $elm$core$Basics$always = F2(
+	function (a, _v0) {
+		return a;
+	});
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $elm_community$list_extra$List$Extra$updateAt = F3(
+	function (index, fn, list) {
+		if (index < 0) {
+			return list;
+		} else {
+			var tail = A2($elm$core$List$drop, index, list);
+			var head = A2($elm$core$List$take, index, list);
+			if (tail.b) {
+				var x = tail.a;
+				var xs = tail.b;
+				return _Utils_ap(
+					head,
+					A2(
+						$elm$core$List$cons,
+						fn(x),
+						xs));
+			} else {
+				return list;
+			}
+		}
+	});
+var $elm_community$list_extra$List$Extra$setAt = F2(
+	function (index, value) {
+		return A2(
+			$elm_community$list_extra$List$Extra$updateAt,
+			index,
+			$elm$core$Basics$always(value));
+	});
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -8444,12 +8709,56 @@ var $author$project$Main$update = F2(
 						model,
 						{state: newS}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'SetSpouseData':
 				var d = msg.a;
 				var s = model.state;
 				var newS = _Utils_update(
 					s,
 					{spouse: d});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			case 'SetNumChildren':
+				var n = msg.a;
+				var s = model.state;
+				var oldNumChildren = model.state.numberOfChildren;
+				var newNumChildren = $elm$core$String$toInt(n);
+				var newChildList = function () {
+					if (newNumChildren.$ === 'Just') {
+						var newNum = newNumChildren.a;
+						if (oldNumChildren.$ === 'Just') {
+							var oldNum = oldNumChildren.a;
+							return (_Utils_cmp(newNum, oldNum) > 0) ? A2(
+								$elm$core$List$append,
+								model.state.children,
+								A2($elm$core$List$repeat, newNum - oldNum, $author$project$Main$defaultChildData)) : ((_Utils_cmp(oldNum, newNum) > 0) ? A2($elm$core$List$take, newNum, model.state.children) : model.state.children);
+						} else {
+							return A2($elm$core$List$repeat, newNum, $author$project$Main$defaultChildData);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}();
+				var newS = _Utils_update(
+					s,
+					{children: newChildList, numberOfChildren: newNumChildren});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var n = msg.a;
+				var newChild = msg.b;
+				var s = model.state;
+				var index = n - 1;
+				var c = model.state.children;
+				var updated = A3($elm_community$list_extra$List$Extra$setAt, index, newChild, c);
+				var newS = _Utils_update(
+					s,
+					{children: updated});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8835,14 +9144,6 @@ var $rtfeldman$elm_css$Css$Structure$compactHelp = F2(
 var $rtfeldman$elm_css$Css$Structure$Keyframes = function (a) {
 	return {$: 'Keyframes', a: a};
 };
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
 var $rtfeldman$elm_css$Css$Structure$withKeyframeDeclarations = F2(
 	function (keyframesByName, compactedDeclarations) {
 		return A2(
@@ -9858,132 +10159,6 @@ var $elm$core$List$tail = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2($elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var $elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return $elm$core$List$reverse(
-			A3($elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var $elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _v0 = _Utils_Tuple2(n, list);
-			_v0$1:
-			while (true) {
-				_v0$5:
-				while (true) {
-					if (!_v0.b.b) {
-						return list;
-					} else {
-						if (_v0.b.b.b) {
-							switch (_v0.a) {
-								case 1:
-									break _v0$1;
-								case 2:
-									var _v2 = _v0.b;
-									var x = _v2.a;
-									var _v3 = _v2.b;
-									var y = _v3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_v0.b.b.b.b) {
-										var _v4 = _v0.b;
-										var x = _v4.a;
-										var _v5 = _v4.b;
-										var y = _v5.a;
-										var _v6 = _v5.b;
-										var z = _v6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _v0$5;
-									}
-								default:
-									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
-										var _v7 = _v0.b;
-										var x = _v7.a;
-										var _v8 = _v7.b;
-										var y = _v8.a;
-										var _v9 = _v8.b;
-										var z = _v9.a;
-										var _v10 = _v9.b;
-										var w = _v10.a;
-										var tl = _v10.b;
-										return (ctr > 1000) ? A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _v0$5;
-									}
-							}
-						} else {
-							if (_v0.a === 1) {
-								break _v0$1;
-							} else {
-								break _v0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _v1 = _v0.b;
-			var x = _v1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var $elm$core$List$take = F2(
-	function (n, list) {
-		return A3($elm$core$List$takeFast, 0, n, list);
-	});
 var $rtfeldman$elm_css$Css$Preprocess$Resolve$toDocumentRule = F5(
 	function (str1, str2, str3, str4, declaration) {
 		if (declaration.$ === 'StyleBlockDeclaration') {
@@ -11272,8 +11447,15 @@ var $author$project$DataTypes$CURRENTLY = {$: 'CURRENTLY'};
 var $author$project$DataTypes$DIVORCED = {$: 'DIVORCED'};
 var $author$project$DataTypes$NEVER = {$: 'NEVER'};
 var $author$project$DataTypes$SINGLE = {$: 'SINGLE'};
+var $author$project$Main$SetChildData = F2(
+	function (a, b) {
+		return {$: 'SetChildData', a: a, b: b};
+	});
 var $author$project$Main$SetEligibility = function (a) {
 	return {$: 'SetEligibility', a: a};
+};
+var $author$project$Main$SetNumChildren = function (a) {
+	return {$: 'SetNumChildren', a: a};
 };
 var $author$project$Main$SetPersonalData = function (a) {
 	return {$: 'SetPersonalData', a: a};
@@ -11846,10 +12028,16 @@ var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$px(4)),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero)
 		]));
+var $elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
+			A2($elm$core$List$drop, idx, xs));
+	});
 var $author$project$Main$validate = function (model) {
 	var s = model.state.spouse;
 	var elig = model.state.eligibility;
 	var d = model.state.personal;
+	var c = model.state.children;
 	if (!model.debug) {
 		var _v0 = model.focusedEntry;
 		switch (_v0.$) {
@@ -11980,6 +12168,26 @@ var $author$project$Main$validate = function (model) {
 				return !_Utils_eq(s.inImmigrationCourt, $elm$core$Maybe$Nothing);
 			case 'SpouseIncluded':
 				return !_Utils_eq(s.includedInApplication, $elm$core$Maybe$Nothing);
+			case 'NumberOfChildren':
+				return true;
+			case 'ChildName':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return (child.firstName !== '') && (child.lastName !== '');
+				} else {
+					return true;
+				}
+			case 'ChildBirth':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return (child.cityOfBirth !== '') && ((child.countryOfBirth !== '') && ((child.dayOfBirth !== '') && ((child.monthOfBirth !== '') && (child.yearOfBirth !== ''))));
+				} else {
+					return true;
+				}
 			default:
 				return true;
 		}
@@ -12254,27 +12462,6 @@ var $author$project$Main$multiEntryElement = F2(
 					$rtfeldman$elm_css$Html$Styled$text(entry)
 				]));
 	});
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
 var $elm_community$list_extra$List$Extra$removeAt = F2(
 	function (index, l) {
 		if (index < 0) {
@@ -12454,6 +12641,13 @@ var $author$project$Main$multiTextEntry = F8(
 					removeFunction)
 				]));
 	});
+var $author$project$Main$numChildrenList = A2(
+	$elm$core$List$cons,
+	'',
+	A2(
+		$elm$core$List$map,
+		$elm$core$String$fromInt,
+		A2($elm$core$List$range, 0, 20)));
 var $rtfeldman$elm_css$Css$PcUnits = {$: 'PcUnits'};
 var $rtfeldman$elm_css$Css$pc = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PcUnits, 'pc');
 var $elm$core$String$concat = function (strings) {
@@ -12530,6 +12724,7 @@ var $author$project$Main$render = F2(
 		var s = model.state.spouse;
 		var elig = model.state.eligibility;
 		var d = model.state.personal;
+		var c = model.state.children;
 		switch (element.$) {
 			case 'CurrentlyInUS':
 				return A4(
@@ -14343,6 +14538,196 @@ var $author$project$Main$render = F2(
 								s,
 								{includedInApplication: r}));
 					});
+			case 'NumberOfChildren':
+				var numChildren = A2(
+					$elm$core$Maybe$withDefault,
+					'',
+					A2($elm$core$Maybe$map, $elm$core$String$fromInt, model.state.numberOfChildren));
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'number-of-children-prompt'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$select,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$SetNumChildren),
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$dropdownStyles]))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (r) {
+									return A2(
+										$rtfeldman$elm_css$Html$Styled$option,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+												_Utils_eq(r, numChildren))
+											]),
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$text(r)
+											]));
+								},
+								$author$project$Main$numChildrenList))
+						]));
+			case 'ChildName':
+				var n = element.a;
+				var index = n - 1;
+				var child = A2(
+					$elm$core$Maybe$withDefault,
+					$author$project$Main$defaultChildData,
+					A2($elm_community$list_extra$List$Extra$getAt, index, c));
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'child-name-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'first-name',
+									child.firstName,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{firstName: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'middle-name',
+									child.middleName,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{middleName: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'last-name',
+									child.lastName,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{lastName: r}));
+									})
+								]))
+						]));
+			case 'ChildBirth':
+				var n = element.a;
+				var index = n - 1;
+				var child = A2(
+					$elm$core$Maybe$withDefault,
+					$author$project$Main$defaultChildData,
+					A2($elm_community$list_extra$List$Extra$getAt, index, c));
+				var day = child.dayOfBirth;
+				var dayUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{dayOfBirth: r}));
+				};
+				var month = child.monthOfBirth;
+				var monthUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{monthOfBirth: r}));
+				};
+				var year = child.yearOfBirth;
+				var yearUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{yearOfBirth: r}));
+				};
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'child-birth'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'city',
+									child.cityOfBirth,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{cityOfBirth: r}));
+									}),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'country',
+									child.countryOfBirth,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{countryOfBirth: r}));
+									})
+								]))
+						]));
 			default:
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 		}
@@ -14506,8 +14891,14 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'immigration-court');
 			case 'SpouseIncluded':
 				return A2($author$project$Main$i18n, model, 'include-in-application');
-			default:
+			case 'NumberOfChildren':
 				return A2($author$project$Main$i18n, model, 'number-of-children');
+			case 'ChildName':
+				return A2($author$project$Main$i18n, model, 'name');
+			case 'ChildBirth':
+				return A2($author$project$Main$i18n, model, 'birth-info');
+			default:
+				return A2($author$project$Main$i18n, model, 'last-address-before-us');
 		}
 	});
 var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
@@ -14524,6 +14915,8 @@ var $author$project$Main$elementNameHtml = F3(
 					$rtfeldman$elm_css$Html$Styled$Attributes$css(
 					_List_fromArray(
 						[
+							$rtfeldman$elm_css$Css$fontSize(
+							$rtfeldman$elm_css$Css$px(10)),
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(5)),
 							$rtfeldman$elm_css$Css$marginBottom(
@@ -14541,6 +14934,8 @@ var $author$project$Main$elementNameHtml = F3(
 					_List_fromArray(
 						[
 							$rtfeldman$elm_css$Css$color($author$project$Main$gray),
+							$rtfeldman$elm_css$Css$fontSize(
+							$rtfeldman$elm_css$Css$px(12)),
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(5)),
 							$rtfeldman$elm_css$Css$marginBottom(
@@ -14565,8 +14960,22 @@ var $author$project$Main$sectionToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'immigration-info');
 			case 'SpouseInfo':
 				return A2($author$project$Main$i18n, model, 'spouse-info');
+			case 'ChildInfo':
+				var maybeNumChildren = title.a;
+				if (maybeNumChildren.$ === 'Just') {
+					var n = maybeNumChildren.a;
+					return $elm$core$String$concat(
+						_List_fromArray(
+							[
+								A2($author$project$Main$i18n, model, 'child'),
+								' ',
+								$elm$core$String$fromInt(n)
+							]));
+				} else {
+					return A2($author$project$Main$i18n, model, 'child-info');
+				}
 			default:
-				return A2($author$project$Main$i18n, model, 'child-info');
+				return A2($author$project$Main$i18n, model, 'address-info');
 		}
 	});
 var $author$project$Main$titleHtml = F4(
@@ -14581,6 +14990,8 @@ var $author$project$Main$titleHtml = F4(
 					$rtfeldman$elm_css$Html$Styled$Attributes$css(
 					_List_fromArray(
 						[
+							$rtfeldman$elm_css$Css$fontSize(
+							$rtfeldman$elm_css$Css$px(12)),
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(10)),
 							$rtfeldman$elm_css$Css$marginBottom(
@@ -14598,6 +15009,8 @@ var $author$project$Main$titleHtml = F4(
 					_List_fromArray(
 						[
 							$rtfeldman$elm_css$Css$color($author$project$Main$gray),
+							$rtfeldman$elm_css$Css$fontSize(
+							$rtfeldman$elm_css$Css$px(10)),
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(10)),
 							$rtfeldman$elm_css$Css$marginBottom(
