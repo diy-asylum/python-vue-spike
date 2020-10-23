@@ -6418,7 +6418,7 @@ var $elm$core$List$append = F2(
 			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
 		}
 	});
-var $author$project$Main$defaultChildData = {cityOfBirth: '', countryOfBirth: '', dayOfBirth: '', firstName: '', lastName: '', middleName: '', monthOfBirth: '', yearOfBirth: ''};
+var $author$project$Main$defaultChildData = {alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentLocation: '', currentStatus: '', dayOfBirth: '', firstName: '', gender: $elm$core$Maybe$Nothing, i94Number: '', inImmigrationCourt: $elm$core$Maybe$Nothing, inUS: $elm$core$Maybe$Nothing, includedInApplication: $elm$core$Maybe$Nothing, lastEntryDay: '', lastEntryMonth: '', lastEntryPlace: '', lastEntryYear: '', lastName: '', maritalStatus: $elm$core$Maybe$Nothing, middleName: '', monthOfBirth: '', nationality: '', raceEthnicityOrTribalGroup: '', socialSecurityNumber: '', statusExpirationDay: '', statusExpirationMonth: '', statusExpirationYear: '', statusOnLastAdmission: '', travelDocNumber: '', yearOfBirth: ''};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Ports$description = _Platform_outgoingPort('description', $elm$json$Json$Encode$string);
 var $author$project$Main$FinishDownload = function (a) {
@@ -7678,11 +7678,53 @@ var $author$project$Main$downloadFilledForm = function (data) {
 var $author$project$Main$Aliases = {$: 'Aliases'};
 var $author$project$Main$AlienRegistration = {$: 'AlienRegistration'};
 var $author$project$Main$BirthInfo = {$: 'BirthInfo'};
+var $author$project$Main$ChildAlienRegistration = function (a) {
+	return {$: 'ChildAlienRegistration', a: a};
+};
 var $author$project$Main$ChildBirth = function (a) {
 	return {$: 'ChildBirth', a: a};
 };
+var $author$project$Main$ChildCurrentStatus = function (a) {
+	return {$: 'ChildCurrentStatus', a: a};
+};
+var $author$project$Main$ChildGender = function (a) {
+	return {$: 'ChildGender', a: a};
+};
+var $author$project$Main$ChildI94 = function (a) {
+	return {$: 'ChildI94', a: a};
+};
+var $author$project$Main$ChildImmigrationCourt = function (a) {
+	return {$: 'ChildImmigrationCourt', a: a};
+};
+var $author$project$Main$ChildInUS = function (a) {
+	return {$: 'ChildInUS', a: a};
+};
+var $author$project$Main$ChildIncluded = function (a) {
+	return {$: 'ChildIncluded', a: a};
+};
+var $author$project$Main$ChildLastEntry = function (a) {
+	return {$: 'ChildLastEntry', a: a};
+};
+var $author$project$Main$ChildLocation = function (a) {
+	return {$: 'ChildLocation', a: a};
+};
+var $author$project$Main$ChildMaritalStatus = function (a) {
+	return {$: 'ChildMaritalStatus', a: a};
+};
 var $author$project$Main$ChildName = function (a) {
 	return {$: 'ChildName', a: a};
+};
+var $author$project$Main$ChildNationality = function (a) {
+	return {$: 'ChildNationality', a: a};
+};
+var $author$project$Main$ChildRaceEthnicity = function (a) {
+	return {$: 'ChildRaceEthnicity', a: a};
+};
+var $author$project$Main$ChildSSN = function (a) {
+	return {$: 'ChildSSN', a: a};
+};
+var $author$project$Main$ChildTravelDoc = function (a) {
+	return {$: 'ChildTravelDoc', a: a};
 };
 var $author$project$Main$EnterGender = {$: 'EnterGender'};
 var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
@@ -7862,11 +7904,53 @@ var $author$project$Main$getBack = F2(
 			case 'ChildBirth':
 				var n = entry.a;
 				return $author$project$Main$ChildName(n);
+			case 'ChildNationality':
+				var n = entry.a;
+				return $author$project$Main$ChildBirth(n);
+			case 'ChildGender':
+				var n = entry.a;
+				return $author$project$Main$ChildNationality(n);
+			case 'ChildRaceEthnicity':
+				var n = entry.a;
+				return $author$project$Main$ChildGender(n);
+			case 'ChildMaritalStatus':
+				var n = entry.a;
+				return $author$project$Main$ChildRaceEthnicity(n);
+			case 'ChildAlienRegistration':
+				var n = entry.a;
+				return $author$project$Main$ChildMaritalStatus(n);
+			case 'ChildTravelDoc':
+				var n = entry.a;
+				return $author$project$Main$ChildAlienRegistration(n);
+			case 'ChildSSN':
+				var n = entry.a;
+				return $author$project$Main$ChildTravelDoc(n);
+			case 'ChildInUS':
+				var n = entry.a;
+				return $author$project$Main$ChildSSN(n);
+			case 'ChildLocation':
+				var n = entry.a;
+				return $author$project$Main$ChildInUS(n);
+			case 'ChildLastEntry':
+				var n = entry.a;
+				return $author$project$Main$ChildLocation(n);
+			case 'ChildI94':
+				var n = entry.a;
+				return $author$project$Main$ChildLastEntry(n);
+			case 'ChildCurrentStatus':
+				var n = entry.a;
+				return $author$project$Main$ChildI94(n);
+			case 'ChildImmigrationCourt':
+				var n = entry.a;
+				return $author$project$Main$ChildCurrentStatus(n);
+			case 'ChildIncluded':
+				var n = entry.a;
+				return $author$project$Main$ChildImmigrationCourt(n);
 			default:
 				var _v3 = model.state.numberOfChildren;
 				if (_v3.$ === 'Just') {
 					var n = _v3.a;
-					return (n > 0) ? $author$project$Main$ChildBirth(n) : $author$project$Main$NumberOfChildren;
+					return (n > 0) ? $author$project$Main$ChildIncluded(n) : $author$project$Main$NumberOfChildren;
 				} else {
 					return $author$project$Main$NumberOfChildren;
 				}
@@ -8032,6 +8116,48 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$ChildBirth(n);
 			case 'ChildBirth':
 				var n = entry.a;
+				return $author$project$Main$ChildNationality(n);
+			case 'ChildNationality':
+				var n = entry.a;
+				return $author$project$Main$ChildGender(n);
+			case 'ChildGender':
+				var n = entry.a;
+				return $author$project$Main$ChildRaceEthnicity(n);
+			case 'ChildRaceEthnicity':
+				var n = entry.a;
+				return $author$project$Main$ChildMaritalStatus(n);
+			case 'ChildMaritalStatus':
+				var n = entry.a;
+				return $author$project$Main$ChildAlienRegistration(n);
+			case 'ChildAlienRegistration':
+				var n = entry.a;
+				return $author$project$Main$ChildTravelDoc(n);
+			case 'ChildTravelDoc':
+				var n = entry.a;
+				return $author$project$Main$ChildSSN(n);
+			case 'ChildSSN':
+				var n = entry.a;
+				return $author$project$Main$ChildInUS(n);
+			case 'ChildInUS':
+				var n = entry.a;
+				return $author$project$Main$ChildLocation(n);
+			case 'ChildLocation':
+				var n = entry.a;
+				return $author$project$Main$ChildLastEntry(n);
+			case 'ChildLastEntry':
+				var n = entry.a;
+				return $author$project$Main$ChildI94(n);
+			case 'ChildI94':
+				var n = entry.a;
+				return $author$project$Main$ChildCurrentStatus(n);
+			case 'ChildCurrentStatus':
+				var n = entry.a;
+				return $author$project$Main$ChildImmigrationCourt(n);
+			case 'ChildImmigrationCourt':
+				var n = entry.a;
+				return $author$project$Main$ChildIncluded(n);
+			case 'ChildIncluded':
+				var n = entry.a;
 				var _v5 = model.state.numberOfChildren;
 				if (_v5.$ === 'Just') {
 					var numChildren = _v5.a;
@@ -8159,6 +8285,62 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$ChildInfo(
 				$elm$core$Maybe$Just(n));
 		case 'ChildBirth':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildNationality':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildGender':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildRaceEthnicity':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildMaritalStatus':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildAlienRegistration':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildTravelDoc':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildSSN':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildInUS':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildLocation':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildLastEntry':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildI94':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildCurrentStatus':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildImmigrationCourt':
+			var n = element.a;
+			return $author$project$Main$ChildInfo(
+				$elm$core$Maybe$Just(n));
+		case 'ChildIncluded':
 			var n = element.a;
 			return $author$project$Main$ChildInfo(
 				$elm$core$Maybe$Just(n));
@@ -12188,6 +12370,108 @@ var $author$project$Main$validate = function (model) {
 				} else {
 					return true;
 				}
+			case 'ChildNationality':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return child.nationality !== '';
+				} else {
+					return true;
+				}
+			case 'ChildGender':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return !_Utils_eq(child.gender, $elm$core$Maybe$Nothing);
+				} else {
+					return true;
+				}
+			case 'ChildRaceEthnicity':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return child.raceEthnicityOrTribalGroup !== '';
+				} else {
+					return true;
+				}
+			case 'ChildMaritalStatus':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return !_Utils_eq(child.maritalStatus, $elm$core$Maybe$Nothing);
+				} else {
+					return true;
+				}
+			case 'ChildAlienRegistration':
+				var n = _v0.a;
+				return true;
+			case 'ChildTravelDoc':
+				var n = _v0.a;
+				return true;
+			case 'ChildSSN':
+				var n = _v0.a;
+				return true;
+			case 'ChildInUS':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return !_Utils_eq(child.inUS, $elm$core$Maybe$Nothing);
+				} else {
+					return true;
+				}
+			case 'ChildLocation':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return child.currentLocation !== '';
+				} else {
+					return true;
+				}
+			case 'ChildLastEntry':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return (child.lastEntryDay !== '') && ((child.lastEntryMonth !== '') && ((child.lastEntryYear !== '') && ((child.lastEntryPlace !== '') && (child.statusOnLastAdmission !== ''))));
+				} else {
+					return true;
+				}
+			case 'ChildI94':
+				var n = _v0.a;
+				return true;
+			case 'ChildCurrentStatus':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return child.currentStatus !== '';
+				} else {
+					return true;
+				}
+			case 'ChildImmigrationCourt':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return !_Utils_eq(child.inImmigrationCourt, $elm$core$Maybe$Nothing);
+				} else {
+					return true;
+				}
+			case 'ChildIncluded':
+				var n = _v0.a;
+				var maybeChild = A2($elm_community$list_extra$List$Extra$getAt, n - 1, c);
+				if (maybeChild.$ === 'Just') {
+					var child = maybeChild.a;
+					return !_Utils_eq(child.includedInApplication, $elm$core$Maybe$Nothing);
+				} else {
+					return true;
+				}
 			default:
 				return true;
 		}
@@ -14728,6 +15012,48 @@ var $author$project$Main$render = F2(
 									})
 								]))
 						]));
+			case 'ChildNationality':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildGender':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildRaceEthnicity':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildMaritalStatus':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildAlienRegistration':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildTravelDoc':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildSSN':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildInUS':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildLocation':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildLastEntry':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildI94':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildCurrentStatus':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildImmigrationCourt':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'ChildIncluded':
+				var n = element.a;
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 			default:
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 		}
@@ -14878,7 +15204,7 @@ var $author$project$Main$formElementToDescription = F2(
 			case 'SpouseInUS':
 				return A2($author$project$Main$i18n, model, 'spouse-in-us');
 			case 'SpouseLocation':
-				return A2($author$project$Main$i18n, model, 'spouse-location');
+				return A2($author$project$Main$i18n, model, 'current-location');
 			case 'SpouseLastEntry':
 				return A2($author$project$Main$i18n, model, 'last-entry');
 			case 'SpouseI94':
@@ -14897,6 +15223,34 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'name');
 			case 'ChildBirth':
 				return A2($author$project$Main$i18n, model, 'birth-info');
+			case 'ChildNationality':
+				return A2($author$project$Main$i18n, model, 'present-nationality');
+			case 'ChildGender':
+				return A2($author$project$Main$i18n, model, 'gender');
+			case 'ChildRaceEthnicity':
+				return A2($author$project$Main$i18n, model, 'race-ethnicity');
+			case 'ChildMaritalStatus':
+				return A2($author$project$Main$i18n, model, 'marital-status');
+			case 'ChildAlienRegistration':
+				return A2($author$project$Main$i18n, model, 'alien-registration');
+			case 'ChildTravelDoc':
+				return A2($author$project$Main$i18n, model, 'travel-doc-info');
+			case 'ChildSSN':
+				return A2($author$project$Main$i18n, model, 'ssn');
+			case 'ChildInUS':
+				return A2($author$project$Main$i18n, model, 'child-in-us');
+			case 'ChildLocation':
+				return A2($author$project$Main$i18n, model, 'current-location');
+			case 'ChildLastEntry':
+				return A2($author$project$Main$i18n, model, 'last-entry');
+			case 'ChildI94':
+				return A2($author$project$Main$i18n, model, 'i94');
+			case 'ChildCurrentStatus':
+				return A2($author$project$Main$i18n, model, 'immigration-status');
+			case 'ChildImmigrationCourt':
+				return A2($author$project$Main$i18n, model, 'immigration-court');
+			case 'ChildIncluded':
+				return A2($author$project$Main$i18n, model, 'include-in-application');
 			default:
 				return A2($author$project$Main$i18n, model, 'last-address-before-us');
 		}

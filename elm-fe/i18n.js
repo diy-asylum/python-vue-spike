@@ -178,6 +178,7 @@ var translations = {
 	"present-nationality": {
 		"en": "Present Nationality"
 	},
+
 	"present-nationality-entry": {
 		"en": "What is your current nationality (citizenship)?"
 	},
@@ -370,8 +371,11 @@ var translations = {
 	"spouse-in-us": {
 		"en": "Spouse in US"
 	},
-	"spouse-location": {
-		"en": "Spouse Location"
+	"child-in-us": {
+		"en": "Child in US"
+	},
+	"current-location" : {
+		"en": "Current Location"
 	},
 	"last-entry": {
 		"en": "Most Recent Entry"

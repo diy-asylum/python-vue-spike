@@ -324,6 +324,27 @@ type alias ChildData =
     , yearOfBirth : String
     , cityOfBirth : String
     , countryOfBirth : String
+    , gender : Maybe Gender
+    , raceEthnicityOrTribalGroup : String
+    , nationality : String
+    , maritalStatus : Maybe MaritalStatus
+    , alienRegistrationNumber : String
+    , travelDocNumber : String
+    , socialSecurityNumber : String
+    , inUS : Maybe Bool
+    , currentLocation : String
+    , lastEntryDay : String
+    , lastEntryMonth : String
+    , lastEntryYear : String
+    , lastEntryPlace : String
+    , i94Number : String
+    , statusOnLastAdmission : String
+    , currentStatus : String
+    , statusExpirationDay : String
+    , statusExpirationMonth : String
+    , statusExpirationYear : String
+    , inImmigrationCourt : Maybe Bool
+    , includedInApplication : Maybe Bool
     }
 
 
@@ -337,6 +358,27 @@ defaultChildData =
     , yearOfBirth = ""
     , cityOfBirth = ""
     , countryOfBirth = ""
+    , gender = Nothing
+    , raceEthnicityOrTribalGroup = ""
+    , nationality = ""
+    , maritalStatus = Nothing
+    , alienRegistrationNumber = ""
+    , travelDocNumber = ""
+    , socialSecurityNumber = ""
+    , inUS = Nothing
+    , currentLocation = ""
+    , lastEntryDay = ""
+    , lastEntryMonth = ""
+    , lastEntryYear = ""
+    , lastEntryPlace = ""
+    , i94Number = ""
+    , statusOnLastAdmission = ""
+    , currentStatus = ""
+    , statusExpirationDay = ""
+    , statusExpirationMonth = ""
+    , statusExpirationYear = ""
+    , inImmigrationCourt = Nothing
+    , includedInApplication = Nothing
     }
 
 
@@ -432,6 +474,20 @@ type FormEntryElement
     | NumberOfChildren
     | ChildName Int
     | ChildBirth Int
+    | ChildNationality Int
+    | ChildGender Int
+    | ChildRaceEthnicity Int
+    | ChildMaritalStatus Int
+    | ChildAlienRegistration Int
+    | ChildTravelDoc Int
+    | ChildSSN Int
+    | ChildInUS Int
+    | ChildLocation Int
+    | ChildLastEntry Int
+    | ChildI94 Int
+    | ChildCurrentStatus Int
+    | ChildImmigrationCourt Int
+    | ChildIncluded Int
     | LastAddressBeforeUS
 
 
@@ -963,6 +1019,48 @@ getNext entry model =
             ChildBirth n
 
         ChildBirth n ->
+            ChildNationality n
+
+        ChildNationality n ->
+            ChildGender n
+
+        ChildGender n ->
+            ChildRaceEthnicity n
+
+        ChildRaceEthnicity n ->
+            ChildMaritalStatus n
+
+        ChildMaritalStatus n ->
+            ChildAlienRegistration n
+
+        ChildAlienRegistration n ->
+            ChildTravelDoc n
+
+        ChildTravelDoc n ->
+            ChildSSN n
+
+        ChildSSN n ->
+            ChildInUS n
+
+        ChildInUS n ->
+            ChildLocation n
+
+        ChildLocation n ->
+            ChildLastEntry n
+
+        ChildLastEntry n ->
+            ChildI94 n
+
+        ChildI94 n ->
+            ChildCurrentStatus n
+
+        ChildCurrentStatus n ->
+            ChildImmigrationCourt n
+
+        ChildImmigrationCourt n ->
+            ChildIncluded n
+
+        ChildIncluded n ->
             case model.state.numberOfChildren of
                 Just numChildren ->
                     if numChildren > n then
@@ -1170,11 +1268,53 @@ getBack entry model =
         ChildBirth n ->
             ChildName n
 
+        ChildNationality n ->
+            ChildBirth n
+
+        ChildGender n ->
+            ChildNationality n
+
+        ChildRaceEthnicity n ->
+            ChildGender n
+
+        ChildMaritalStatus n ->
+            ChildRaceEthnicity n
+
+        ChildAlienRegistration n ->
+            ChildMaritalStatus n
+
+        ChildTravelDoc n ->
+            ChildAlienRegistration n
+
+        ChildSSN n ->
+            ChildTravelDoc n
+
+        ChildInUS n ->
+            ChildSSN n
+
+        ChildLocation n ->
+            ChildInUS n
+
+        ChildLastEntry n ->
+            ChildLocation n
+
+        ChildI94 n ->
+            ChildLastEntry n
+
+        ChildCurrentStatus n ->
+            ChildI94 n
+
+        ChildImmigrationCourt n ->
+            ChildCurrentStatus n
+
+        ChildIncluded n ->
+            ChildImmigrationCourt n
+
         LastAddressBeforeUS ->
             case model.state.numberOfChildren of
                 Just n ->
                     if n > 0 then
-                        ChildBirth n
+                        ChildIncluded n
 
                     else
                         NumberOfChildren
@@ -1343,6 +1483,48 @@ getSectionFromElement element =
             ChildInfo (Just n)
 
         ChildBirth n ->
+            ChildInfo (Just n)
+
+        ChildNationality n ->
+            ChildInfo (Just n)
+
+        ChildGender n ->
+            ChildInfo (Just n)
+
+        ChildRaceEthnicity n ->
+            ChildInfo (Just n)
+
+        ChildMaritalStatus n ->
+            ChildInfo (Just n)
+
+        ChildAlienRegistration n ->
+            ChildInfo (Just n)
+
+        ChildTravelDoc n ->
+            ChildInfo (Just n)
+
+        ChildSSN n ->
+            ChildInfo (Just n)
+
+        ChildInUS n ->
+            ChildInfo (Just n)
+
+        ChildLocation n ->
+            ChildInfo (Just n)
+
+        ChildLastEntry n ->
+            ChildInfo (Just n)
+
+        ChildI94 n ->
+            ChildInfo (Just n)
+
+        ChildCurrentStatus n ->
+            ChildInfo (Just n)
+
+        ChildImmigrationCourt n ->
+            ChildInfo (Just n)
+
+        ChildIncluded n ->
             ChildInfo (Just n)
 
         LastAddressBeforeUS ->
@@ -1603,6 +1785,138 @@ validate model =
                 case maybeChild of
                     Just child ->
                         child.cityOfBirth /= "" && child.countryOfBirth /= "" && child.dayOfBirth /= "" && child.monthOfBirth /= "" && child.yearOfBirth /= ""
+
+                    _ ->
+                        True
+
+            ChildNationality n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.nationality /= ""
+
+                    _ ->
+                        True
+
+            ChildGender n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.gender /= Nothing
+
+                    _ ->
+                        True
+
+            ChildRaceEthnicity n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.raceEthnicityOrTribalGroup /= ""
+
+                    _ ->
+                        True
+
+            ChildMaritalStatus n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.maritalStatus /= Nothing
+
+                    _ ->
+                        True
+
+            ChildAlienRegistration n ->
+                True
+
+            ChildTravelDoc n ->
+                True
+
+            ChildSSN n ->
+                True
+
+            ChildInUS n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.inUS /= Nothing
+
+                    _ ->
+                        True
+
+            ChildLocation n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.currentLocation /= ""
+
+                    _ ->
+                        True
+
+            ChildLastEntry n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.lastEntryDay /= "" && child.lastEntryMonth /= "" && child.lastEntryYear /= "" && child.lastEntryPlace /= "" && child.statusOnLastAdmission /= ""
+
+                    _ ->
+                        True
+
+            ChildI94 n ->
+                True
+
+            ChildCurrentStatus n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.currentStatus /= ""
+
+                    _ ->
+                        True
+
+            ChildImmigrationCourt n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.inImmigrationCourt /= Nothing
+
+                    _ ->
+                        True
+
+            ChildIncluded n ->
+                let
+                    maybeChild =
+                        List.Extra.getAt (n - 1) c
+                in
+                case maybeChild of
+                    Just child ->
+                        child.includedInApplication /= Nothing
 
                     _ ->
                         True
@@ -2377,6 +2691,48 @@ render element model =
                     ]
                 ]
 
+        ChildNationality n ->
+            div [] []
+
+        ChildGender n ->
+            div [] []
+
+        ChildRaceEthnicity n ->
+            div [] []
+
+        ChildMaritalStatus n ->
+            div [] []
+
+        ChildAlienRegistration n ->
+            div [] []
+
+        ChildTravelDoc n ->
+            div [] []
+
+        ChildSSN n ->
+            div [] []
+
+        ChildInUS n ->
+            div [] []
+
+        ChildLocation n ->
+            div [] []
+
+        ChildLastEntry n ->
+            div [] []
+
+        ChildI94 n ->
+            div [] []
+
+        ChildCurrentStatus n ->
+            div [] []
+
+        ChildImmigrationCourt n ->
+            div [] []
+
+        ChildIncluded n ->
+            div [] []
+
         LastAddressBeforeUS ->
             div [] []
 
@@ -2986,7 +3342,7 @@ formElementToDescription element model =
             i18n model "spouse-in-us"
 
         SpouseLocation ->
-            i18n model "spouse-location"
+            i18n model "current-location"
 
         SpouseLastEntry ->
             i18n model "last-entry"
@@ -3014,6 +3370,48 @@ formElementToDescription element model =
 
         ChildBirth _ ->
             i18n model "birth-info"
+
+        ChildNationality _ ->
+            i18n model "present-nationality"
+
+        ChildGender _ ->
+            i18n model "gender"
+
+        ChildRaceEthnicity _ ->
+            i18n model "race-ethnicity"
+
+        ChildMaritalStatus _ ->
+            i18n model "marital-status"
+
+        ChildAlienRegistration _ ->
+            i18n model "alien-registration"
+
+        ChildTravelDoc _ ->
+            i18n model "travel-doc-info"
+
+        ChildSSN _ ->
+            i18n model "ssn"
+
+        ChildInUS _ ->
+            i18n model "child-in-us"
+
+        ChildLocation _ ->
+            i18n model "current-location"
+
+        ChildLastEntry _ ->
+            i18n model "last-entry"
+
+        ChildI94 _ ->
+            i18n model "i94"
+
+        ChildCurrentStatus _ ->
+            i18n model "immigration-status"
+
+        ChildImmigrationCourt _ ->
+            i18n model "immigration-court"
+
+        ChildIncluded _ ->
+            i18n model "include-in-application"
 
         LastAddressBeforeUS ->
             i18n model "last-address-before-us"
