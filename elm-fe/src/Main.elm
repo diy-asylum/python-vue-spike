@@ -1043,10 +1043,27 @@ getNext entry model =
             ChildInUS n
 
         ChildInUS n ->
-            ChildLocation n
+            let
+                child =
+                    getChildByIndex n model.state.children
+            in
+            if child.inUS == Just True then
+                ChildLastEntry n
+
+            else
+                ChildLocation n
 
         ChildLocation n ->
-            ChildLastEntry n
+            case model.state.numberOfChildren of
+                Just numChildren ->
+                    if numChildren > n then
+                        ChildName (n + 1)
+
+                    else
+                        LastAddressBeforeUS
+
+                _ ->
+                    LastAddressBeforeUS
 
         ChildLastEntry n ->
             ChildI94 n
@@ -1296,7 +1313,7 @@ getBack entry model =
             ChildInUS n
 
         ChildLastEntry n ->
-            ChildLocation n
+            ChildInUS n
 
         ChildI94 n ->
             ChildLastEntry n
@@ -1314,7 +1331,19 @@ getBack entry model =
             case model.state.numberOfChildren of
                 Just n ->
                     if n > 0 then
-                        ChildIncluded n
+                        let
+                            child =
+                                getChildByIndex n model.state.children
+                        in
+                        case child.inUS of
+                            Just True ->
+                                ChildIncluded n
+
+                            Just False ->
+                                ChildLocation n
+
+                            Nothing ->
+                                ChildInUS n
 
                     else
                         NumberOfChildren
@@ -2085,51 +2114,7 @@ render element model =
             genderSelector model d.gender "enter-gender" (\r -> SetPersonalData { d | gender = r })
 
         EnterMaritalStatus ->
-            let
-                status =
-                    d.maritalStatus
-
-                singleChecked =
-                    case status of
-                        Just SINGLE ->
-                            True
-
-                        _ ->
-                            False
-
-                marriedChecked =
-                    case status of
-                        Just MARRIED ->
-                            True
-
-                        _ ->
-                            False
-
-                divorcedChecked =
-                    case status of
-                        Just DIVORCED ->
-                            True
-
-                        _ ->
-                            False
-
-                widowedChecked =
-                    case status of
-                        Just WIDOWED ->
-                            True
-
-                        _ ->
-                            False
-            in
-            nextBackWrap model
-                [ prompt model [] "enter-marital-status"
-                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-                    [ checkBox model singleChecked "single" SetPersonalData { d | maritalStatus = setMaybe singleChecked SINGLE }
-                    , checkBox model marriedChecked "married" SetPersonalData { d | maritalStatus = setMaybe marriedChecked MARRIED }
-                    , checkBox model divorcedChecked "divorced" SetPersonalData { d | maritalStatus = setMaybe divorcedChecked DIVORCED }
-                    , checkBox model widowedChecked "widowed" SetPersonalData { d | maritalStatus = setMaybe widowedChecked WIDOWED }
-                    ]
-                ]
+            maritalStatusSelector model "enter-marital-status" d.maritalStatus (\r -> SetPersonalData { d | maritalStatus = r })
 
         BirthInfo ->
             let
@@ -2362,8 +2347,8 @@ render element model =
                 , div [ css [ displayFlex, flexDirection column, alignItems center ] ]
                     [ form [ onSubmit submitFunction ]
                         [ div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                            [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                            , labeledTextInput model "place" place placeUpdate
+                            [ labeledTextInput model "place" place placeUpdate
+                            , dateSelector model day dayUpdate month monthUpdate year yearUpdate
                             , labeledTextInput model "immigration-status" status statusUpdate
                             , button
                                 [ type_ "submit"
@@ -2641,11 +2626,8 @@ render element model =
 
         ChildName n ->
             let
-                index =
-                    n - 1
-
                 child =
-                    Maybe.withDefault defaultChildData (List.Extra.getAt index c)
+                    getChildByIndex n c
             in
             nextBackWrap model
                 [ prompt model [] "child-name-entry"
@@ -2658,11 +2640,8 @@ render element model =
 
         ChildBirth n ->
             let
-                index =
-                    n - 1
-
                 child =
-                    Maybe.withDefault defaultChildData (List.Extra.getAt index c)
+                    getChildByIndex n c
 
                 day =
                     child.dayOfBirth
@@ -2692,46 +2671,151 @@ render element model =
                 ]
 
         ChildNationality n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-nationality" child.nationality (\r -> SetChildData n { child | nationality = r })
 
         ChildGender n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            genderSelector model child.gender "child-enter-gender" (\r -> SetChildData n { child | gender = r })
 
         ChildRaceEthnicity n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-race-ethnicity" child.raceEthnicityOrTribalGroup (\r -> SetChildData n { child | raceEthnicityOrTribalGroup = r })
 
         ChildMaritalStatus n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            maritalStatusSelector model "child-marital-status" child.maritalStatus (\r -> SetChildData n { child | maritalStatus = r })
 
         ChildAlienRegistration n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-alien-registration" child.alienRegistrationNumber (\r -> SetChildData n { child | alienRegistrationNumber = r })
 
         ChildTravelDoc n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-travel-doc-number" child.travelDocNumber (\r -> SetChildData n { child | travelDocNumber = r })
 
         ChildSSN n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-ssn" child.socialSecurityNumber (\r -> SetChildData n { child | socialSecurityNumber = r })
 
         ChildInUS n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            yesNoCheckBox model "child-in-us-prompt" child.inUS (\r -> SetChildData n { child | inUS = r })
 
         ChildLocation n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-current-location" child.currentLocation (\r -> SetChildData n { child | currentLocation = r })
 
         ChildLastEntry n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+
+                day =
+                    child.lastEntryDay
+
+                dayUpdate =
+                    \r -> SetChildData n { child | lastEntryDay = r }
+
+                month =
+                    child.lastEntryMonth
+
+                monthUpdate =
+                    \r -> SetChildData n { child | lastEntryMonth = r }
+
+                year =
+                    child.lastEntryYear
+
+                yearUpdate =
+                    \r -> SetChildData n { child | lastEntryYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "child-last-entry"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "place" child.lastEntryPlace (\r -> SetChildData n { child | lastEntryPlace = r })
+                    , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    , labeledTextInput model "immigration-status" child.statusOnLastAdmission (\r -> SetChildData n { child | statusOnLastAdmission = r })
+                    ]
+                ]
 
         ChildI94 n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            singleTextEntry model "child-i94" child.i94Number (\r -> SetChildData n { child | i94Number = r })
 
         ChildCurrentStatus n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+
+                day =
+                    child.statusExpirationDay
+
+                dayUpdate =
+                    \r -> SetChildData n { child | statusExpirationDay = r }
+
+                month =
+                    child.statusExpirationMonth
+
+                monthUpdate =
+                    \r -> SetChildData n { child | statusExpirationMonth = r }
+
+                year =
+                    child.statusExpirationYear
+
+                yearUpdate =
+                    \r -> SetChildData n { child | statusExpirationYear = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "child-current-status"
+                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                    [ labeledTextInput model "immigration-status" child.currentStatus (\r -> SetChildData n { child | currentStatus = r })
+                    , dateSelector model day dayUpdate month monthUpdate year yearUpdate
+                    ]
+                ]
 
         ChildImmigrationCourt n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            yesNoCheckBox model "child-in-court" child.inImmigrationCourt (\r -> SetChildData n { child | inImmigrationCourt = r })
 
         ChildIncluded n ->
-            div [] []
+            let
+                child =
+                    getChildByIndex n c
+            in
+            yesNoCheckBox model "child-included" child.includedInApplication (\r -> SetChildData n { child | includedInApplication = r })
 
         LastAddressBeforeUS ->
             div [] []
@@ -2740,6 +2824,11 @@ render element model =
 
 -- View end
 -- Misc
+
+
+getChildByIndex : Int -> List ChildData -> ChildData
+getChildByIndex n c =
+    Maybe.withDefault defaultChildData (List.Extra.getAt (n - 1) c)
 
 
 printEntry : ExpandableTravelEvent -> String
@@ -2805,6 +2894,32 @@ yearList currentYear =
 
 
 -- Generic views
+
+
+maritalStatusSelector : Model -> String -> Maybe MaritalStatus -> (Maybe MaritalStatus -> Msg) -> Html Msg
+maritalStatusSelector model promptId status updateFunction =
+    let
+        singleChecked =
+            status == Just SINGLE
+
+        marriedChecked =
+            status == Just MARRIED
+
+        divorcedChecked =
+            status == Just DIVORCED
+
+        widowedChecked =
+            status == Just WIDOWED
+    in
+    nextBackWrap model
+        [ prompt model [] promptId
+        , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+            [ checkBox model singleChecked "single" updateFunction (setMaybe singleChecked SINGLE)
+            , checkBox model marriedChecked "married" updateFunction (setMaybe marriedChecked MARRIED)
+            , checkBox model divorcedChecked "divorced" updateFunction (setMaybe divorcedChecked DIVORCED)
+            , checkBox model widowedChecked "widowed" updateFunction (setMaybe widowedChecked WIDOWED)
+            ]
+        ]
 
 
 genderSelector : Model -> Maybe Gender -> String -> (Maybe Gender -> Msg) -> Html Msg
@@ -3158,10 +3273,10 @@ titleHtml title elementLink clickable model =
 
         html =
             if clickable then
-                h3 [ onClick (SetFormEntryElement elementLink), css [ fontSize (px 12), marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
+                h3 [ onClick (SetFormEntryElement elementLink), css [ fontSize (px 12), marginTop (px 10), marginBottom (px 10), cursor pointer ] ] [ text description ]
 
             else
-                h3 [ css [ color gray, fontSize (px 10), marginTop (px 10), marginBottom (px 10) ] ] [ text description ]
+                h3 [ css [ color gray, fontSize (px 10), marginTop (px 10), marginBottom (px 10), cursor notAllowed ] ] [ text description ]
     in
     html
 
@@ -3174,10 +3289,10 @@ elementNameHtml element clickable model =
 
         html =
             if clickable then
-                div [ onClick (SetFormEntryElement element), css [ fontSize (px 10), marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
+                div [ onClick (SetFormEntryElement element), css [ fontSize (px 10), marginTop (px 5), marginBottom (px 5), cursor pointer ] ] [ text description ]
 
             else
-                div [ css [ color gray, fontSize (px 12), marginTop (px 5), marginBottom (px 5) ] ] [ text description ]
+                div [ css [ color gray, fontSize (px 12), marginTop (px 5), marginBottom (px 5), cursor notAllowed ] ] [ text description ]
     in
     html
 
@@ -3539,6 +3654,7 @@ activeButtonStyles =
         , property "-webkit-appearance" "none"
         , padding (px 8)
         , outline zero
+        , cursor pointer
         , active
             [ focus
                 [ borderTopColor dark
@@ -3562,6 +3678,7 @@ disabledButtonStyles =
         , borderBottomColor dark
         , borderRightColor dark
         , borderStyle solid
+        , cursor notAllowed
         , property "appearance" "none"
         , property "-webkit-appearance" "none"
         , padding (px 4)

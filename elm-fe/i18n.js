@@ -151,6 +151,9 @@ var translations = {
 	"enter-marital-status": {
 		"en": "Please select your marital status."
 	},
+	"child-marital-status": {
+		"en": "Please select your child's marital status."
+	},
 	"single": {
 		"en": "Single"
 	},
@@ -248,6 +251,9 @@ var translations = {
 	"alien-registration-entry": {
 		"en": "Please enter your alien registration number. If you do not have an alien registration number, leave this field blank."
 	},
+	"child-alien-registration": {
+		"en": "Please enter your child's alien registration number. If your child does not have an alien registration number, leave this field blank."
+	},
 	"spouse-alien-registration": {
 		"en": "Please enter your spouse's alien registration number. If they do not have an alien registration number, leave this field blank."
 	},
@@ -335,6 +341,9 @@ var translations = {
 	"travel-doc-number-entry": {
 		"en": "What is your travel document number?"
 	},
+	"child-travel-doc-number": {
+		"en": "What is your child's travel document number?"
+	},
 	"passport-number-entry": {
 		"en": "What is your passport number?"
 	},
@@ -392,11 +401,20 @@ var translations = {
 	"spouse-enter-gender": {
 		"en": "Please enter your spouse's gender."
 	},
+	"child-enter-gender": {
+		"en": "Please enter your child's gender."
+	},
 	"spouse-nationality": {
 		"en": "Please enter your spouse's current nationality (citizenship)."
 	},
+	"child-nationality": {
+		"en": "Please enter your child's current nationality (citizenship)."
+	},
 	"spouse-race-ethnicity": {
 		"en": "To what race, ethnicity, or tribal group does your spouse belong?"
+	},
+	"child-race-ethnicity": {
+		"en": "To what race, ethnicity, or tribal group does your child belong?"
 	},
 	"spouse-travel-number": {
 		"en": "Please enter the number on your spouse's passport. If your spouse does not have a passport, list the number from any other travel document. If your spouse does not have a travel document, leave this field blank."
@@ -404,20 +422,35 @@ var translations = {
 	"spouse-ssn": {
 		"en": "Please enter your spouse's US social security number. If your spouse does not have a social security number, leave this field blank."
 	},
+	"child-ssn": {
+		"en": "Please enter your child's US social security number. If your child does not have a social security number, leave this field blank."
+	},
 	"marriage-info-entry": {
 		"en": "Please enter the place and date of your marriage."
 	},
 	"spouse-in-us-prompt": {
 		"en": "Is your spouse currently located in the US?"
 	},
+	"child-in-us-prompt": {
+		"en": "Is your child currently located in the US?"
+	},
 	"spouse-location-entry": {
 		"en": "Where is your spouse currently located?"
+	},
+	"child-current-location": {
+		"en": "Where is your child currently located?"
 	},
 	"spouse-i94-entry": {
 		"en": "What is your spouse's I94 number? If your spouse does not have an I94 number, leave this field blank."
 	},
+	"child-i94": {
+		"en": "What is your child's I94 number? If your child does not have an I94 number, leave this field blank."
+	},
 	"spouse-current-status": {
 		"en": "Please list your spouse's current immigration status along with its expiration date."
+	},
+	"child-current-status": {
+		"en": "Please list your child's current immigration status along with its expiration date."
 	},
 	"previous-entry-prompt": {
 		"en": "If your spouse has entered the US prior to their most recent entry, enter the date of the entry which occurred immediately prior to their most recent one. If your spouse has never entered the US prior to their most recent entry, leave these fields blank."
@@ -425,11 +458,20 @@ var translations = {
 	"spouse-in-court": {
 		"en": "Is your spouse currently involved in US immigration court?"
 	},
+	"child-in-court": {
+		"en": "Is your child currently involved in US immigration court?"
+	},
 	"spouse-include": {
-		"en": "Is you spouse to be included in this application?"
+		"en": "Is your spouse to be included in this application?"
+	},
+	"child-included": {
+		"en": "Is your child to be included in this application?"
 	},
 	"spouse-last-entry": {
 		"en": "Please enter the place, date, and immigration status of your spouse's most recent entry into the US."
+	},
+	"child-last-entry": {
+		"en": "Please enter the place, date, and immigration status of your child's most recent entry into the US."
 	},
 	"address-info": {
 		"en": "Address Information"

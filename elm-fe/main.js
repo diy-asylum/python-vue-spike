@@ -7773,6 +7773,57 @@ var $author$project$Main$TravelDocCountry = {$: 'TravelDocCountry'};
 var $author$project$Main$TravelDocExpiration = {$: 'TravelDocExpiration'};
 var $author$project$Main$TravelDocNumber = {$: 'TravelDocNumber'};
 var $author$project$Main$USCISAccount = {$: 'USCISAccount'};
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
+			A2($elm$core$List$drop, idx, xs));
+	});
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Main$getChildByIndex = F2(
+	function (n, c) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			$author$project$Main$defaultChildData,
+			A2($elm_community$list_extra$List$Extra$getAt, n - 1, c));
+	});
 var $author$project$Main$getBack = F2(
 	function (entry, model) {
 		switch (entry.$) {
@@ -7933,7 +7984,7 @@ var $author$project$Main$getBack = F2(
 				return $author$project$Main$ChildInUS(n);
 			case 'ChildLastEntry':
 				var n = entry.a;
-				return $author$project$Main$ChildLocation(n);
+				return $author$project$Main$ChildInUS(n);
 			case 'ChildI94':
 				var n = entry.a;
 				return $author$project$Main$ChildLastEntry(n);
@@ -7950,7 +8001,21 @@ var $author$project$Main$getBack = F2(
 				var _v3 = model.state.numberOfChildren;
 				if (_v3.$ === 'Just') {
 					var n = _v3.a;
-					return (n > 0) ? $author$project$Main$ChildIncluded(n) : $author$project$Main$NumberOfChildren;
+					if (n > 0) {
+						var child = A2($author$project$Main$getChildByIndex, n, model.state.children);
+						var _v4 = child.inUS;
+						if (_v4.$ === 'Just') {
+							if (_v4.a) {
+								return $author$project$Main$ChildIncluded(n);
+							} else {
+								return $author$project$Main$ChildLocation(n);
+							}
+						} else {
+							return $author$project$Main$ChildInUS(n);
+						}
+					} else {
+						return $author$project$Main$NumberOfChildren;
+					}
 				} else {
 					return $author$project$Main$NumberOfChildren;
 				}
@@ -8140,10 +8205,19 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$ChildInUS(n);
 			case 'ChildInUS':
 				var n = entry.a;
-				return $author$project$Main$ChildLocation(n);
+				var child = A2($author$project$Main$getChildByIndex, n, model.state.children);
+				return _Utils_eq(
+					child.inUS,
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$ChildLastEntry(n) : $author$project$Main$ChildLocation(n);
 			case 'ChildLocation':
 				var n = entry.a;
-				return $author$project$Main$ChildLastEntry(n);
+				var _v5 = model.state.numberOfChildren;
+				if (_v5.$ === 'Just') {
+					var numChildren = _v5.a;
+					return (_Utils_cmp(numChildren, n) > 0) ? $author$project$Main$ChildName(n + 1) : $author$project$Main$LastAddressBeforeUS;
+				} else {
+					return $author$project$Main$LastAddressBeforeUS;
+				}
 			case 'ChildLastEntry':
 				var n = entry.a;
 				return $author$project$Main$ChildI94(n);
@@ -8158,9 +8232,9 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$ChildIncluded(n);
 			case 'ChildIncluded':
 				var n = entry.a;
-				var _v5 = model.state.numberOfChildren;
-				if (_v5.$ === 'Just') {
-					var numChildren = _v5.a;
+				var _v6 = model.state.numberOfChildren;
+				if (_v6.$ === 'Just') {
+					var numChildren = _v6.a;
 					return (_Utils_cmp(numChildren, n) > 0) ? $author$project$Main$ChildName(n + 1) : $author$project$Main$LastAddressBeforeUS;
 				} else {
 					return $author$project$Main$LastAddressBeforeUS;
@@ -8407,27 +8481,6 @@ var $author$project$Main$savePdf = function (bytes) {
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
-	});
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
 	});
 var $elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
@@ -9366,15 +9419,6 @@ var $elm$core$Maybe$map = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $rtfeldman$elm_css$Css$Structure$Output$charsetToString = function (charset) {
 	return A2(
 		$elm$core$Maybe$withDefault,
@@ -10231,15 +10275,6 @@ var $rtfeldman$elm_css$Hash$fromString = function (str) {
 		_Utils_chr('_'),
 		$rtfeldman$elm_hex$Hex$toString(
 			A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString, $rtfeldman$elm_css$Hash$murmurSeed, str)));
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
 };
 var $rtfeldman$elm_css$Css$Preprocess$Resolve$last = function (list) {
 	last:
@@ -11626,9 +11661,7 @@ var $author$project$Main$footer = A2(
 				]))
 		]));
 var $author$project$DataTypes$CURRENTLY = {$: 'CURRENTLY'};
-var $author$project$DataTypes$DIVORCED = {$: 'DIVORCED'};
 var $author$project$DataTypes$NEVER = {$: 'NEVER'};
-var $author$project$DataTypes$SINGLE = {$: 'SINGLE'};
 var $author$project$Main$SetChildData = F2(
 	function (a, b) {
 		return {$: 'SetChildData', a: a, b: b};
@@ -11645,7 +11678,6 @@ var $author$project$Main$SetPersonalData = function (a) {
 var $author$project$Main$SetSpouseData = function (a) {
 	return {$: 'SetSpouseData', a: a};
 };
-var $author$project$DataTypes$WIDOWED = {$: 'WIDOWED'};
 var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
 	function (a, b) {
 		return {$: 'ExtendSelector', a: a, b: b};
@@ -11672,12 +11704,14 @@ var $rtfeldman$elm_css$Css$borderStyle = $rtfeldman$elm_css$Css$prop1('border-st
 var $rtfeldman$elm_css$Css$borderTopColor = function (c) {
 	return A2($rtfeldman$elm_css$Css$property, 'border-top-color', c.value);
 };
+var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
 var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $author$project$Main$defaultMargin = $rtfeldman$elm_css$Css$margin(
 	$rtfeldman$elm_css$Css$px(10));
 var $rtfeldman$elm_css$Css$focus = $rtfeldman$elm_css$Css$pseudoClass('focus');
 var $author$project$Main$gray = $rtfeldman$elm_css$Css$hex('717878');
 var $rtfeldman$elm_css$Css$outline = $rtfeldman$elm_css$Css$prop1('outline');
+var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
 var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $rtfeldman$elm_css$Css$UnitlessInteger = {$: 'UnitlessInteger'};
 var $rtfeldman$elm_css$Css$zero = {length: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible, number: $rtfeldman$elm_css$Css$Structure$Compatible, numericValue: 0, outline: $rtfeldman$elm_css$Css$Structure$Compatible, unitLabel: '', units: $rtfeldman$elm_css$Css$UnitlessInteger, value: '0'};
@@ -11699,6 +11733,7 @@ var $author$project$Main$activeButtonStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$padding(
 			$rtfeldman$elm_css$Css$px(8)),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+			$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
 			$rtfeldman$elm_css$Css$active(
 			_List_fromArray(
 				[
@@ -12191,6 +12226,7 @@ var $rtfeldman$elm_css$Css$flexStart = $rtfeldman$elm_css$Css$prop1('flex-start'
 var $rtfeldman$elm_css$Css$flexWrap = $rtfeldman$elm_css$Css$prop1('flex-wrap');
 var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
 var $author$project$Main$Next = {$: 'Next'};
+var $rtfeldman$elm_css$Css$notAllowed = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'not-allowed'};
 var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(
 		[
@@ -12204,17 +12240,13 @@ var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$borderBottomColor($author$project$Main$dark),
 			$rtfeldman$elm_css$Css$borderRightColor($author$project$Main$dark),
 			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$notAllowed),
 			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
 			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
 			$rtfeldman$elm_css$Css$padding(
 			$rtfeldman$elm_css$Css$px(4)),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero)
 		]));
-var $elm_community$list_extra$List$Extra$getAt = F2(
-	function (idx, xs) {
-		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
-			A2($elm$core$List$drop, idx, xs));
-	});
 var $author$project$Main$validate = function (model) {
 	var s = model.state.spouse;
 	var elig = model.state.eligibility;
@@ -12699,6 +12731,75 @@ var $author$project$Main$labeledTextInput = F4(
 				]));
 	});
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $author$project$DataTypes$DIVORCED = {$: 'DIVORCED'};
+var $author$project$DataTypes$SINGLE = {$: 'SINGLE'};
+var $author$project$DataTypes$WIDOWED = {$: 'WIDOWED'};
+var $author$project$Main$maritalStatusSelector = F4(
+	function (model, promptId, status, updateFunction) {
+		var widowedChecked = _Utils_eq(
+			status,
+			$elm$core$Maybe$Just($author$project$DataTypes$WIDOWED));
+		var singleChecked = _Utils_eq(
+			status,
+			$elm$core$Maybe$Just($author$project$DataTypes$SINGLE));
+		var marriedChecked = _Utils_eq(
+			status,
+			$elm$core$Maybe$Just($author$project$DataTypes$MARRIED));
+		var divorcedChecked = _Utils_eq(
+			status,
+			$elm$core$Maybe$Just($author$project$DataTypes$DIVORCED));
+		return A2(
+			$author$project$Main$nextBackWrap,
+			model,
+			_List_fromArray(
+				[
+					A3($author$project$Main$prompt, model, _List_Nil, promptId),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$displayFlex,
+									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+									$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+									$author$project$Main$defaultMargin
+								]))
+						]),
+					_List_fromArray(
+						[
+							A5(
+							$author$project$Main$checkBox,
+							model,
+							singleChecked,
+							'single',
+							updateFunction,
+							A2($author$project$Main$setMaybe, singleChecked, $author$project$DataTypes$SINGLE)),
+							A5(
+							$author$project$Main$checkBox,
+							model,
+							marriedChecked,
+							'married',
+							updateFunction,
+							A2($author$project$Main$setMaybe, marriedChecked, $author$project$DataTypes$MARRIED)),
+							A5(
+							$author$project$Main$checkBox,
+							model,
+							divorcedChecked,
+							'divorced',
+							updateFunction,
+							A2($author$project$Main$setMaybe, divorcedChecked, $author$project$DataTypes$DIVORCED)),
+							A5(
+							$author$project$Main$checkBox,
+							model,
+							widowedChecked,
+							'widowed',
+							updateFunction,
+							A2($author$project$Main$setMaybe, widowedChecked, $author$project$DataTypes$WIDOWED))
+						]))
+				]));
+	});
 var $rtfeldman$elm_css$Css$minWidth = $rtfeldman$elm_css$Css$prop1('min-width');
 var $rtfeldman$elm_css$Html$Styled$Events$alwaysPreventDefault = function (msg) {
 	return _Utils_Tuple2(msg, true);
@@ -13577,106 +13678,17 @@ var $author$project$Main$render = F2(
 								{gender: r}));
 					});
 			case 'EnterMaritalStatus':
-				var status = d.maritalStatus;
-				var widowedChecked = function () {
-					if ((status.$ === 'Just') && (status.a.$ === 'WIDOWED')) {
-						var _v8 = status.a;
-						return true;
-					} else {
-						return false;
-					}
-				}();
-				var singleChecked = function () {
-					if ((status.$ === 'Just') && (status.a.$ === 'SINGLE')) {
-						var _v6 = status.a;
-						return true;
-					} else {
-						return false;
-					}
-				}();
-				var marriedChecked = function () {
-					if ((status.$ === 'Just') && (status.a.$ === 'MARRIED')) {
-						var _v4 = status.a;
-						return true;
-					} else {
-						return false;
-					}
-				}();
-				var divorcedChecked = function () {
-					if ((status.$ === 'Just') && (status.a.$ === 'DIVORCED')) {
-						var _v2 = status.a;
-						return true;
-					} else {
-						return false;
-					}
-				}();
-				return A2(
-					$author$project$Main$nextBackWrap,
+				return A4(
+					$author$project$Main$maritalStatusSelector,
 					model,
-					_List_fromArray(
-						[
-							A3($author$project$Main$prompt, model, _List_Nil, 'enter-marital-status'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$displayFlex,
-											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$author$project$Main$defaultMargin
-										]))
-								]),
-							_List_fromArray(
-								[
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									singleChecked,
-									'single',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											maritalStatus: A2($author$project$Main$setMaybe, singleChecked, $author$project$DataTypes$SINGLE)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									marriedChecked,
-									'married',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											maritalStatus: A2($author$project$Main$setMaybe, marriedChecked, $author$project$DataTypes$MARRIED)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									divorcedChecked,
-									'divorced',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											maritalStatus: A2($author$project$Main$setMaybe, divorcedChecked, $author$project$DataTypes$DIVORCED)
-										})),
-									A5(
-									$author$project$Main$checkBox,
-									model,
-									widowedChecked,
-									'widowed',
-									$author$project$Main$SetPersonalData,
-									_Utils_update(
-										d,
-										{
-											maritalStatus: A2($author$project$Main$setMaybe, widowedChecked, $author$project$DataTypes$WIDOWED)
-										}))
-								]))
-						]));
+					'enter-marital-status',
+					d.maritalStatus,
+					function (r) {
+						return $author$project$Main$SetPersonalData(
+							_Utils_update(
+								d,
+								{maritalStatus: r}));
+					});
 			case 'BirthInfo':
 				var yearUpdate = function (r) {
 					return $author$project$Main$SetPersonalData(
@@ -14191,8 +14203,8 @@ var $author$project$Main$render = F2(
 												]),
 											_List_fromArray(
 												[
-													A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
 													A4($author$project$Main$labeledTextInput, model, 'place', place, placeUpdate),
+													A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
 													A4($author$project$Main$labeledTextInput, model, 'immigration-status', status, statusUpdate),
 													A2(
 													$rtfeldman$elm_css$Html$Styled$button,
@@ -14861,11 +14873,7 @@ var $author$project$Main$render = F2(
 						]));
 			case 'ChildName':
 				var n = element.a;
-				var index = n - 1;
-				var child = A2(
-					$elm$core$Maybe$withDefault,
-					$author$project$Main$defaultChildData,
-					A2($elm_community$list_extra$List$Extra$getAt, index, c));
+				var child = A2($author$project$Main$getChildByIndex, n, c);
 				return A2(
 					$author$project$Main$nextBackWrap,
 					model,
@@ -14930,11 +14938,7 @@ var $author$project$Main$render = F2(
 						]));
 			case 'ChildBirth':
 				var n = element.a;
-				var index = n - 1;
-				var child = A2(
-					$elm$core$Maybe$withDefault,
-					$author$project$Main$defaultChildData,
-					A2($elm_community$list_extra$List$Extra$getAt, index, c));
+				var child = A2($author$project$Main$getChildByIndex, n, c);
 				var day = child.dayOfBirth;
 				var dayUpdate = function (r) {
 					return A2(
@@ -15014,46 +15018,343 @@ var $author$project$Main$render = F2(
 						]));
 			case 'ChildNationality':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-nationality',
+					child.nationality,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{nationality: r}));
+					});
 			case 'ChildGender':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$genderSelector,
+					model,
+					child.gender,
+					'child-enter-gender',
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{gender: r}));
+					});
 			case 'ChildRaceEthnicity':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-race-ethnicity',
+					child.raceEthnicityOrTribalGroup,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{raceEthnicityOrTribalGroup: r}));
+					});
 			case 'ChildMaritalStatus':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$maritalStatusSelector,
+					model,
+					'child-marital-status',
+					child.maritalStatus,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{maritalStatus: r}));
+					});
 			case 'ChildAlienRegistration':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-alien-registration',
+					child.alienRegistrationNumber,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{alienRegistrationNumber: r}));
+					});
 			case 'ChildTravelDoc':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-travel-doc-number',
+					child.travelDocNumber,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{travelDocNumber: r}));
+					});
 			case 'ChildSSN':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-ssn',
+					child.socialSecurityNumber,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{socialSecurityNumber: r}));
+					});
 			case 'ChildInUS':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$yesNoCheckBox,
+					model,
+					'child-in-us-prompt',
+					child.inUS,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{inUS: r}));
+					});
 			case 'ChildLocation':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-current-location',
+					child.currentLocation,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{currentLocation: r}));
+					});
 			case 'ChildLastEntry':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				var day = child.lastEntryDay;
+				var dayUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{lastEntryDay: r}));
+				};
+				var month = child.lastEntryMonth;
+				var monthUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{lastEntryMonth: r}));
+				};
+				var year = child.lastEntryYear;
+				var yearUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{lastEntryYear: r}));
+				};
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'child-last-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'place',
+									child.lastEntryPlace,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{lastEntryPlace: r}));
+									}),
+									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'immigration-status',
+									child.statusOnLastAdmission,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{statusOnLastAdmission: r}));
+									})
+								]))
+						]));
 			case 'ChildI94':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$singleTextEntry,
+					model,
+					'child-i94',
+					child.i94Number,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{i94Number: r}));
+					});
 			case 'ChildCurrentStatus':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				var day = child.statusExpirationDay;
+				var dayUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{statusExpirationDay: r}));
+				};
+				var month = child.statusExpirationMonth;
+				var monthUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{statusExpirationMonth: r}));
+				};
+				var year = child.statusExpirationYear;
+				var yearUpdate = function (r) {
+					return A2(
+						$author$project$Main$SetChildData,
+						n,
+						_Utils_update(
+							child,
+							{statusExpirationYear: r}));
+				};
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'child-current-status'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A4(
+									$author$project$Main$labeledTextInput,
+									model,
+									'immigration-status',
+									child.currentStatus,
+									function (r) {
+										return A2(
+											$author$project$Main$SetChildData,
+											n,
+											_Utils_update(
+												child,
+												{currentStatus: r}));
+									}),
+									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate)
+								]))
+						]));
 			case 'ChildImmigrationCourt':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$yesNoCheckBox,
+					model,
+					'child-in-court',
+					child.inImmigrationCourt,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{inImmigrationCourt: r}));
+					});
 			case 'ChildIncluded':
 				var n = element.a;
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var child = A2($author$project$Main$getChildByIndex, n, c);
+				return A4(
+					$author$project$Main$yesNoCheckBox,
+					model,
+					'child-included',
+					child.includedInApplication,
+					function (r) {
+						return A2(
+							$author$project$Main$SetChildData,
+							n,
+							_Utils_update(
+								child,
+								{includedInApplication: r}));
+					});
 			default:
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 		}
@@ -15274,7 +15575,8 @@ var $author$project$Main$elementNameHtml = F3(
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(5)),
 							$rtfeldman$elm_css$Css$marginBottom(
-							$rtfeldman$elm_css$Css$px(5))
+							$rtfeldman$elm_css$Css$px(5)),
+							$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer)
 						]))
 				]),
 			_List_fromArray(
@@ -15293,7 +15595,8 @@ var $author$project$Main$elementNameHtml = F3(
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(5)),
 							$rtfeldman$elm_css$Css$marginBottom(
-							$rtfeldman$elm_css$Css$px(5))
+							$rtfeldman$elm_css$Css$px(5)),
+							$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$notAllowed)
 						]))
 				]),
 			_List_fromArray(
@@ -15349,7 +15652,8 @@ var $author$project$Main$titleHtml = F4(
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(10)),
 							$rtfeldman$elm_css$Css$marginBottom(
-							$rtfeldman$elm_css$Css$px(10))
+							$rtfeldman$elm_css$Css$px(10)),
+							$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer)
 						]))
 				]),
 			_List_fromArray(
@@ -15368,7 +15672,8 @@ var $author$project$Main$titleHtml = F4(
 							$rtfeldman$elm_css$Css$marginTop(
 							$rtfeldman$elm_css$Css$px(10)),
 							$rtfeldman$elm_css$Css$marginBottom(
-							$rtfeldman$elm_css$Css$px(10))
+							$rtfeldman$elm_css$Css$px(10)),
+							$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$notAllowed)
 						]))
 				]),
 			_List_fromArray(
