@@ -487,5 +487,17 @@ var translations = {
 	},
 	"child-birth": {
 		"en": "Please enter your child's date of birth, as well as the city and country where they were born."
+	},
+	"from": {
+		"en": "From"
+	},
+	"department-province-state": {
+		"en": "Department, Province, or State"
+	},
+	"last-address-entry": {
+		"en": "Please enter your last address before coming to the US, along with the dates lived there."
+	},
+	"to": {
+		"en": "To"
 	}
 }

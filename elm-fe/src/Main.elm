@@ -384,12 +384,18 @@ defaultChildData =
 
 type alias AddressData =
     { lastAddressBeforeUS : GranularAddressWithDates
+    , sameAsWhereFearsPersecution : Maybe Bool
+    , lastAddressFearsPersecution : GranularAddressWithDates
+    , pastResidences : List GranularAddressWithDates
     }
 
 
 defaultAddressData : AddressData
 defaultAddressData =
     { lastAddressBeforeUS = defaultGranularAddressWithDates
+    , sameAsWhereFearsPersecution = Maybe.Nothing
+    , lastAddressFearsPersecution = defaultGranularAddressWithDates
+    , pastResidences = []
     }
 
 
@@ -399,9 +405,9 @@ type alias GranularAddressWithDates =
     , cityOrTown : String
     , departmentProvinceOrState : String
     , country : String
-    , fromDay : String
+    , fromYear : String
     , fromMonth : String
-    , toDay : String
+    , toYear : String
     , toMonth : String
     }
 
@@ -413,9 +419,9 @@ defaultGranularAddressWithDates =
     , cityOrTown = ""
     , departmentProvinceOrState = ""
     , country = ""
-    , fromDay = ""
+    , fromYear = ""
     , fromMonth = ""
-    , toDay = ""
+    , toYear = ""
     , toMonth = ""
     }
 
@@ -581,6 +587,7 @@ type Msg
     | SetSpouseData SpouseData
     | SetNumChildren String
     | SetChildData Int ChildData
+    | SetAddressData AddressData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -798,6 +805,16 @@ update msg model =
 
                 newS =
                     { s | children = updated }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetAddressData a ->
+            let
+                s =
+                    model.state
+
+                newS =
+                    { s | addresses = a }
             in
             ( { model | state = newS }, Cmd.none )
 
@@ -2818,7 +2835,69 @@ render element model =
             yesNoCheckBox model "child-included" child.includedInApplication (\r -> SetChildData n { child | includedInApplication = r })
 
         LastAddressBeforeUS ->
-            div [] []
+            let
+                a =
+                    model.state.addresses
+
+                last =
+                    a.lastAddressBeforeUS
+            in
+            nextBackWrap model
+                [ prompt model [] "last-address-entry"
+                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr", alignItems center, justifyContent center, alignSelf flexStart, flexWrap wrap ] ]
+                    [ textInput last.streetNumber (i18n model "street-number") [ property "grid-column" "1/2" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | streetNumber = r } })
+                    , textInput last.streetName (i18n model "street-name") [ property "grid-column" "2/3" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | streetName = r } })
+                    ]
+                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr 1fr", alignItems center, justifyContent center, flexWrap wrap ] ]
+                    [ textInput last.cityOrTown (i18n model "city") [ property "grid-column" "1/2" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | cityOrTown = r } })
+                    , textInput last.departmentProvinceOrState (i18n model "department-province-state") [ property "grid-column" "2/3" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | departmentProvinceOrState = r } })
+                    , textInput last.country (i18n model "country") [ property "grid-column" "3/4" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | country = r } })
+                    ]
+                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 1fr 1fr 1fr", property "grid-template-rows" "1fr 2fr 2fr", property "column-gap" "10px", alignItems center, justifyContent center ] ]
+                    [ div [ css [ textAlign center, property "grid-column" "1/3", property "grid-row" "1/2" ] ] [ text (i18n model "from") ]
+                    , div [ css [ textAlign center, property "grid-column" "1/2", property "grid-row" "2/3" ] ] [ text (i18n model "month") ]
+                    , select
+                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | fromMonth = r } })
+                        , css
+                            [ dropdownStyles
+                            , property "grid-column" "1/2"
+                            , property "grid-row" "3/4"
+                            ]
+                        ]
+                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.fromMonth) ] [ text r ]) monthList)
+                    , div [ css [ textAlign center, property "grid-column" "2/3", property "grid-row" "2/3" ] ] [ text (i18n model "year") ]
+                    , select
+                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | fromYear = r } })
+                        , css
+                            [ dropdownStyles
+                            , property "grid-column" "2/3"
+                            , property "grid-row" "3/4"
+                            ]
+                        ]
+                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.fromYear) ] [ text r ]) (yearList model.currentYear))
+                    , div [ css [ textAlign center, property "grid-column" "3/5", property "grid-row" "1/2" ] ] [ text (i18n model "to") ]
+                    , div [ css [ textAlign center, property "grid-column" "3/4", property "grid-row" "2/3" ] ] [ text (i18n model "month") ]
+                    , select
+                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | toMonth = r } })
+                        , css
+                            [ dropdownStyles
+                            , property "grid-column" "3/4"
+                            , property "grid-row" "3/4"
+                            ]
+                        ]
+                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.toMonth) ] [ text r ]) monthList)
+                    , div [ css [ textAlign center, property "grid-column" "4/5", property "grid-row" "2/3" ] ] [ text (i18n model "year") ]
+                    , select
+                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | toYear = r } })
+                        , css
+                            [ dropdownStyles
+                            , property "grid-column" "4/5"
+                            , property "grid-row" "3/4"
+                            ]
+                        ]
+                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.toYear) ] [ text r ]) (yearList model.currentYear))
+                    ]
+                ]
 
 
 
@@ -3619,6 +3698,7 @@ dropdownStyles =
         , outline zero
         , padding (px 8)
         , boxSizing borderBox
+        , defaultMargin
         ]
 
 
