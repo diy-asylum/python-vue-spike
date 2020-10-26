@@ -499,5 +499,20 @@ var translations = {
 	},
 	"to": {
 		"en": "To"
+	},
+	"same-as-fears-persecution": {
+		"en": "Is this address in the country where you fear persecution?"
+	},
+	"last-address-persecution-entry": {
+		"en": "Please enter your last address in the country where you fear persecution, along with the dates lived there."
+	},
+	"past-addresses-entry": {
+		"en": "Please list all addresses where you have lived in the past five years. This includes the addresses you have previously listed if they occurred in the past five years."
+	},
+	"last-address-persecution": {
+		"en": "Last Address In Country Where You Fear Persecution"
+	},
+	"past-addresses": {
+		"en": "Past Addresses"
 	}
 }

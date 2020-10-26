@@ -495,6 +495,8 @@ type FormEntryElement
     | ChildImmigrationCourt Int
     | ChildIncluded Int
     | LastAddressBeforeUS
+    | LastAddressFearsPersecution
+    | PastAddresses
 
 
 type SectionTitle
@@ -1107,7 +1109,17 @@ getNext entry model =
                     LastAddressBeforeUS
 
         LastAddressBeforeUS ->
-            LastAddressBeforeUS
+            if model.state.addresses.sameAsWhereFearsPersecution == Just True then
+                PastAddresses
+
+            else
+                LastAddressFearsPersecution
+
+        LastAddressFearsPersecution ->
+            PastAddresses
+
+        PastAddresses ->
+            PastAddresses
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -1368,6 +1380,16 @@ getBack entry model =
                 _ ->
                     NumberOfChildren
 
+        LastAddressFearsPersecution ->
+            LastAddressBeforeUS
+
+        PastAddresses ->
+            if model.state.addresses.sameAsWhereFearsPersecution == Just True then
+                LastAddressBeforeUS
+
+            else
+                LastAddressFearsPersecution
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -1576,6 +1598,12 @@ getSectionFromElement element =
         LastAddressBeforeUS ->
             AddressInfo
 
+        LastAddressFearsPersecution ->
+            AddressInfo
+
+        PastAddresses ->
+            AddressInfo
+
 
 validate : Model -> Bool
 validate model =
@@ -1591,6 +1619,9 @@ validate model =
 
         c =
             model.state.children
+
+        a =
+            model.state.addresses
     in
     if not model.debug then
         case model.focusedEntry of
@@ -1968,6 +1999,17 @@ validate model =
                         True
 
             LastAddressBeforeUS ->
+                let
+                    last =
+                        a.lastAddressBeforeUS
+                in
+                a.sameAsWhereFearsPersecution /= Nothing && last.streetNumber /= "" && last.streetName /= "" && last.departmentProvinceOrState /= "" && last.cityOrTown /= "" && last.country /= ""
+
+            --TODO fix
+            LastAddressFearsPersecution ->
+                True
+
+            PastAddresses ->
                 True
 
     else
@@ -2841,6 +2883,12 @@ render element model =
 
                 last =
                     a.lastAddressBeforeUS
+
+                yesChecked =
+                    a.sameAsWhereFearsPersecution == Just True
+
+                noChecked =
+                    a.sameAsWhereFearsPersecution == Just False
             in
             nextBackWrap model
                 [ prompt model [] "last-address-entry"
@@ -2897,7 +2945,18 @@ render element model =
                         ]
                         (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.toYear) ] [ text r ]) (yearList model.currentYear))
                     ]
+                , prompt model [ marginTop (px 20) ] "same-as-fears-persecution"
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+                    [ checkBox model yesChecked "yes" (\r -> SetAddressData { a | sameAsWhereFearsPersecution = r }) (setMaybe yesChecked True)
+                    , checkBox model noChecked "no" (\r -> SetAddressData { a | sameAsWhereFearsPersecution = r }) (setMaybe noChecked False)
+                    ]
                 ]
+
+        LastAddressFearsPersecution ->
+            div [] []
+
+        PastAddresses ->
+            div [] []
 
 
 
@@ -3609,6 +3668,12 @@ formElementToDescription element model =
 
         LastAddressBeforeUS ->
             i18n model "last-address-before-us"
+
+        LastAddressFearsPersecution ->
+            i18n model "last-address-persecution"
+
+        PastAddresses ->
+            i18n model "past-addresses"
 
 
 

@@ -7737,6 +7737,8 @@ var $author$project$Main$HomeMailingSame = {$: 'HomeMailingSame'};
 var $author$project$Main$I94 = {$: 'I94'};
 var $author$project$Main$ImmigrationCourtHistoryEntry = {$: 'ImmigrationCourtHistoryEntry'};
 var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
+var $author$project$Main$LastAddressBeforeUS = {$: 'LastAddressBeforeUS'};
+var $author$project$Main$LastAddressFearsPersecution = {$: 'LastAddressFearsPersecution'};
 var $author$project$Main$LeftHomeCountry = {$: 'LeftHomeCountry'};
 var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
 var $author$project$Main$MarriageInfo = {$: 'MarriageInfo'};
@@ -7997,7 +7999,7 @@ var $author$project$Main$getBack = F2(
 			case 'ChildIncluded':
 				var n = entry.a;
 				return $author$project$Main$ChildImmigrationCourt(n);
-			default:
+			case 'LastAddressBeforeUS':
 				var _v3 = model.state.numberOfChildren;
 				if (_v3.$ === 'Just') {
 					var n = _v3.a;
@@ -8019,10 +8021,16 @@ var $author$project$Main$getBack = F2(
 				} else {
 					return $author$project$Main$NumberOfChildren;
 				}
+			case 'LastAddressFearsPersecution':
+				return $author$project$Main$LastAddressBeforeUS;
+			default:
+				return _Utils_eq(
+					model.state.addresses.sameAsWhereFearsPersecution,
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$LastAddressBeforeUS : $author$project$Main$LastAddressFearsPersecution;
 		}
 	});
-var $author$project$Main$LastAddressBeforeUS = {$: 'LastAddressBeforeUS'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
+var $author$project$Main$PastAddresses = {$: 'PastAddresses'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -8239,8 +8247,14 @@ var $author$project$Main$getNext = F2(
 				} else {
 					return $author$project$Main$LastAddressBeforeUS;
 				}
+			case 'LastAddressBeforeUS':
+				return _Utils_eq(
+					model.state.addresses.sameAsWhereFearsPersecution,
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$PastAddresses : $author$project$Main$LastAddressFearsPersecution;
+			case 'LastAddressFearsPersecution':
+				return $author$project$Main$PastAddresses;
 			default:
-				return $author$project$Main$LastAddressBeforeUS;
+				return $author$project$Main$PastAddresses;
 		}
 	});
 var $author$project$Main$AddressInfo = {$: 'AddressInfo'};
@@ -8418,6 +8432,10 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			var n = element.a;
 			return $author$project$Main$ChildInfo(
 				$elm$core$Maybe$Just(n));
+		case 'LastAddressBeforeUS':
+			return $author$project$Main$AddressInfo;
+		case 'LastAddressFearsPersecution':
+			return $author$project$Main$AddressInfo;
 		default:
 			return $author$project$Main$AddressInfo;
 	}
@@ -12267,6 +12285,7 @@ var $author$project$Main$validate = function (model) {
 	var elig = model.state.eligibility;
 	var d = model.state.personal;
 	var c = model.state.children;
+	var a = model.state.addresses;
 	if (!model.debug) {
 		var _v0 = model.focusedEntry;
 		switch (_v0.$) {
@@ -12519,6 +12538,11 @@ var $author$project$Main$validate = function (model) {
 				} else {
 					return true;
 				}
+			case 'LastAddressBeforeUS':
+				var last = a.lastAddressBeforeUS;
+				return (!_Utils_eq(a.sameAsWhereFearsPersecution, $elm$core$Maybe$Nothing)) && ((last.streetNumber !== '') && ((last.streetName !== '') && ((last.departmentProvinceOrState !== '') && ((last.cityOrTown !== '') && (last.country !== '')))));
+			case 'LastAddressFearsPersecution':
+				return true;
 			default:
 				return true;
 		}
@@ -12746,6 +12770,7 @@ var $author$project$Main$labeledTextInput = F4(
 				]));
 	});
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
 var $author$project$DataTypes$DIVORCED = {$: 'DIVORCED'};
 var $author$project$DataTypes$SINGLE = {$: 'SINGLE'};
 var $author$project$DataTypes$WIDOWED = {$: 'WIDOWED'};
@@ -15370,9 +15395,15 @@ var $author$project$Main$render = F2(
 								child,
 								{includedInApplication: r}));
 					});
-			default:
+			case 'LastAddressBeforeUS':
 				var a = model.state.addresses;
 				var last = a.lastAddressBeforeUS;
+				var noChecked = _Utils_eq(
+					a.sameAsWhereFearsPersecution,
+					$elm$core$Maybe$Just(false));
+				var yesChecked = _Utils_eq(
+					a.sameAsWhereFearsPersecution,
+					$elm$core$Maybe$Just(true));
 				return A2(
 					$author$project$Main$nextBackWrap,
 					model,
@@ -15780,8 +15811,61 @@ var $author$project$Main$render = F2(
 													]));
 										},
 										$author$project$Main$yearList(model.currentYear)))
+								])),
+							A3(
+							$author$project$Main$prompt,
+							model,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$marginTop(
+									$rtfeldman$elm_css$Css$px(20))
+								]),
+							'same-as-fears-persecution'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$author$project$Main$defaultMargin
+										]))
+								]),
+							_List_fromArray(
+								[
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									yesChecked,
+									'yes',
+									function (r) {
+										return $author$project$Main$SetAddressData(
+											_Utils_update(
+												a,
+												{sameAsWhereFearsPersecution: r}));
+									},
+									A2($author$project$Main$setMaybe, yesChecked, true)),
+									A5(
+									$author$project$Main$checkBox,
+									model,
+									noChecked,
+									'no',
+									function (r) {
+										return $author$project$Main$SetAddressData(
+											_Utils_update(
+												a,
+												{sameAsWhereFearsPersecution: r}));
+									},
+									A2($author$project$Main$setMaybe, noChecked, false))
 								]))
 						]));
+			case 'LastAddressFearsPersecution':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			default:
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {
@@ -15977,12 +16061,15 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'immigration-court');
 			case 'ChildIncluded':
 				return A2($author$project$Main$i18n, model, 'include-in-application');
-			default:
+			case 'LastAddressBeforeUS':
 				return A2($author$project$Main$i18n, model, 'last-address-before-us');
+			case 'LastAddressFearsPersecution':
+				return A2($author$project$Main$i18n, model, 'last-address-persecution');
+			default:
+				return A2($author$project$Main$i18n, model, 'past-addresses');
 		}
 	});
 var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
-var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
 var $author$project$Main$elementNameHtml = F3(
 	function (element, clickable, model) {
 		var description = A2($author$project$Main$formElementToDescription, element, model);
