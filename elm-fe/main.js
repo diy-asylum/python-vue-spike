@@ -5594,13 +5594,19 @@ var $mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 };
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultGranularAddressWithDates = {cityOrTown: '', country: '', departmentProvinceOrState: '', fromMonth: '', fromYear: '', streetName: '', streetNumber: '', toMonth: '', toYear: ''};
-var $author$project$Main$defaultAddressData = {lastAddressBeforeUS: $author$project$Main$defaultGranularAddressWithDates, lastAddressFearsPersecution: $author$project$Main$defaultGranularAddressWithDates, pastResidences: _List_Nil, sameAsWhereFearsPersecution: $elm$core$Maybe$Nothing};
+var $author$project$Main$defaultAddressData = {lastAddressBeforeUS: $author$project$Main$defaultGranularAddressWithDates, lastAddressFearsPersecution: $author$project$Main$defaultGranularAddressWithDates, pastAddressEntry: $author$project$Main$defaultGranularAddressWithDates, pastAddresses: _List_Nil, sameAsWhereFearsPersecution: $elm$core$Maybe$Nothing};
+var $author$project$Main$defaultSchoolData = {address: '', fromMonth: '', fromYear: '', name: '', schoolType: '', toMonth: '', toYear: ''};
+var $author$project$Main$defaultEducationData = {schoolEntry: $author$project$Main$defaultSchoolData, schools: _List_Nil};
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
+var $author$project$Main$defaultEmploymentEntry = {address: '', fromMonth: '', fromYear: '', name: '', occupation: '', toMonth: '', toYear: ''};
+var $author$project$Main$defaultEmploymentData = {employment: _List_Nil, employmentEntry: $author$project$Main$defaultEmploymentEntry};
+var $author$project$Main$defaultFamilyEntry = {countryOfBirth: '', isDeceased: $elm$core$Maybe$Nothing, location: '', name: ''};
+var $author$project$Main$defaultFamilyData = {father: $author$project$Main$defaultFamilyEntry, mother: $author$project$Main$defaultFamilyEntry, siblings: _List_Nil};
 var $author$project$DataTypes$defaultMailingAddress = {apartmentNumber: '', areaCode: '', city: '', inCareOf: '', phoneNumber: '', state: '', streetName: '', streetNumber: '', zipCode: ''};
 var $author$project$Main$defaultTravelEvent = {day: '', month: '', place: '', status: '', year: ''};
 var $author$project$Main$defaultPersonalData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentEntryDay: '', currentEntryMonth: '', currentEntryPlace: '', currentEntryStatus: '', currentEntryYear: '', currentLanguagesInput: '', dayOfBirth: '', entryExpirationDay: '', entryExpirationMonth: '', entryExpirationYear: '', firstName: '', fluentInEnglish: $elm$core$Maybe$Nothing, gender: $elm$core$Maybe$Nothing, hasOtherTravelDoc: $elm$core$Maybe$Nothing, hasPassport: $elm$core$Maybe$Nothing, homeAddress: $author$project$DataTypes$defaultMailingAddress, homeMailingSame: $elm$core$Maybe$Nothing, i94Number: '', immigrationCourtHistory: $elm$core$Maybe$Nothing, lastLeftHomeCountryDay: '', lastLeftHomeCountryMonth: '', lastLeftHomeCountryYear: '', lastName: '', mailingAddress: $author$project$DataTypes$defaultMailingAddress, maritalStatus: $elm$core$Maybe$Nothing, middleName: '', monthOfBirth: '', mostRecentEntry: $author$project$Main$defaultTravelEvent, nationalityAtBirth: '', nativeLanguage: '', otherEntries: _List_Nil, otherLanguages: _List_Nil, presentNationality: '', raceEthnicOrTribalGroup: '', religion: '', socialSecurityNumber: '', travelDocCountry: '', travelDocExpirationDay: '', travelDocExpirationMonth: '', travelDocExpirationYear: '', travelDocNumber: '', uscisAccountNumber: '', yearOfBirth: ''};
 var $author$project$Main$defaultSpouseData = {aliases: _List_Nil, alienRegistrationNumber: '', cityOfBirth: '', countryOfBirth: '', currentAliasInput: '', currentLocation: '', currentStatus: '', dayOfBirth: '', firstName: '', gender: $elm$core$Maybe$Nothing, i94Number: '', inImmigrationCourt: $elm$core$Maybe$Nothing, inUS: $elm$core$Maybe$Nothing, includedInApplication: $elm$core$Maybe$Nothing, lastEntryDay: '', lastEntryMonth: '', lastEntryPlace: '', lastEntryYear: '', lastName: '', marriageDay: '', marriageMonth: '', marriageYear: '', middleName: '', monthOfBirth: '', nationality: '', placeOfMarriage: '', previousEntryDay: '', previousEntryMonth: '', previousEntryYear: '', raceEthnicityOrTribalGroup: '', socialSecurityNumber: '', statusExpirationDay: '', statusExpirationMonth: '', statusExpirationYear: '', statusOnLastAdmission: '', travelDocNumber: '', yearOfBirth: ''};
-var $author$project$Main$defaultFormState = {addresses: $author$project$Main$defaultAddressData, children: _List_Nil, eligibility: $author$project$Main$defaultEligibilityData, numberOfChildren: $elm$core$Maybe$Nothing, personal: $author$project$Main$defaultPersonalData, spouse: $author$project$Main$defaultSpouseData};
+var $author$project$Main$defaultFormState = {addresses: $author$project$Main$defaultAddressData, children: _List_Nil, education: $author$project$Main$defaultEducationData, eligibility: $author$project$Main$defaultEligibilityData, employment: $author$project$Main$defaultEmploymentData, family: $author$project$Main$defaultFamilyData, numberOfChildren: $elm$core$Maybe$Nothing, personal: $author$project$Main$defaultPersonalData, spouse: $author$project$Main$defaultSpouseData};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Dict$Black = {$: 'Black'};
@@ -6401,7 +6407,7 @@ var $elm$browser$Browser$Events$onResize = function (func) {
 				A2($elm$json$Json$Decode$field, 'innerWidth', $elm$json$Json$Decode$int),
 				A2($elm$json$Json$Decode$field, 'innerHeight', $elm$json$Json$Decode$int))));
 };
-var $author$project$Main$subscriptions = function (model) {
+var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$browser$Browser$Events$onResize(
 		F2(
 			function (width, height) {
@@ -7504,11 +7510,9 @@ var $author$project$Main$parseBytes = function (response) {
 			return $elm$core$Result$Err($elm$http$Http$NetworkError);
 		case 'BadStatus_':
 			var metadata = response.a;
-			var body = response.b;
 			return $elm$core$Result$Err(
 				$elm$http$Http$BadStatus(metadata.statusCode));
 		default:
-			var metadata = response.a;
 			var body = response.b;
 			return $elm$core$Result$Ok(body);
 	}
@@ -7726,9 +7730,12 @@ var $author$project$Main$ChildSSN = function (a) {
 var $author$project$Main$ChildTravelDoc = function (a) {
 	return {$: 'ChildTravelDoc', a: a};
 };
+var $author$project$Main$Education = {$: 'Education'};
+var $author$project$Main$Employment = {$: 'Employment'};
 var $author$project$Main$EnterGender = {$: 'EnterGender'};
 var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
 var $author$project$Main$EnterMaritalStatus = {$: 'EnterMaritalStatus'};
+var $author$project$Main$FatherInfo = {$: 'FatherInfo'};
 var $author$project$Main$FluentInEnglish = {$: 'FluentInEnglish'};
 var $author$project$Main$HasOtherTravelDoc = {$: 'HasOtherTravelDoc'};
 var $author$project$Main$HasPassport = {$: 'HasPassport'};
@@ -7744,12 +7751,14 @@ var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
 var $author$project$Main$MarriageInfo = {$: 'MarriageInfo'};
 var $author$project$Main$MostRecentEntry = {$: 'MostRecentEntry'};
 var $author$project$Main$MostRecentEntryExpiration = {$: 'MostRecentEntryExpiration'};
+var $author$project$Main$MotherInfo = {$: 'MotherInfo'};
 var $author$project$Main$Name = {$: 'Name'};
 var $author$project$Main$NationalityAtBirth = {$: 'NationalityAtBirth'};
 var $author$project$Main$NativeLanguage = {$: 'NativeLanguage'};
 var $author$project$Main$NumberOfChildren = {$: 'NumberOfChildren'};
 var $author$project$Main$OtherEntries = {$: 'OtherEntries'};
 var $author$project$Main$OtherLanguages = {$: 'OtherLanguages'};
+var $author$project$Main$PastAddresses = {$: 'PastAddresses'};
 var $author$project$Main$PresentNationality = {$: 'PresentNationality'};
 var $author$project$Main$RaceEthnicity = {$: 'RaceEthnicity'};
 var $author$project$Main$Religion = {$: 'Religion'};
@@ -8023,14 +8032,24 @@ var $author$project$Main$getBack = F2(
 				}
 			case 'LastAddressFearsPersecution':
 				return $author$project$Main$LastAddressBeforeUS;
-			default:
+			case 'PastAddresses':
 				return _Utils_eq(
 					model.state.addresses.sameAsWhereFearsPersecution,
 					$elm$core$Maybe$Just(true)) ? $author$project$Main$LastAddressBeforeUS : $author$project$Main$LastAddressFearsPersecution;
+			case 'Education':
+				return $author$project$Main$PastAddresses;
+			case 'Employment':
+				return $author$project$Main$Education;
+			case 'MotherInfo':
+				return $author$project$Main$Employment;
+			case 'FatherInfo':
+				return $author$project$Main$MotherInfo;
+			default:
+				return $author$project$Main$FatherInfo;
 		}
 	});
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
-var $author$project$Main$PastAddresses = {$: 'PastAddresses'};
+var $author$project$Main$SiblingInfo = {$: 'SiblingInfo'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -8253,11 +8272,22 @@ var $author$project$Main$getNext = F2(
 					$elm$core$Maybe$Just(true)) ? $author$project$Main$PastAddresses : $author$project$Main$LastAddressFearsPersecution;
 			case 'LastAddressFearsPersecution':
 				return $author$project$Main$PastAddresses;
+			case 'PastAddresses':
+				return $author$project$Main$Education;
+			case 'Education':
+				return $author$project$Main$Employment;
+			case 'Employment':
+				return $author$project$Main$MotherInfo;
+			case 'MotherInfo':
+				return $author$project$Main$FatherInfo;
+			case 'FatherInfo':
+				return $author$project$Main$SiblingInfo;
 			default:
-				return $author$project$Main$PastAddresses;
+				return $author$project$Main$SiblingInfo;
 		}
 	});
 var $author$project$Main$AddressInfo = {$: 'AddressInfo'};
+var $author$project$Main$BackgroundInfo = {$: 'BackgroundInfo'};
 var $author$project$Main$ChildInfo = function (a) {
 	return {$: 'ChildInfo', a: a};
 };
@@ -8436,8 +8466,18 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$AddressInfo;
 		case 'LastAddressFearsPersecution':
 			return $author$project$Main$AddressInfo;
-		default:
+		case 'PastAddresses':
 			return $author$project$Main$AddressInfo;
+		case 'Education':
+			return $author$project$Main$BackgroundInfo;
+		case 'Employment':
+			return $author$project$Main$BackgroundInfo;
+		case 'MotherInfo':
+			return $author$project$Main$BackgroundInfo;
+		case 'FatherInfo':
+			return $author$project$Main$BackgroundInfo;
+		default:
+			return $author$project$Main$BackgroundInfo;
 	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -9017,12 +9057,45 @@ var $author$project$Main$update = F2(
 						model,
 						{state: newS}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'SetAddressData':
 				var a = msg.a;
 				var s = model.state;
 				var newS = _Utils_update(
 					s,
 					{addresses: a});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			case 'SetEmploymentData':
+				var e = msg.a;
+				var s = model.state;
+				var newS = _Utils_update(
+					s,
+					{employment: e});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			case 'SetEducationData':
+				var e = msg.a;
+				var s = model.state;
+				var newS = _Utils_update(
+					s,
+					{education: e});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var f = msg.a;
+				var s = model.state;
+				var newS = _Utils_update(
+					s,
+					{family: f});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -11698,8 +11771,14 @@ var $author$project$Main$SetChildData = F2(
 	function (a, b) {
 		return {$: 'SetChildData', a: a, b: b};
 	});
+var $author$project$Main$SetEducationData = function (a) {
+	return {$: 'SetEducationData', a: a};
+};
 var $author$project$Main$SetEligibility = function (a) {
 	return {$: 'SetEligibility', a: a};
+};
+var $author$project$Main$SetEmploymentData = function (a) {
+	return {$: 'SetEmploymentData', a: a};
 };
 var $author$project$Main$SetNumChildren = function (a) {
 	return {$: 'SetNumChildren', a: a};
@@ -11786,8 +11865,30 @@ var $rtfeldman$elm_css$Css$alignSelf = function (fn) {
 		'align-self',
 		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
 };
-var $author$project$Main$Back = {$: 'Back'};
-var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
+var $rtfeldman$elm_css$Css$column = _Utils_update(
+	$rtfeldman$elm_css$Css$row,
+	{value: 'column'});
+var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
+var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
+var $rtfeldman$elm_css$Css$flexStart = $rtfeldman$elm_css$Css$prop1('flex-start');
+var $rtfeldman$elm_css$Css$flexWrap = $rtfeldman$elm_css$Css$prop1('flex-wrap');
+var $rtfeldman$elm_css$Css$borderBox = {backgroundClip: $rtfeldman$elm_css$Css$Structure$Compatible, boxSizing: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'border-box'};
+var $rtfeldman$elm_css$Css$boxSizing = $rtfeldman$elm_css$Css$prop1('box-sizing');
+var $author$project$Main$dropdownStyles = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+			$rtfeldman$elm_css$Css$borderRadius(
+			$rtfeldman$elm_css$Css$px(5)),
+			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(8)),
+			$rtfeldman$elm_css$Css$boxSizing($rtfeldman$elm_css$Css$borderBox),
+			$author$project$Main$defaultMargin
+		]));
 var $author$project$I18n$i18nHelper = F3(
 	function (languageDict, key, language) {
 		var errorValue = 'No translation available.';
@@ -11818,8 +11919,20 @@ var $author$project$Main$i18n = F2(
 	function (model, key) {
 		return A3($author$project$I18n$i18nHelper, model.languageDict, key, model.language);
 	});
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
+var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'justifyContent',
+		'justify-content',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
+};
+var $author$project$Main$monthList = _List_fromArray(
+	['', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
+var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
 };
 var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
@@ -11830,6 +11943,519 @@ var $rtfeldman$elm_css$VirtualDom$Styled$on = F2(
 			_List_Nil,
 			'');
 	});
+var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
+};
+var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
+var $rtfeldman$elm_css$Html$Styled$select = $rtfeldman$elm_css$Html$Styled$node('select');
+var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$property, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$selected = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('selected');
+var $rtfeldman$elm_css$Css$textAlign = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'textAlign',
+		'text-align',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
+};
+var $author$project$Main$yearList = function (currentYear) {
+	var year = A2($elm$core$Maybe$withDefault, 2020, currentYear);
+	return A2(
+		$elm$core$List$cons,
+		'',
+		A2(
+			$elm$core$List$map,
+			function (r) {
+				return $elm$core$String$fromInt(year - r);
+			},
+			A2($elm$core$List$range, 0, 120)));
+};
+var $author$project$Main$fromToSelector = F3(
+	function (model, data, updateFunction) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
+							A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 1fr 1fr 1fr'),
+							A2($rtfeldman$elm_css$Css$property, 'grid-template-rows', '1fr 2fr 2fr'),
+							A2($rtfeldman$elm_css$Css$property, 'column-gap', '10px'),
+							$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/3'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '1/2')
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'from'))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'month'))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$select,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Events$onInput(
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										data,
+										{fromMonth: r}));
+							}),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$author$project$Main$dropdownStyles,
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
+								]))
+						]),
+					A2(
+						$elm$core$List$map,
+						function (r) {
+							return A2(
+								$rtfeldman$elm_css$Html$Styled$option,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+										_Utils_eq(r, data.fromMonth))
+									]),
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text(r)
+									]));
+						},
+						$author$project$Main$monthList)),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'year'))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$select,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Events$onInput(
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										data,
+										{fromYear: r}));
+							}),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$author$project$Main$dropdownStyles,
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
+								]))
+						]),
+					A2(
+						$elm$core$List$map,
+						function (r) {
+							return A2(
+								$rtfeldman$elm_css$Html$Styled$option,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+										_Utils_eq(r, data.fromYear))
+									]),
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text(r)
+									]));
+						},
+						$author$project$Main$yearList(model.currentYear))),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/5'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '1/2')
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'to'))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'month'))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$select,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Events$onInput(
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										data,
+										{toMonth: r}));
+							}),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$author$project$Main$dropdownStyles,
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
+								]))
+						]),
+					A2(
+						$elm$core$List$map,
+						function (r) {
+							return A2(
+								$rtfeldman$elm_css$Html$Styled$option,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+										_Utils_eq(r, data.toMonth))
+									]),
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text(r)
+									]));
+						},
+						$author$project$Main$monthList)),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '4/5'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
+								]))
+						]),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$text(
+							A2($author$project$Main$i18n, model, 'year'))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$select,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Events$onInput(
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										data,
+										{toYear: r}));
+							}),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$author$project$Main$dropdownStyles,
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '4/5'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
+								]))
+						]),
+					A2(
+						$elm$core$List$map,
+						function (r) {
+							return A2(
+								$rtfeldman$elm_css$Html$Styled$option,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+										_Utils_eq(r, data.toYear))
+									]),
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text(r)
+									]));
+						},
+						$author$project$Main$yearList(model.currentYear)))
+				]));
+	});
+var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
+var $rtfeldman$elm_css$Css$borderColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
+};
+var $rtfeldman$elm_css$Css$borderWidth = $rtfeldman$elm_css$Css$prop1('border-width');
+var $author$project$Main$highlight = $rtfeldman$elm_css$Css$hex('f06e11');
+var $rtfeldman$elm_css$Css$transparent = {color: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'transparent'};
+var $author$project$Main$inputStyles = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$author$project$Main$defaultMargin,
+			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+			$rtfeldman$elm_css$Css$borderRadius(
+			$rtfeldman$elm_css$Css$px(3)),
+			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+			$rtfeldman$elm_css$Css$borderWidth(
+			$rtfeldman$elm_css$Css$px(2)),
+			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+			$rtfeldman$elm_css$Css$borderColor($rtfeldman$elm_css$Css$transparent),
+			$rtfeldman$elm_css$Css$focus(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$borderColor($author$project$Main$highlight)
+				])),
+			$rtfeldman$elm_css$Css$padding(
+			$rtfeldman$elm_css$Css$px(7))
+		]));
+var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
+var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
+var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
+var $author$project$Main$textInput = F4(
+	function (value, placeholder, additionalStyles, updateFunction) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$input,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$author$project$Main$inputStyles,
+							$rtfeldman$elm_css$Css$batch(additionalStyles)
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
+					$rtfeldman$elm_css$Html$Styled$Attributes$value(value),
+					$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(placeholder),
+					$rtfeldman$elm_css$Html$Styled$Events$onInput(updateFunction)
+				]),
+			_List_Nil);
+	});
+var $rtfeldman$elm_css$Css$wrap = {flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, flexWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'wrap'};
+var $author$project$Main$addressWithDatesEntry = F3(
+	function (model, last, updateFunction) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$displayFlex,
+							$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+							$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 4fr'),
+									$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+									$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+									$rtfeldman$elm_css$Css$alignSelf($rtfeldman$elm_css$Css$flexStart),
+									$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A4(
+							$author$project$Main$textInput,
+							last.streetNumber,
+							A2($author$project$Main$i18n, model, 'street-number'),
+							_List_fromArray(
+								[
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
+								]),
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										last,
+										{streetNumber: r}));
+							}),
+							A4(
+							$author$project$Main$textInput,
+							last.streetName,
+							A2($author$project$Main$i18n, model, 'street-name'),
+							_List_fromArray(
+								[
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
+								]),
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										last,
+										{streetName: r}));
+							})
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$alignSelf($rtfeldman$elm_css$Css$flexStart),
+									A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
+									A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 2fr 1fr'),
+									$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+									$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+									$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A4(
+							$author$project$Main$textInput,
+							last.cityOrTown,
+							A2($author$project$Main$i18n, model, 'city'),
+							_List_fromArray(
+								[
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
+								]),
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										last,
+										{cityOrTown: r}));
+							}),
+							A4(
+							$author$project$Main$textInput,
+							last.departmentProvinceOrState,
+							A2($author$project$Main$i18n, model, 'department-province-state'),
+							_List_fromArray(
+								[
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
+								]),
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										last,
+										{departmentProvinceOrState: r}));
+							}),
+							A4(
+							$author$project$Main$textInput,
+							last.country,
+							A2($author$project$Main$i18n, model, 'country'),
+							_List_fromArray(
+								[
+									A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4')
+								]),
+							function (r) {
+								return updateFunction(
+									_Utils_update(
+										last,
+										{country: r}));
+							})
+						])),
+					A3($author$project$Main$fromToSelector, model, last, updateFunction)
+				]));
+	});
+var $author$project$Main$Back = {$: 'Back'};
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
 var $rtfeldman$elm_css$Html$Styled$Events$on = F2(
 	function (event, decoder) {
 		return A2(
@@ -11860,19 +12486,6 @@ var $author$project$Main$backButton = function (model) {
 			]));
 };
 var $author$project$Main$accent = $rtfeldman$elm_css$Css$hex('4F7CAC');
-var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
-var $rtfeldman$elm_css$Css$column = _Utils_update(
-	$rtfeldman$elm_css$Css$row,
-	{value: 'column'});
-var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
-var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
-var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
-	return A3(
-		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
-		'justifyContent',
-		'justify-content',
-		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
-};
 var $author$project$Main$centerWrap = function (list) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -11911,29 +12524,9 @@ var $author$project$Main$centerWrap = function (list) {
 };
 var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
 var $rtfeldman$elm_css$Css$checked = $rtfeldman$elm_css$Css$pseudoClass('checked');
-var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$property, key, value),
-			_List_Nil,
-			'');
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
 var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $rtfeldman$elm_css$Html$Styled$Events$targetChecked = A2(
 	$elm$json$Json$Decode$at,
@@ -11949,14 +12542,6 @@ var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
 var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
 var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
 var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
-var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
 var $author$project$Main$checkBox = F5(
 	function (model, isChecked, labelTextId, dataMessage, newData) {
@@ -11981,7 +12566,7 @@ var $author$project$Main$checkBox = F5(
 							$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
 							$rtfeldman$elm_css$Html$Styled$Attributes$checked(isChecked),
 							$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-							function (r) {
+							function (_v0) {
 								return dataMessage(newData);
 							}),
 							$rtfeldman$elm_css$Html$Styled$Attributes$css(
@@ -12017,66 +12602,6 @@ var $author$project$Main$checkBox = F5(
 	});
 var $author$project$Main$dayList = _List_fromArray(
 	['', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']);
-var $rtfeldman$elm_css$Css$borderBox = {backgroundClip: $rtfeldman$elm_css$Css$Structure$Compatible, boxSizing: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'border-box'};
-var $rtfeldman$elm_css$Css$boxSizing = $rtfeldman$elm_css$Css$prop1('box-sizing');
-var $author$project$Main$dropdownStyles = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
-			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
-			$rtfeldman$elm_css$Css$borderRadius(
-			$rtfeldman$elm_css$Css$px(5)),
-			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
-			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
-			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(8)),
-			$rtfeldman$elm_css$Css$boxSizing($rtfeldman$elm_css$Css$borderBox),
-			$author$project$Main$defaultMargin
-		]));
-var $author$project$Main$monthList = _List_fromArray(
-	['', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
-var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
-};
-var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
-var $rtfeldman$elm_css$Html$Styled$select = $rtfeldman$elm_css$Html$Styled$node('select');
-var $rtfeldman$elm_css$Html$Styled$Attributes$selected = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('selected');
-var $author$project$Main$yearList = function (currentYear) {
-	var year = A2($elm$core$Maybe$withDefault, 2020, currentYear);
-	return A2(
-		$elm$core$List$cons,
-		'',
-		A2(
-			$elm$core$List$map,
-			function (r) {
-				return $elm$core$String$fromInt(year - r);
-			},
-			A2($elm$core$List$range, 0, 120)));
-};
 var $author$project$Main$dateSelector = F7(
 	function (model, dayValue, dayInput, monthValue, monthInput, yearValue, yearInput) {
 		return A2(
@@ -12254,11 +12779,6 @@ var $author$project$Main$dateSelector = F7(
 						]))
 				]));
 	});
-var $rtfeldman$elm_css$Css$flexEnd = $rtfeldman$elm_css$Css$prop1('flex-end');
-var $rtfeldman$elm_css$Css$flexStart = $rtfeldman$elm_css$Css$prop1('flex-start');
-var $rtfeldman$elm_css$Css$flexWrap = $rtfeldman$elm_css$Css$prop1('flex-wrap');
-var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
-var $author$project$Main$Next = {$: 'Next'};
 var $rtfeldman$elm_css$Css$notAllowed = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'not-allowed'};
 var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(
@@ -12277,9 +12797,12 @@ var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
 			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
 			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(4)),
+			$rtfeldman$elm_css$Css$px(8)),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero)
 		]));
+var $rtfeldman$elm_css$Css$flexEnd = $rtfeldman$elm_css$Css$prop1('flex-end');
+var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
+var $author$project$Main$Next = {$: 'Next'};
 var $author$project$Main$validate = function (model) {
 	var s = model.state.spouse;
 	var elig = model.state.eligibility;
@@ -12473,13 +12996,10 @@ var $author$project$Main$validate = function (model) {
 					return true;
 				}
 			case 'ChildAlienRegistration':
-				var n = _v0.a;
 				return true;
 			case 'ChildTravelDoc':
-				var n = _v0.a;
 				return true;
 			case 'ChildSSN':
-				var n = _v0.a;
 				return true;
 			case 'ChildInUS':
 				var n = _v0.a;
@@ -12509,7 +13029,6 @@ var $author$project$Main$validate = function (model) {
 					return true;
 				}
 			case 'ChildI94':
-				var n = _v0.a;
 				return true;
 			case 'ChildCurrentStatus':
 				var n = _v0.a;
@@ -12540,9 +13059,30 @@ var $author$project$Main$validate = function (model) {
 				}
 			case 'LastAddressBeforeUS':
 				var last = a.lastAddressBeforeUS;
-				return (!_Utils_eq(a.sameAsWhereFearsPersecution, $elm$core$Maybe$Nothing)) && ((last.streetNumber !== '') && ((last.streetName !== '') && ((last.departmentProvinceOrState !== '') && ((last.cityOrTown !== '') && (last.country !== '')))));
+				return (!_Utils_eq(a.sameAsWhereFearsPersecution, $elm$core$Maybe$Nothing)) && ((last.streetNumber !== '') && ((last.streetName !== '') && ((last.departmentProvinceOrState !== '') && ((last.cityOrTown !== '') && ((last.country !== '') && ((last.fromMonth !== '') && ((last.fromYear !== '') && ((last.toMonth !== '') && (last.toYear !== '')))))))));
 			case 'LastAddressFearsPersecution':
+				var last = a.lastAddressFearsPersecution;
+				return (last.streetNumber !== '') && ((last.streetName !== '') && ((last.departmentProvinceOrState !== '') && ((last.cityOrTown !== '') && ((last.country !== '') && ((last.fromMonth !== '') && ((last.fromYear !== '') && ((last.toMonth !== '') && (last.toYear !== ''))))))));
+			case 'PastAddresses':
 				return true;
+			case 'Employment':
+				return true;
+			case 'Education':
+				return true;
+			case 'MotherInfo':
+				var m = model.state.family.mother;
+				return (m.name !== '') && ((m.countryOfBirth !== '') && (_Utils_eq(
+					m.isDeceased,
+					$elm$core$Maybe$Just(true)) || (_Utils_eq(
+					m.isDeceased,
+					$elm$core$Maybe$Just(false)) && (m.location !== ''))));
+			case 'FatherInfo':
+				var m = model.state.family.father;
+				return (m.name !== '') && ((m.countryOfBirth !== '') && (_Utils_eq(
+					m.isDeceased,
+					$elm$core$Maybe$Just(true)) || (_Utils_eq(
+					m.isDeceased,
+					$elm$core$Maybe$Just(false)) && (m.location !== ''))));
 			default:
 				return true;
 		}
@@ -12597,13 +13137,6 @@ var $author$project$Main$nextBackWrap = F2(
 	});
 var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
 var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
-var $rtfeldman$elm_css$Css$textAlign = function (fn) {
-	return A3(
-		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
-		'textAlign',
-		'text-align',
-		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
-};
 var $author$project$Main$prompt = F3(
 	function (model, additionalStyles, textId) {
 		return A2(
@@ -12687,54 +13220,6 @@ var $author$project$Main$genderSelector = F4(
 				]));
 	});
 var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
-var $rtfeldman$elm_css$Css$borderColor = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
-};
-var $rtfeldman$elm_css$Css$borderWidth = $rtfeldman$elm_css$Css$prop1('border-width');
-var $author$project$Main$highlight = $rtfeldman$elm_css$Css$hex('f06e11');
-var $rtfeldman$elm_css$Css$transparent = {color: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'transparent'};
-var $author$project$Main$inputStyles = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$author$project$Main$defaultMargin,
-			A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
-			A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
-			$rtfeldman$elm_css$Css$borderRadius(
-			$rtfeldman$elm_css$Css$px(3)),
-			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
-			$rtfeldman$elm_css$Css$borderWidth(
-			$rtfeldman$elm_css$Css$px(2)),
-			$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
-			$rtfeldman$elm_css$Css$borderColor($rtfeldman$elm_css$Css$transparent),
-			$rtfeldman$elm_css$Css$focus(
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Css$borderColor($author$project$Main$highlight)
-				])),
-			$rtfeldman$elm_css$Css$padding(
-			$rtfeldman$elm_css$Css$px(7))
-		]));
-var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
-var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
-var $author$project$Main$textInput = F4(
-	function (value, placeholder, additionalStyles, updateFunction) {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$input,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$author$project$Main$inputStyles,
-							$rtfeldman$elm_css$Css$batch(additionalStyles)
-						])),
-					$rtfeldman$elm_css$Html$Styled$Attributes$type_('input'),
-					$rtfeldman$elm_css$Html$Styled$Attributes$value(value),
-					$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(placeholder),
-					$rtfeldman$elm_css$Html$Styled$Events$onInput(updateFunction)
-				]),
-			_List_Nil);
-	});
 var $author$project$Main$labeledTextInput = F4(
 	function (model, labelId, value, updateFunction) {
 		return A2(
@@ -12917,7 +13402,8 @@ var $author$project$Main$multiEntryRemoveButton = F5(
 							A2(
 							$rtfeldman$elm_css$Css$property,
 							'grid-row',
-							$elm$core$String$fromInt(index + 2))
+							$elm$core$String$fromInt(index + 2)),
+							A2($rtfeldman$elm_css$Css$property, 'justify-self', 'center')
 						])),
 					$rtfeldman$elm_css$Html$Styled$Events$onSubmit(
 					removeFunction(newList))
@@ -13078,10 +13564,25 @@ var $rtfeldman$elm_css$Css$pc = A2($rtfeldman$elm_css$Css$Internal$lengthConvert
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
+var $author$project$Main$printAddressWithDates = function (a) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[a.streetNumber, ' ', a.streetName, ', ', a.cityOrTown, ', ', a.departmentProvinceOrState, ', ', a.country, ', ', a.fromMonth, '/', a.fromYear, ' to ', a.toMonth, '/', a.toYear]));
+};
+var $author$project$Main$printEmploymentEntry = function (d) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[d.name, ', ', d.occupation, ', ', d.address, ', ', d.fromMonth, '/', d.fromYear, ' to ', d.toMonth, '/', d.toYear]));
+};
 var $author$project$Main$printEntry = function (e) {
 	return $elm$core$String$concat(
 		_List_fromArray(
 			[e.place, ', ', e.month, '/', e.day, '/', e.year, ', ', e.status]));
+};
+var $author$project$Main$printSchoolData = function (d) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[d.name, ', ', d.schoolType, ', ', d.address, ', ', d.fromMonth, '/', d.fromYear, ' to ', d.toMonth, '/', d.toYear]));
 };
 var $author$project$Main$singleTextEntry = F4(
 	function (model, promptTextId, value, updateFunction) {
@@ -13094,7 +13595,6 @@ var $author$project$Main$singleTextEntry = F4(
 					A4($author$project$Main$textInput, value, '', _List_Nil, updateFunction)
 				]));
 	});
-var $rtfeldman$elm_css$Css$wrap = {flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, flexWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'wrap'};
 var $author$project$Main$yesNoCheckBox = F4(
 	function (model, promptId, value, updateFunction) {
 		var yesChecked = A2($elm$core$Maybe$withDefault, false, value);
@@ -15410,408 +15910,16 @@ var $author$project$Main$render = F2(
 					_List_fromArray(
 						[
 							A3($author$project$Main$prompt, model, _List_Nil, 'last-address-entry'),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
-											A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 4fr'),
-											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$alignSelf($rtfeldman$elm_css$Css$flexStart),
-											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
-										]))
-								]),
-							_List_fromArray(
-								[
-									A4(
-									$author$project$Main$textInput,
-									last.streetNumber,
-									A2($author$project$Main$i18n, model, 'street-number'),
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
-										]),
-									function (r) {
-										return $author$project$Main$SetAddressData(
-											_Utils_update(
-												a,
-												{
-													lastAddressBeforeUS: _Utils_update(
-														last,
-														{streetNumber: r})
-												}));
-									}),
-									A4(
-									$author$project$Main$textInput,
-									last.streetName,
-									A2($author$project$Main$i18n, model, 'street-name'),
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
-										]),
-									function (r) {
-										return $author$project$Main$SetAddressData(
-											_Utils_update(
-												a,
-												{
-													lastAddressBeforeUS: _Utils_update(
-														last,
-														{streetName: r})
-												}));
-									})
-								])),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$alignSelf($rtfeldman$elm_css$Css$flexStart),
-											A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
-											A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 2fr 1fr'),
-											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
-										]))
-								]),
-							_List_fromArray(
-								[
-									A4(
-									$author$project$Main$textInput,
-									last.cityOrTown,
-									A2($author$project$Main$i18n, model, 'city'),
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2')
-										]),
-									function (r) {
-										return $author$project$Main$SetAddressData(
-											_Utils_update(
-												a,
-												{
-													lastAddressBeforeUS: _Utils_update(
-														last,
-														{cityOrTown: r})
-												}));
-									}),
-									A4(
-									$author$project$Main$textInput,
-									last.departmentProvinceOrState,
-									A2($author$project$Main$i18n, model, 'department-province-state'),
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3')
-										]),
-									function (r) {
-										return $author$project$Main$SetAddressData(
-											_Utils_update(
-												a,
-												{
-													lastAddressBeforeUS: _Utils_update(
-														last,
-														{departmentProvinceOrState: r})
-												}));
-									}),
-									A4(
-									$author$project$Main$textInput,
-									last.country,
-									A2($author$project$Main$i18n, model, 'country'),
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4')
-										]),
-									function (r) {
-										return $author$project$Main$SetAddressData(
-											_Utils_update(
-												a,
-												{
-													lastAddressBeforeUS: _Utils_update(
-														last,
-														{country: r})
-												}));
-									})
-								])),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[
-											A2($rtfeldman$elm_css$Css$property, 'display', 'grid'),
-											A2($rtfeldman$elm_css$Css$property, 'grid-template-columns', '1fr 1fr 1fr 1fr'),
-											A2($rtfeldman$elm_css$Css$property, 'grid-template-rows', '1fr 2fr 2fr'),
-											A2($rtfeldman$elm_css$Css$property, 'column-gap', '10px'),
-											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-										]))
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$rtfeldman$elm_css$Html$Styled$div,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/3'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '1/2')
-												]))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'from'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$div,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
-												]))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'month'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$select,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Events$onInput(
-											function (r) {
-												return $author$project$Main$SetAddressData(
-													_Utils_update(
-														a,
-														{
-															lastAddressBeforeUS: _Utils_update(
-																last,
-																{fromMonth: r})
-														}));
-											}),
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$author$project$Main$dropdownStyles,
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '1/2'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
-												]))
-										]),
-									A2(
-										$elm$core$List$map,
-										function (r) {
-											return A2(
-												$rtfeldman$elm_css$Html$Styled$option,
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-														_Utils_eq(r, last.fromMonth))
-													]),
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$text(r)
-													]));
-										},
-										$author$project$Main$monthList)),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$div,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
-												]))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'year'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$select,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Events$onInput(
-											function (r) {
-												return $author$project$Main$SetAddressData(
-													_Utils_update(
-														a,
-														{
-															lastAddressBeforeUS: _Utils_update(
-																last,
-																{fromYear: r})
-														}));
-											}),
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$author$project$Main$dropdownStyles,
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '2/3'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
-												]))
-										]),
-									A2(
-										$elm$core$List$map,
-										function (r) {
-											return A2(
-												$rtfeldman$elm_css$Html$Styled$option,
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-														_Utils_eq(r, last.fromYear))
-													]),
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$text(r)
-													]));
-										},
-										$author$project$Main$yearList(model.currentYear))),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$div,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/5'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '1/2')
-												]))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'to'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$div,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
-												]))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'month'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$select,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Events$onInput(
-											function (r) {
-												return $author$project$Main$SetAddressData(
-													_Utils_update(
-														a,
-														{
-															lastAddressBeforeUS: _Utils_update(
-																last,
-																{toMonth: r})
-														}));
-											}),
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$author$project$Main$dropdownStyles,
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '3/4'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
-												]))
-										]),
-									A2(
-										$elm$core$List$map,
-										function (r) {
-											return A2(
-												$rtfeldman$elm_css$Html$Styled$option,
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-														_Utils_eq(r, last.toMonth))
-													]),
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$text(r)
-													]));
-										},
-										$author$project$Main$monthList)),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$div,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '4/5'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '2/3')
-												]))
-										]),
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$text(
-											A2($author$project$Main$i18n, model, 'year'))
-										])),
-									A2(
-									$rtfeldman$elm_css$Html$Styled$select,
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Html$Styled$Events$onInput(
-											function (r) {
-												return $author$project$Main$SetAddressData(
-													_Utils_update(
-														a,
-														{
-															lastAddressBeforeUS: _Utils_update(
-																last,
-																{toYear: r})
-														}));
-											}),
-											$rtfeldman$elm_css$Html$Styled$Attributes$css(
-											_List_fromArray(
-												[
-													$author$project$Main$dropdownStyles,
-													A2($rtfeldman$elm_css$Css$property, 'grid-column', '4/5'),
-													A2($rtfeldman$elm_css$Css$property, 'grid-row', '3/4')
-												]))
-										]),
-									A2(
-										$elm$core$List$map,
-										function (r) {
-											return A2(
-												$rtfeldman$elm_css$Html$Styled$option,
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-														_Utils_eq(r, last.toYear))
-													]),
-												_List_fromArray(
-													[
-														$rtfeldman$elm_css$Html$Styled$text(r)
-													]));
-										},
-										$author$project$Main$yearList(model.currentYear)))
-								])),
+							A3(
+							$author$project$Main$addressWithDatesEntry,
+							model,
+							last,
+							function (r) {
+								return $author$project$Main$SetAddressData(
+									_Utils_update(
+										a,
+										{lastAddressBeforeUS: r}));
+							}),
 							A3(
 							$author$project$Main$prompt,
 							model,
@@ -15863,6 +15971,366 @@ var $author$project$Main$render = F2(
 								]))
 						]));
 			case 'LastAddressFearsPersecution':
+				var a = model.state.addresses;
+				var last = a.lastAddressFearsPersecution;
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'last-address-persecution-entry'),
+							A3(
+							$author$project$Main$addressWithDatesEntry,
+							model,
+							last,
+							function (r) {
+								return $author$project$Main$SetAddressData(
+									_Utils_update(
+										a,
+										{lastAddressFearsPersecution: r}));
+							})
+						]));
+			case 'PastAddresses':
+				var a = model.state.addresses;
+				var input = a.pastAddressEntry;
+				var validInput = (input.streetNumber !== '') && ((input.streetName !== '') && ((input.cityOrTown !== '') && ((input.country !== '') && ((input.departmentProvinceOrState !== '') && ((input.fromMonth !== '') && ((input.fromYear !== '') && ((input.toMonth !== '') && (input.toYear !== ''))))))));
+				var buttonStyles = validInput ? $author$project$Main$activeButtonStyles : $author$project$Main$disabledButtonStyles;
+				var newList = A2($elm$core$List$cons, input, a.pastAddresses);
+				var submitFunction = validInput ? $author$project$Main$SetAddressData(
+					_Utils_update(
+						a,
+						{pastAddressEntry: $author$project$Main$defaultGranularAddressWithDates, pastAddresses: newList})) : $author$project$Main$SetAddressData(a);
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'past-addresses-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$form,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onSubmit(submitFunction)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$div,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$displayFlex,
+													$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+													$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+													$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+												]))
+										]),
+									_List_fromArray(
+										[
+											A3(
+											$author$project$Main$addressWithDatesEntry,
+											model,
+											input,
+											function (r) {
+												return $author$project$Main$SetAddressData(
+													_Utils_update(
+														a,
+														{pastAddressEntry: r}));
+											}),
+											A2(
+											$rtfeldman$elm_css$Html$Styled$button,
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$Attributes$type_('submit'),
+													$rtfeldman$elm_css$Html$Styled$Attributes$css(
+													_List_fromArray(
+														[buttonStyles]))
+												]),
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Html$Styled$text(
+													A2($author$project$Main$i18n, model, 'add'))
+												]))
+										]))
+								])),
+							A5(
+							$author$project$Main$removeList,
+							model,
+							a.pastAddresses,
+							'past-addresses',
+							$author$project$Main$printAddressWithDates,
+							function (r) {
+								return $author$project$Main$SetAddressData(
+									_Utils_update(
+										a,
+										{pastAddresses: r}));
+							})
+						]));
+			case 'Education':
+				var e = model.state.education;
+				var input = e.schoolEntry;
+				var validInput = (input.name !== '') && ((input.schoolType !== '') && ((input.address !== '') && ((input.fromMonth !== '') && ((input.fromYear !== '') && ((input.toMonth !== '') && (input.toYear !== ''))))));
+				var newList = A2($elm$core$List$cons, input, e.schools);
+				var submitFunction = validInput ? $author$project$Main$SetEducationData(
+					_Utils_update(
+						e,
+						{schoolEntry: $author$project$Main$defaultSchoolData, schools: newList})) : $author$project$Main$SetEducationData(e);
+				var buttonStyles = validInput ? $author$project$Main$activeButtonStyles : $author$project$Main$disabledButtonStyles;
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'education-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$form,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onSubmit(submitFunction),
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$div,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$displayFlex,
+													$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+													$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+													$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+												]))
+										]),
+									_List_fromArray(
+										[
+											A4(
+											$author$project$Main$textInput,
+											input.name,
+											A2($author$project$Main$i18n, model, 'school-name'),
+											_List_Nil,
+											function (r) {
+												return $author$project$Main$SetEducationData(
+													_Utils_update(
+														e,
+														{
+															schoolEntry: _Utils_update(
+																input,
+																{name: r})
+														}));
+											}),
+											A4(
+											$author$project$Main$textInput,
+											input.schoolType,
+											A2($author$project$Main$i18n, model, 'school-type'),
+											_List_Nil,
+											function (r) {
+												return $author$project$Main$SetEducationData(
+													_Utils_update(
+														e,
+														{
+															schoolEntry: _Utils_update(
+																input,
+																{schoolType: r})
+														}));
+											}),
+											A4(
+											$author$project$Main$textInput,
+											input.address,
+											A2($author$project$Main$i18n, model, 'address'),
+											_List_Nil,
+											function (r) {
+												return $author$project$Main$SetEducationData(
+													_Utils_update(
+														e,
+														{
+															schoolEntry: _Utils_update(
+																input,
+																{address: r})
+														}));
+											})
+										])),
+									A3(
+									$author$project$Main$fromToSelector,
+									model,
+									input,
+									function (r) {
+										return $author$project$Main$SetEducationData(
+											_Utils_update(
+												e,
+												{schoolEntry: r}));
+									}),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$button,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$type_('submit'),
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[buttonStyles]))
+										]),
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$Main$i18n, model, 'add'))
+										]))
+								])),
+							A5(
+							$author$project$Main$removeList,
+							model,
+							e.schools,
+							'education-history',
+							$author$project$Main$printSchoolData,
+							function (r) {
+								return $author$project$Main$SetEducationData(
+									_Utils_update(
+										e,
+										{schools: r}));
+							})
+						]));
+			case 'Employment':
+				var e = model.state.employment;
+				var input = e.employmentEntry;
+				var validInput = (input.name !== '') && ((input.occupation !== '') && ((input.address !== '') && ((input.fromMonth !== '') && ((input.fromYear !== '') && ((input.toMonth !== '') && (input.toYear !== ''))))));
+				var newList = A2($elm$core$List$cons, input, e.employment);
+				var submitFunction = validInput ? $author$project$Main$SetEmploymentData(
+					_Utils_update(
+						e,
+						{employment: newList, employmentEntry: $author$project$Main$defaultEmploymentEntry})) : $author$project$Main$SetEmploymentData(e);
+				var buttonStyles = validInput ? $author$project$Main$activeButtonStyles : $author$project$Main$disabledButtonStyles;
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'employment-entry'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$form,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onSubmit(submitFunction),
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$div,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$displayFlex,
+													$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+													$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+													$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+												]))
+										]),
+									_List_fromArray(
+										[
+											A4(
+											$author$project$Main$textInput,
+											input.name,
+											A2($author$project$Main$i18n, model, 'employer-name'),
+											_List_Nil,
+											function (r) {
+												return $author$project$Main$SetEmploymentData(
+													_Utils_update(
+														e,
+														{
+															employmentEntry: _Utils_update(
+																input,
+																{name: r})
+														}));
+											}),
+											A4(
+											$author$project$Main$textInput,
+											input.occupation,
+											A2($author$project$Main$i18n, model, 'occupation'),
+											_List_Nil,
+											function (r) {
+												return $author$project$Main$SetEmploymentData(
+													_Utils_update(
+														e,
+														{
+															employmentEntry: _Utils_update(
+																input,
+																{occupation: r})
+														}));
+											}),
+											A4(
+											$author$project$Main$textInput,
+											input.address,
+											A2($author$project$Main$i18n, model, 'address'),
+											_List_Nil,
+											function (r) {
+												return $author$project$Main$SetEmploymentData(
+													_Utils_update(
+														e,
+														{
+															employmentEntry: _Utils_update(
+																input,
+																{address: r})
+														}));
+											})
+										])),
+									A3(
+									$author$project$Main$fromToSelector,
+									model,
+									input,
+									function (r) {
+										return $author$project$Main$SetEmploymentData(
+											_Utils_update(
+												e,
+												{employmentEntry: r}));
+									}),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$button,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$type_('submit'),
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[buttonStyles]))
+										]),
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(
+											A2($author$project$Main$i18n, model, 'add'))
+										]))
+								])),
+							A5(
+							$author$project$Main$removeList,
+							model,
+							e.employment,
+							'employment-history',
+							$author$project$Main$printEmploymentEntry,
+							function (r) {
+								return $author$project$Main$SetEmploymentData(
+									_Utils_update(
+										e,
+										{employment: r}));
+							})
+						]));
+			case 'MotherInfo':
+				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+			case 'FatherInfo':
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
 			default:
 				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
@@ -16065,8 +16533,18 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'last-address-before-us');
 			case 'LastAddressFearsPersecution':
 				return A2($author$project$Main$i18n, model, 'last-address-persecution');
-			default:
+			case 'PastAddresses':
 				return A2($author$project$Main$i18n, model, 'past-addresses');
+			case 'Education':
+				return A2($author$project$Main$i18n, model, 'education');
+			case 'Employment':
+				return A2($author$project$Main$i18n, model, 'employment');
+			case 'MotherInfo':
+				return A2($author$project$Main$i18n, model, 'mother-info');
+			case 'FatherInfo':
+				return A2($author$project$Main$i18n, model, 'father-info');
+			default:
+				return A2($author$project$Main$i18n, model, 'sibling-info');
 		}
 	});
 var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
@@ -16143,8 +16621,10 @@ var $author$project$Main$sectionToDescription = F2(
 				} else {
 					return A2($author$project$Main$i18n, model, 'child-info');
 				}
-			default:
+			case 'AddressInfo':
 				return A2($author$project$Main$i18n, model, 'address-info');
+			default:
+				return A2($author$project$Main$i18n, model, 'background-info');
 		}
 	});
 var $author$project$Main$titleHtml = F4(

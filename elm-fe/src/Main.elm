@@ -81,6 +81,9 @@ type alias FormState =
     , numberOfChildren : Maybe Int
     , children : List ChildData
     , addresses : AddressData
+    , education : EducationData
+    , employment : EmploymentData
+    , family : FamilyData
     }
 
 
@@ -92,6 +95,9 @@ defaultFormState =
     , numberOfChildren = Nothing
     , children = []
     , addresses = defaultAddressData
+    , education = defaultEducationData
+    , employment = defaultEmploymentData
+    , family = defaultFamilyData
     }
 
 
@@ -386,7 +392,8 @@ type alias AddressData =
     { lastAddressBeforeUS : GranularAddressWithDates
     , sameAsWhereFearsPersecution : Maybe Bool
     , lastAddressFearsPersecution : GranularAddressWithDates
-    , pastResidences : List GranularAddressWithDates
+    , pastAddresses : List GranularAddressWithDates
+    , pastAddressEntry : GranularAddressWithDates
     }
 
 
@@ -395,7 +402,8 @@ defaultAddressData =
     { lastAddressBeforeUS = defaultGranularAddressWithDates
     , sameAsWhereFearsPersecution = Maybe.Nothing
     , lastAddressFearsPersecution = defaultGranularAddressWithDates
-    , pastResidences = []
+    , pastAddresses = []
+    , pastAddressEntry = defaultGranularAddressWithDates
     }
 
 
@@ -423,6 +431,110 @@ defaultGranularAddressWithDates =
     , fromMonth = ""
     , toYear = ""
     , toMonth = ""
+    }
+
+
+type alias EducationData =
+    { schools : List SchoolData
+    , schoolEntry : SchoolData
+    }
+
+
+type alias SchoolData =
+    { name : String
+    , schoolType : String
+    , address : String
+    , fromYear : String
+    , fromMonth : String
+    , toYear : String
+    , toMonth : String
+    }
+
+
+defaultSchoolData : SchoolData
+defaultSchoolData =
+    { name = ""
+    , schoolType = ""
+    , address = ""
+    , fromYear = ""
+    , fromMonth = ""
+    , toYear = ""
+    , toMonth = ""
+    }
+
+
+defaultEducationData : EducationData
+defaultEducationData =
+    { schools = []
+    , schoolEntry = defaultSchoolData
+    }
+
+
+type alias EmploymentData =
+    { employment : List EmploymentEntry
+    , employmentEntry : EmploymentEntry
+    }
+
+
+defaultEmploymentData : EmploymentData
+defaultEmploymentData =
+    { employment = []
+    , employmentEntry = defaultEmploymentEntry
+    }
+
+
+type alias EmploymentEntry =
+    { name : String
+    , address : String
+    , occupation : String
+    , fromYear : String
+    , fromMonth : String
+    , toYear : String
+    , toMonth : String
+    }
+
+
+defaultEmploymentEntry : EmploymentEntry
+defaultEmploymentEntry =
+    { name = ""
+    , occupation = ""
+    , address = ""
+    , fromYear = ""
+    , fromMonth = ""
+    , toYear = ""
+    , toMonth = ""
+    }
+
+
+type alias FamilyData =
+    { father : FamilyEntry
+    , mother : FamilyEntry
+    , siblings : List FamilyEntry
+    }
+
+
+defaultFamilyData : FamilyData
+defaultFamilyData =
+    { father = defaultFamilyEntry
+    , mother = defaultFamilyEntry
+    , siblings = []
+    }
+
+
+type alias FamilyEntry =
+    { name : String
+    , countryOfBirth : String
+    , isDeceased : Maybe Bool
+    , location : String
+    }
+
+
+defaultFamilyEntry : FamilyEntry
+defaultFamilyEntry =
+    { name = ""
+    , countryOfBirth = ""
+    , isDeceased = Nothing
+    , location = ""
     }
 
 
@@ -497,6 +609,11 @@ type FormEntryElement
     | LastAddressBeforeUS
     | LastAddressFearsPersecution
     | PastAddresses
+    | Education
+    | Employment
+    | MotherInfo
+    | FatherInfo
+    | SiblingInfo
 
 
 type SectionTitle
@@ -506,6 +623,7 @@ type SectionTitle
     | SpouseInfo
     | ChildInfo (Maybe Int)
     | AddressInfo
+    | BackgroundInfo
 
 
 pathMatch : String -> Page
@@ -590,6 +708,9 @@ type Msg
     | SetNumChildren String
     | SetChildData Int ChildData
     | SetAddressData AddressData
+    | SetEmploymentData EmploymentData
+    | SetEducationData EducationData
+    | SetFamilyData FamilyData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -817,6 +938,36 @@ update msg model =
 
                 newS =
                     { s | addresses = a }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetEmploymentData e ->
+            let
+                s =
+                    model.state
+
+                newS =
+                    { s | employment = e }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetEducationData e ->
+            let
+                s =
+                    model.state
+
+                newS =
+                    { s | education = e }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetFamilyData f ->
+            let
+                s =
+                    model.state
+
+                newS =
+                    { s | family = f }
             in
             ( { model | state = newS }, Cmd.none )
 
@@ -1119,7 +1270,22 @@ getNext entry model =
             PastAddresses
 
         PastAddresses ->
-            PastAddresses
+            Education
+
+        Education ->
+            Employment
+
+        Employment ->
+            MotherInfo
+
+        MotherInfo ->
+            FatherInfo
+
+        FatherInfo ->
+            SiblingInfo
+
+        SiblingInfo ->
+            SiblingInfo
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -1390,6 +1556,21 @@ getBack entry model =
             else
                 LastAddressFearsPersecution
 
+        Education ->
+            PastAddresses
+
+        Employment ->
+            Education
+
+        MotherInfo ->
+            Employment
+
+        FatherInfo ->
+            MotherInfo
+
+        SiblingInfo ->
+            FatherInfo
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -1603,6 +1784,21 @@ getSectionFromElement element =
 
         PastAddresses ->
             AddressInfo
+
+        Education ->
+            BackgroundInfo
+
+        Employment ->
+            BackgroundInfo
+
+        MotherInfo ->
+            BackgroundInfo
+
+        FatherInfo ->
+            BackgroundInfo
+
+        SiblingInfo ->
+            BackgroundInfo
 
 
 validate : Model -> Bool
@@ -1914,13 +2110,13 @@ validate model =
                     _ ->
                         True
 
-            ChildAlienRegistration n ->
+            ChildAlienRegistration _ ->
                 True
 
-            ChildTravelDoc n ->
+            ChildTravelDoc _ ->
                 True
 
-            ChildSSN n ->
+            ChildSSN _ ->
                 True
 
             ChildInUS n ->
@@ -1959,7 +2155,7 @@ validate model =
                     _ ->
                         True
 
-            ChildI94 n ->
+            ChildI94 _ ->
                 True
 
             ChildCurrentStatus n ->
@@ -2003,13 +2199,39 @@ validate model =
                     last =
                         a.lastAddressBeforeUS
                 in
-                a.sameAsWhereFearsPersecution /= Nothing && last.streetNumber /= "" && last.streetName /= "" && last.departmentProvinceOrState /= "" && last.cityOrTown /= "" && last.country /= ""
+                a.sameAsWhereFearsPersecution /= Nothing && last.streetNumber /= "" && last.streetName /= "" && last.departmentProvinceOrState /= "" && last.cityOrTown /= "" && last.country /= "" && last.fromMonth /= "" && last.fromYear /= "" && last.toMonth /= "" && last.toYear /= ""
 
-            --TODO fix
             LastAddressFearsPersecution ->
-                True
+                let
+                    last =
+                        a.lastAddressFearsPersecution
+                in
+                last.streetNumber /= "" && last.streetName /= "" && last.departmentProvinceOrState /= "" && last.cityOrTown /= "" && last.country /= "" && last.fromMonth /= "" && last.fromYear /= "" && last.toMonth /= "" && last.toYear /= ""
 
             PastAddresses ->
+                True
+
+            Employment ->
+                True
+
+            Education ->
+                True
+
+            MotherInfo ->
+                let
+                    m =
+                        model.state.family.mother
+                in
+                m.name /= "" && m.countryOfBirth /= "" && (m.isDeceased == Just True || (m.isDeceased == Just False && m.location /= ""))
+
+            FatherInfo ->
+                let
+                    m =
+                        model.state.family.father
+                in
+                m.name /= "" && m.countryOfBirth /= "" && (m.isDeceased == Just True || (m.isDeceased == Just False && m.location /= ""))
+
+            SiblingInfo ->
                 True
 
     else
@@ -2021,7 +2243,7 @@ validate model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     onResize <|
         \width height ->
             DeviceClassified (Element.classifyDevice { width = width, height = height })
@@ -2892,59 +3114,7 @@ render element model =
             in
             nextBackWrap model
                 [ prompt model [] "last-address-entry"
-                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr", alignItems center, justifyContent center, alignSelf flexStart, flexWrap wrap ] ]
-                    [ textInput last.streetNumber (i18n model "street-number") [ property "grid-column" "1/2" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | streetNumber = r } })
-                    , textInput last.streetName (i18n model "street-name") [ property "grid-column" "2/3" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | streetName = r } })
-                    ]
-                , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr 1fr", alignItems center, justifyContent center, flexWrap wrap ] ]
-                    [ textInput last.cityOrTown (i18n model "city") [ property "grid-column" "1/2" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | cityOrTown = r } })
-                    , textInput last.departmentProvinceOrState (i18n model "department-province-state") [ property "grid-column" "2/3" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | departmentProvinceOrState = r } })
-                    , textInput last.country (i18n model "country") [ property "grid-column" "3/4" ] (\r -> SetAddressData { a | lastAddressBeforeUS = { last | country = r } })
-                    ]
-                , div [ css [ property "display" "grid", property "grid-template-columns" "1fr 1fr 1fr 1fr", property "grid-template-rows" "1fr 2fr 2fr", property "column-gap" "10px", alignItems center, justifyContent center ] ]
-                    [ div [ css [ textAlign center, property "grid-column" "1/3", property "grid-row" "1/2" ] ] [ text (i18n model "from") ]
-                    , div [ css [ textAlign center, property "grid-column" "1/2", property "grid-row" "2/3" ] ] [ text (i18n model "month") ]
-                    , select
-                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | fromMonth = r } })
-                        , css
-                            [ dropdownStyles
-                            , property "grid-column" "1/2"
-                            , property "grid-row" "3/4"
-                            ]
-                        ]
-                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.fromMonth) ] [ text r ]) monthList)
-                    , div [ css [ textAlign center, property "grid-column" "2/3", property "grid-row" "2/3" ] ] [ text (i18n model "year") ]
-                    , select
-                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | fromYear = r } })
-                        , css
-                            [ dropdownStyles
-                            , property "grid-column" "2/3"
-                            , property "grid-row" "3/4"
-                            ]
-                        ]
-                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.fromYear) ] [ text r ]) (yearList model.currentYear))
-                    , div [ css [ textAlign center, property "grid-column" "3/5", property "grid-row" "1/2" ] ] [ text (i18n model "to") ]
-                    , div [ css [ textAlign center, property "grid-column" "3/4", property "grid-row" "2/3" ] ] [ text (i18n model "month") ]
-                    , select
-                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | toMonth = r } })
-                        , css
-                            [ dropdownStyles
-                            , property "grid-column" "3/4"
-                            , property "grid-row" "3/4"
-                            ]
-                        ]
-                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.toMonth) ] [ text r ]) monthList)
-                    , div [ css [ textAlign center, property "grid-column" "4/5", property "grid-row" "2/3" ] ] [ text (i18n model "year") ]
-                    , select
-                        [ onInput (\r -> SetAddressData { a | lastAddressBeforeUS = { last | toYear = r } })
-                        , css
-                            [ dropdownStyles
-                            , property "grid-column" "4/5"
-                            , property "grid-row" "3/4"
-                            ]
-                        ]
-                        (List.map (\r -> option [ Html.Styled.Attributes.selected (r == last.toYear) ] [ text r ]) (yearList model.currentYear))
-                    ]
+                , addressWithDatesEntry model last (\r -> SetAddressData { a | lastAddressBeforeUS = r })
                 , prompt model [ marginTop (px 20) ] "same-as-fears-persecution"
                 , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
                     [ checkBox model yesChecked "yes" (\r -> SetAddressData { a | sameAsWhereFearsPersecution = r }) (setMaybe yesChecked True)
@@ -2953,15 +3123,169 @@ render element model =
                 ]
 
         LastAddressFearsPersecution ->
-            div [] []
+            let
+                a =
+                    model.state.addresses
+
+                last =
+                    a.lastAddressFearsPersecution
+            in
+            nextBackWrap model
+                [ prompt model [] "last-address-persecution-entry"
+                , addressWithDatesEntry model last (\r -> SetAddressData { a | lastAddressFearsPersecution = r })
+                ]
 
         PastAddresses ->
+            let
+                a =
+                    model.state.addresses
+
+                input =
+                    a.pastAddressEntry
+
+                validInput =
+                    input.streetNumber /= "" && input.streetName /= "" && input.cityOrTown /= "" && input.country /= "" && input.departmentProvinceOrState /= "" && input.fromMonth /= "" && input.fromYear /= "" && input.toMonth /= "" && input.toYear /= ""
+
+                buttonStyles =
+                    if validInput then
+                        activeButtonStyles
+
+                    else
+                        disabledButtonStyles
+
+                newList =
+                    input :: a.pastAddresses
+
+                submitFunction =
+                    if validInput then
+                        SetAddressData { a | pastAddresses = newList, pastAddressEntry = defaultGranularAddressWithDates }
+
+                    else
+                        SetAddressData a
+            in
+            nextBackWrap model
+                [ prompt model [] "past-addresses-entry"
+                , form [ onSubmit submitFunction ]
+                    [ div [ css [ displayFlex, flexDirection column, alignItems center, justifyContent center ] ]
+                        [ addressWithDatesEntry model input (\r -> SetAddressData { a | pastAddressEntry = r })
+                        , button [ type_ "submit", css [ buttonStyles ] ] [ text (i18n model "add") ]
+                        ]
+                    ]
+                , removeList model a.pastAddresses "past-addresses" printAddressWithDates (\r -> SetAddressData { a | pastAddresses = r })
+                ]
+
+        Education ->
+            let
+                e =
+                    model.state.education
+
+                input =
+                    e.schoolEntry
+
+                validInput =
+                    input.name /= "" && input.schoolType /= "" && input.address /= "" && input.fromMonth /= "" && input.fromYear /= "" && input.toMonth /= "" && input.toYear /= ""
+
+                buttonStyles =
+                    if validInput then
+                        activeButtonStyles
+
+                    else
+                        disabledButtonStyles
+
+                newList =
+                    input :: e.schools
+
+                submitFunction =
+                    if validInput then
+                        SetEducationData { e | schools = newList, schoolEntry = defaultSchoolData }
+
+                    else
+                        SetEducationData e
+            in
+            nextBackWrap model
+                [ prompt model [] "education-entry"
+                , form [ onSubmit submitFunction, css [ displayFlex, flexDirection column, alignItems center ] ]
+                    [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
+                        [ textInput input.name (i18n model "school-name") [] (\r -> SetEducationData { e | schoolEntry = { input | name = r } })
+                        , textInput input.schoolType (i18n model "school-type") [] (\r -> SetEducationData { e | schoolEntry = { input | schoolType = r } })
+                        , textInput input.address (i18n model "address") [] (\r -> SetEducationData { e | schoolEntry = { input | address = r } })
+                        ]
+                    , fromToSelector model input (\r -> SetEducationData { e | schoolEntry = r })
+                    , button [ type_ "submit", css [ buttonStyles ] ] [ text (i18n model "add") ]
+                    ]
+                , removeList model e.schools "education-history" printSchoolData (\r -> SetEducationData { e | schools = r })
+                ]
+
+        Employment ->
+            let
+                e =
+                    model.state.employment
+
+                input =
+                    e.employmentEntry
+
+                validInput =
+                    input.name /= "" && input.occupation /= "" && input.address /= "" && input.fromMonth /= "" && input.fromYear /= "" && input.toMonth /= "" && input.toYear /= ""
+
+                buttonStyles =
+                    if validInput then
+                        activeButtonStyles
+
+                    else
+                        disabledButtonStyles
+
+                newList =
+                    input :: e.employment
+
+                submitFunction =
+                    if validInput then
+                        SetEmploymentData { e | employment = newList, employmentEntry = defaultEmploymentEntry }
+
+                    else
+                        SetEmploymentData e
+            in
+            nextBackWrap model
+                [ prompt model [] "employment-entry"
+                , form [ onSubmit submitFunction, css [ displayFlex, flexDirection column, alignItems center ] ]
+                    [ div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
+                        [ textInput input.name (i18n model "employer-name") [] (\r -> SetEmploymentData { e | employmentEntry = { input | name = r } })
+                        , textInput input.occupation (i18n model "occupation") [] (\r -> SetEmploymentData { e | employmentEntry = { input | occupation = r } })
+                        , textInput input.address (i18n model "address") [] (\r -> SetEmploymentData { e | employmentEntry = { input | address = r } })
+                        ]
+                    , fromToSelector model input (\r -> SetEmploymentData { e | employmentEntry = r })
+                    , button [ type_ "submit", css [ buttonStyles ] ] [ text (i18n model "add") ]
+                    ]
+                , removeList model e.employment "employment-history" printEmploymentEntry (\r -> SetEmploymentData { e | employment = r })
+                ]
+
+        MotherInfo ->
+            div [] []
+
+        FatherInfo ->
+            div [] []
+
+        SiblingInfo ->
             div [] []
 
 
 
 -- View end
 -- Misc
+
+
+printAddressWithDates : GranularAddressWithDates -> String
+printAddressWithDates a =
+    String.concat [ a.streetNumber, " ", a.streetName, ", ", a.cityOrTown, ", ", a.departmentProvinceOrState, ", ", a.country, ", ", a.fromMonth, "/", a.fromYear, " to ", a.toMonth, "/", a.toYear ]
+
+
+printSchoolData : SchoolData -> String
+printSchoolData d =
+    String.concat [ d.name, ", ", d.schoolType, ", ", d.address, ", ", d.fromMonth, "/", d.fromYear, " to ", d.toMonth, "/", d.toYear ]
+
+
+printEmploymentEntry : EmploymentEntry -> String
+printEmploymentEntry d =
+    String.concat [ d.name, ", ", d.occupation, ", ", d.address, ", ", d.fromMonth, "/", d.fromYear, " to ", d.toMonth, "/", d.toYear ]
 
 
 getChildByIndex : Int -> List ChildData -> ChildData
@@ -3032,6 +3356,79 @@ yearList currentYear =
 
 
 -- Generic views
+
+
+addressWithDatesEntry : Model -> GranularAddressWithDates -> (GranularAddressWithDates -> Msg) -> Html Msg
+addressWithDatesEntry model last updateFunction =
+    div [ css [ displayFlex, flexDirection column, alignItems center ] ]
+        [ div [ css [ property "display" "grid", property "grid-template-columns" "1fr 4fr", alignItems center, justifyContent center, alignSelf flexStart, flexWrap wrap ] ]
+            [ textInput last.streetNumber (i18n model "street-number") [ property "grid-column" "1/2" ] (\r -> updateFunction { last | streetNumber = r })
+            , textInput last.streetName (i18n model "street-name") [ property "grid-column" "2/3" ] (\r -> updateFunction { last | streetName = r })
+            ]
+        , div [ css [ alignSelf flexStart, property "display" "grid", property "grid-template-columns" "1fr 2fr 1fr", alignItems center, justifyContent center, flexWrap wrap ] ]
+            [ textInput last.cityOrTown (i18n model "city") [ property "grid-column" "1/2" ] (\r -> updateFunction { last | cityOrTown = r })
+            , textInput last.departmentProvinceOrState (i18n model "department-province-state") [ property "grid-column" "2/3" ] (\r -> updateFunction { last | departmentProvinceOrState = r })
+            , textInput last.country (i18n model "country") [ property "grid-column" "3/4" ] (\r -> updateFunction { last | country = r })
+            ]
+        , fromToSelector model last updateFunction
+        ]
+
+
+type alias FromTo r =
+    { r
+        | fromYear : String
+        , fromMonth : String
+        , toYear : String
+        , toMonth : String
+    }
+
+
+fromToSelector : Model -> FromTo r -> (FromTo r -> Msg) -> Html Msg
+fromToSelector model data updateFunction =
+    div [ css [ property "display" "grid", property "grid-template-columns" "1fr 1fr 1fr 1fr", property "grid-template-rows" "1fr 2fr 2fr", property "column-gap" "10px", alignItems center, justifyContent center ] ]
+        [ div [ css [ textAlign center, property "grid-column" "1/3", property "grid-row" "1/2" ] ] [ text (i18n model "from") ]
+        , div [ css [ textAlign center, property "grid-column" "1/2", property "grid-row" "2/3" ] ] [ text (i18n model "month") ]
+        , select
+            [ onInput (\r -> updateFunction { data | fromMonth = r })
+            , css
+                [ dropdownStyles
+                , property "grid-column" "1/2"
+                , property "grid-row" "3/4"
+                ]
+            ]
+            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == data.fromMonth) ] [ text r ]) monthList)
+        , div [ css [ textAlign center, property "grid-column" "2/3", property "grid-row" "2/3" ] ] [ text (i18n model "year") ]
+        , select
+            [ onInput (\r -> updateFunction { data | fromYear = r })
+            , css
+                [ dropdownStyles
+                , property "grid-column" "2/3"
+                , property "grid-row" "3/4"
+                ]
+            ]
+            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == data.fromYear) ] [ text r ]) (yearList model.currentYear))
+        , div [ css [ textAlign center, property "grid-column" "3/5", property "grid-row" "1/2" ] ] [ text (i18n model "to") ]
+        , div [ css [ textAlign center, property "grid-column" "3/4", property "grid-row" "2/3" ] ] [ text (i18n model "month") ]
+        , select
+            [ onInput (\r -> updateFunction { data | toMonth = r })
+            , css
+                [ dropdownStyles
+                , property "grid-column" "3/4"
+                , property "grid-row" "3/4"
+                ]
+            ]
+            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == data.toMonth) ] [ text r ]) monthList)
+        , div [ css [ textAlign center, property "grid-column" "4/5", property "grid-row" "2/3" ] ] [ text (i18n model "year") ]
+        , select
+            [ onInput (\r -> updateFunction { data | toYear = r })
+            , css
+                [ dropdownStyles
+                , property "grid-column" "4/5"
+                , property "grid-row" "3/4"
+                ]
+            ]
+            (List.map (\r -> option [ Html.Styled.Attributes.selected (r == data.toYear) ] [ text r ]) (yearList model.currentYear))
+        ]
 
 
 maritalStatusSelector : Model -> String -> Maybe MaritalStatus -> (Maybe MaritalStatus -> Msg) -> Html Msg
@@ -3221,7 +3618,7 @@ checkBox model isChecked labelTextId dataMessage newData =
         [ input
             [ type_ "checkbox"
             , Html.Styled.Attributes.checked isChecked
-            , onCheck (\r -> dataMessage newData)
+            , onCheck (\_ -> dataMessage newData)
             , css
                 [ position relative
                 , width (Css.em 1)
@@ -3264,6 +3661,7 @@ multiEntryRemoveButton model currentList removeFunction index _ =
         [ css
             [ property "grid-column" "2"
             , property "grid-row" (String.fromInt (index + 2))
+            , property "justify-self" "center"
             ]
         , onSubmit (removeFunction newList)
         ]
@@ -3460,6 +3858,9 @@ sectionToDescription title model =
 
         AddressInfo ->
             i18n model "address-info"
+
+        BackgroundInfo ->
+            i18n model "background-info"
 
 
 formElementToDescription : FormEntryElement -> Model -> String
@@ -3675,6 +4076,21 @@ formElementToDescription element model =
         PastAddresses ->
             i18n model "past-addresses"
 
+        Education ->
+            i18n model "education"
+
+        Employment ->
+            i18n model "employment"
+
+        MotherInfo ->
+            i18n model "mother-info"
+
+        FatherInfo ->
+            i18n model "father-info"
+
+        SiblingInfo ->
+            i18n model "sibling-info"
+
 
 
 -- Help view
@@ -3826,7 +4242,7 @@ disabledButtonStyles =
         , cursor notAllowed
         , property "appearance" "none"
         , property "-webkit-appearance" "none"
-        , padding (px 4)
+        , padding (px 8)
         , outline zero
         ]
 
@@ -3847,10 +4263,10 @@ parseBytes response =
         Http.NetworkError_ ->
             Err Http.NetworkError
 
-        Http.BadStatus_ metadata body ->
+        Http.BadStatus_ metadata _ ->
             Err (Http.BadStatus metadata.statusCode)
 
-        Http.GoodStatus_ metadata body ->
+        Http.GoodStatus_ _ body ->
             Ok body
 
 

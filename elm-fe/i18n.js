@@ -514,5 +514,50 @@ var translations = {
 	},
 	"past-addresses": {
 		"en": "Past Addresses"
+	},
+	"education": {
+		"en": "Education"
+	},
+	"employment": {
+		"en": "Employment"
+	},
+	"background-info": {
+		"en": "Background Information"
+	},
+	"education-history": {
+		"en": "Education History"
+	},
+	"education-entry": {
+		"en": "Please list information about all schools you have attended, including the name, type of school, address, and dates attended."
+	},
+	"school-name": {
+		"en": "School Name"
+	},
+	"school-type": {
+		"en": "Type of School"
+	},
+	"address": {
+		"en": "Address"
+	},
+	"employment-history": {
+		"en": "Employment History"
+	},
+	"employment-entry": {
+		"en": "Please list your employers for the past five years."
+	},
+	"employer-name": {
+		"en": "Employer Name"
+	},
+	"occupation": {
+		"en": "Occupation"
+	},
+	"mother-info": {
+		"en": "Mother Information"
+	},
+	"father-info": {
+		"en": "Father Information"
+	},
+	"sibling-info": {
+		"en": "Sibling Information"
 	}
 }
