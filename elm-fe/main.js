@@ -9107,12 +9107,23 @@ var $author$project$Main$update = F2(
 						model,
 						{state: newS}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'SetFamilyData':
 				var f = msg.a;
 				var s = model.state;
 				var newS = _Utils_update(
 					s,
 					{family: f});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: newS}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var f = msg.a;
+				var s = model.state;
+				var newS = _Utils_update(
+					s,
+					{application: f});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -11780,9 +11791,16 @@ var $author$project$Main$footer = A2(
 				]))
 		]));
 var $author$project$DataTypes$CURRENTLY = {$: 'CURRENTLY'};
+var $author$project$DataTypes$MEMBERSHIP_IN_SOCIAL_GROUP = {$: 'MEMBERSHIP_IN_SOCIAL_GROUP'};
+var $author$project$DataTypes$NATIONALITY = {$: 'NATIONALITY'};
 var $author$project$DataTypes$NEVER = {$: 'NEVER'};
+var $author$project$DataTypes$NO = {$: 'NO'};
+var $author$project$DataTypes$POLITICAL_OPINION = {$: 'POLITICAL_OPINION'};
 var $author$project$Main$SetAddressData = function (a) {
 	return {$: 'SetAddressData', a: a};
+};
+var $author$project$Main$SetApplicationData = function (a) {
+	return {$: 'SetApplicationData', a: a};
 };
 var $author$project$Main$SetChildData = F2(
 	function (a, b) {
@@ -11809,6 +11827,7 @@ var $author$project$Main$SetPersonalData = function (a) {
 var $author$project$Main$SetSpouseData = function (a) {
 	return {$: 'SetSpouseData', a: a};
 };
+var $author$project$DataTypes$TORTURE_CONVENTION = {$: 'TORTURE_CONVENTION'};
 var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
 	function (a, b) {
 		return {$: 'ExtendSelector', a: a, b: b};
@@ -12856,17 +12875,14 @@ var $author$project$Main$setMaybe = F2(
 	function (isAlreadyChecked, x) {
 		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(x);
 	});
-var $author$project$Main$unwrappedCheckbox = F4(
-	function (model, promptId, value, updateFunction) {
-		var yesChecked = A2($elm$core$Maybe$withDefault, false, value);
-		var noChecked = function () {
-			if (value.$ === 'Just') {
-				var b = value.a;
-				return !b;
-			} else {
-				return false;
-			}
-		}();
+var $author$project$Main$unwrappedCheckbox = F6(
+	function (model, promptId, value, trueValue, falseValue, updateFunction) {
+		var yesChecked = _Utils_eq(
+			value,
+			$elm$core$Maybe$Just(trueValue));
+		var noChecked = _Utils_eq(
+			value,
+			$elm$core$Maybe$Just(falseValue));
 		return _List_fromArray(
 			[
 				A3($author$project$Main$prompt, model, _List_Nil, promptId),
@@ -12891,14 +12907,14 @@ var $author$project$Main$unwrappedCheckbox = F4(
 						yesChecked,
 						'yes',
 						updateFunction,
-						A2($author$project$Main$setMaybe, yesChecked, true)),
+						A2($author$project$Main$setMaybe, yesChecked, trueValue)),
 						A5(
 						$author$project$Main$checkBox,
 						model,
 						noChecked,
 						'no',
 						updateFunction,
-						A2($author$project$Main$setMaybe, noChecked, false))
+						A2($author$project$Main$setMaybe, noChecked, falseValue))
 					]))
 			]);
 	});
@@ -12969,11 +12985,13 @@ var $author$project$Main$familyEntry = F6(
 								})
 							]))
 					]),
-					A4(
+					A6(
 					$author$project$Main$unwrappedCheckbox,
 					model,
 					deceasedPrompt,
 					m.isDeceased,
+					true,
+					false,
 					function (r) {
 						return updateFunction(
 							_Utils_update(
@@ -12986,7 +13004,6 @@ var $author$project$Main$familyEntry = F6(
 var $rtfeldman$elm_css$Css$flexEnd = $rtfeldman$elm_css$Css$prop1('flex-end');
 var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
 var $author$project$Main$Next = {$: 'Next'};
-var $author$project$DataTypes$NO = {$: 'NO'};
 var $author$project$Main$validate = function (model) {
 	var s = model.state.spouse;
 	var elig = model.state.eligibility;
@@ -13419,7 +13436,72 @@ var $author$project$Main$labeledTextInput = F4(
 					A4($author$project$Main$textInput, value, '', _List_Nil, updateFunction)
 				]));
 	});
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$cols = function (n) {
+	return A2(
+		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
+		'cols',
+		$elm$core$String$fromInt(n));
+};
+var $rtfeldman$elm_css$Html$Styled$Attributes$rows = function (n) {
+	return A2(
+		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
+		'rows',
+		$elm$core$String$fromInt(n));
+};
+var $rtfeldman$elm_css$Html$Styled$textarea = $rtfeldman$elm_css$Html$Styled$node('textarea');
+var $author$project$Main$largeTextInput = F4(
+	function (value, placeholder, additionalStyles, updateFunction) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$textarea,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$author$project$Main$inputStyles,
+							$rtfeldman$elm_css$Css$batch(additionalStyles)
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$rows(20),
+					$rtfeldman$elm_css$Html$Styled$Attributes$cols(60),
+					$rtfeldman$elm_css$Html$Styled$Attributes$value(value),
+					$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(placeholder),
+					$rtfeldman$elm_css$Html$Styled$Events$onInput(updateFunction)
+				]),
+			_List_Nil);
+	});
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $elm_community$list_extra$List$Extra$remove = F2(
+	function (x, xs) {
+		if (!xs.b) {
+			return _List_Nil;
+		} else {
+			var y = xs.a;
+			var ys = xs.b;
+			return _Utils_eq(x, y) ? ys : A2(
+				$elm$core$List$cons,
+				y,
+				A2($elm_community$list_extra$List$Extra$remove, x, ys));
+		}
+	});
+var $author$project$Main$listCheckboxUpdate = F3(
+	function (alreadyChecked, item, itemList) {
+		return alreadyChecked ? A2($elm_community$list_extra$List$Extra$remove, item, itemList) : A2($elm$core$List$cons, item, itemList);
+	});
 var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
 var $author$project$DataTypes$DIVORCED = {$: 'DIVORCED'};
 var $author$project$DataTypes$SINGLE = {$: 'SINGLE'};
@@ -13792,7 +13874,7 @@ var $author$project$Main$yesNoCheckBox = F4(
 		return A2(
 			$author$project$Main$nextBackWrap,
 			model,
-			A4($author$project$Main$unwrappedCheckbox, model, promptId, value, updateFunction));
+			A6($author$project$Main$unwrappedCheckbox, model, promptId, value, true, false, updateFunction));
 	});
 var $author$project$Main$render = F2(
 	function (element, model) {
@@ -16584,9 +16666,170 @@ var $author$project$Main$render = F2(
 							})
 						]));
 			case 'WhyApplyingEntry':
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var a = model.state.application;
+				var reasons = a.whyApplying;
+				var membershipChecked = A2($elm$core$List$member, $author$project$DataTypes$MEMBERSHIP_IN_SOCIAL_GROUP, reasons);
+				var nationalityChecked = A2($elm$core$List$member, $author$project$DataTypes$NATIONALITY, reasons);
+				var politicalChecked = A2($elm$core$List$member, $author$project$DataTypes$POLITICAL_OPINION, reasons);
+				var raceChecked = A2($elm$core$List$member, $author$project$DataTypes$RACE, reasons);
+				var religionChecked = A2($elm$core$List$member, $author$project$DataTypes$RELIGION, reasons);
+				var tortureChecked = A2($elm$core$List$member, $author$project$DataTypes$TORTURE_CONVENTION, reasons);
+				var updateFunction = function (r) {
+					return $author$project$Main$SetApplicationData(
+						_Utils_update(
+							a,
+							{whyApplying: r}));
+				};
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					_List_fromArray(
+						[
+							A3($author$project$Main$prompt, model, _List_Nil, 'why-applying-prompt'),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$displayFlex,
+											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+											$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+											$author$project$Main$defaultMargin
+										]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$div,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$displayFlex,
+													$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+													$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+													$author$project$Main$defaultMargin
+												]))
+										]),
+									_List_fromArray(
+										[
+											A5(
+											$author$project$Main$checkBox,
+											model,
+											raceChecked,
+											'race',
+											updateFunction,
+											A3($author$project$Main$listCheckboxUpdate, raceChecked, $author$project$DataTypes$RACE, reasons)),
+											A5(
+											$author$project$Main$checkBox,
+											model,
+											religionChecked,
+											'religion',
+											updateFunction,
+											A3($author$project$Main$listCheckboxUpdate, religionChecked, $author$project$DataTypes$RELIGION, reasons)),
+											A5(
+											$author$project$Main$checkBox,
+											model,
+											nationalityChecked,
+											'nationality',
+											updateFunction,
+											A3($author$project$Main$listCheckboxUpdate, nationalityChecked, $author$project$DataTypes$NATIONALITY, reasons))
+										])),
+									A2(
+									$rtfeldman$elm_css$Html$Styled$div,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$css(
+											_List_fromArray(
+												[
+													$rtfeldman$elm_css$Css$displayFlex,
+													$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+													$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+													$author$project$Main$defaultMargin
+												]))
+										]),
+									_List_fromArray(
+										[
+											A5(
+											$author$project$Main$checkBox,
+											model,
+											politicalChecked,
+											'political-opinion',
+											updateFunction,
+											A3($author$project$Main$listCheckboxUpdate, politicalChecked, $author$project$DataTypes$POLITICAL_OPINION, reasons)),
+											A5(
+											$author$project$Main$checkBox,
+											model,
+											membershipChecked,
+											'membership-in-social-group',
+											updateFunction,
+											A3($author$project$Main$listCheckboxUpdate, membershipChecked, $author$project$DataTypes$MEMBERSHIP_IN_SOCIAL_GROUP, reasons)),
+											A5(
+											$author$project$Main$checkBox,
+											model,
+											tortureChecked,
+											'torture-convention',
+											updateFunction,
+											A3($author$project$Main$listCheckboxUpdate, tortureChecked, $author$project$DataTypes$TORTURE_CONVENTION, reasons))
+										]))
+								]))
+						]));
 			default:
-				return A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil);
+				var a = model.state.application;
+				var h = a.experiencedHarm;
+				var updateFunction = function (r) {
+					return $author$project$Main$SetApplicationData(
+						_Utils_update(
+							a,
+							{
+								experiencedHarm: _Utils_update(
+									h,
+									{explanation: r})
+							}));
+				};
+				var explanationEntry = _Utils_eq(
+					h.yesNo,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES)) ? _List_fromArray(
+					[
+						A3($author$project$Main$prompt, model, _List_Nil, 'explain-below'),
+						A4(
+						$author$project$Main$largeTextInput,
+						h.explanation,
+						A2($author$project$Main$i18n, model, 'explain-here'),
+						_List_Nil,
+						updateFunction)
+					]) : _List_fromArray(
+					[
+						A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil)
+					]);
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					$elm$core$List$concat(
+						_List_fromArray(
+							[
+								A6(
+								$author$project$Main$unwrappedCheckbox,
+								model,
+								'experienced-harm-entry',
+								h.yesNo,
+								$author$project$DataTypes$YES,
+								$author$project$DataTypes$NO,
+								function (r) {
+									return $author$project$Main$SetApplicationData(
+										_Utils_update(
+											a,
+											{
+												experiencedHarm: _Utils_update(
+													h,
+													{yesNo: r})
+											}));
+								}),
+								explanationEntry
+							])));
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {

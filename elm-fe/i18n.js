@@ -604,6 +604,36 @@ var translations = {
 	},
 	"application-info": {
 		"en": "Application Information"
+	},
+	"why-applying-prompt": {
+		"en": "Why are you applying for asylum in the US? Please select all options that apply."
+	},
+	"race": {
+		"en": "Race"
+	},
+	"religion": {
+		"en": "Religion"
+	},
+	"political-opinion": {
+		"en": "Political Opinion"
+	},
+	"membership-in-social-group": {
+		"en": "Membership in a particular social group"
+	},
+	"nationality": {
+		"en": "Nationality"
+	},
+	"torture-convention": {
+		"en": "Torture Convention"
+	},
+	"explain-here": {
+		"en": "Explain here."
+	},
+	"explain-below": {
+		"en": "Please explain below."
+	},
+	"experienced-harm-entry": {
+		"en": "Have you, your family, or close friends or colleagues ever experienced harm or mistreatment or threats in the past by anyone?"
 	}
 
 }

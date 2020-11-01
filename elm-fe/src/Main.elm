@@ -744,6 +744,7 @@ type Msg
     | SetEmploymentData EmploymentData
     | SetEducationData EducationData
     | SetFamilyData FamilyData
+    | SetApplicationData ApplicationData
     | SetLanguage String
     | SetFormEntryElement FormEntryElement
 
@@ -1001,6 +1002,16 @@ update msg model =
 
                 newS =
                     { s | family = f }
+            in
+            ( { model | state = newS }, Cmd.none )
+
+        SetApplicationData f ->
+            let
+                s =
+                    model.state
+
+                newS =
+                    { s | application = f }
             in
             ( { model | state = newS }, Cmd.none )
 
@@ -3384,15 +3395,91 @@ render element model =
                 ]
 
         WhyApplyingEntry ->
-            div [] []
+            let
+                a =
+                    model.state.application
+
+                reasons =
+                    a.whyApplying
+
+                raceChecked =
+                    List.member RACE reasons
+
+                religionChecked =
+                    List.member RELIGION reasons
+
+                nationalityChecked =
+                    List.member NATIONALITY reasons
+
+                politicalChecked =
+                    List.member POLITICAL_OPINION reasons
+
+                membershipChecked =
+                    List.member MEMBERSHIP_IN_SOCIAL_GROUP reasons
+
+                tortureChecked =
+                    List.member TORTURE_CONVENTION reasons
+
+                updateFunction =
+                    \r -> SetApplicationData { a | whyApplying = r }
+            in
+            nextBackWrap model
+                [ prompt model [] "why-applying-prompt"
+                , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+                    [ div [ css [ displayFlex, flexDirection column, justifyContent center, defaultMargin ] ]
+                        [ checkBox model raceChecked "race" updateFunction (listCheckboxUpdate raceChecked RACE reasons)
+                        , checkBox model religionChecked "religion" updateFunction (listCheckboxUpdate religionChecked RELIGION reasons)
+                        , checkBox model nationalityChecked "nationality" updateFunction (listCheckboxUpdate nationalityChecked NATIONALITY reasons)
+                        ]
+                    , div
+                        [ css [ displayFlex, flexDirection column, justifyContent center, defaultMargin ] ]
+                        [ checkBox model politicalChecked "political-opinion" updateFunction (listCheckboxUpdate politicalChecked POLITICAL_OPINION reasons)
+                        , checkBox model membershipChecked "membership-in-social-group" updateFunction (listCheckboxUpdate membershipChecked MEMBERSHIP_IN_SOCIAL_GROUP reasons)
+                        , checkBox model tortureChecked "torture-convention" updateFunction (listCheckboxUpdate tortureChecked TORTURE_CONVENTION reasons)
+                        ]
+                    ]
+                ]
 
         ExperiencedHarm ->
-            div [] []
+            let
+                a =
+                    model.state.application
+
+                h =
+                    a.experiencedHarm
+
+                updateFunction =
+                    \r -> SetApplicationData { a | experiencedHarm = { h | explanation = r } }
+
+                explanationEntry =
+                    if h.yesNo == Just YES then
+                        [ prompt model [] "explain-below"
+                        , largeTextInput h.explanation (i18n model "explain-here") [] updateFunction
+                        ]
+
+                    else
+                        [ div [] [] ]
+            in
+            nextBackWrap model
+                (List.concat
+                    [ unwrappedCheckbox model "experienced-harm-entry" h.yesNo YES NO (\r -> SetApplicationData { a | experiencedHarm = { h | yesNo = r } })
+                    , explanationEntry
+                    ]
+                )
 
 
 
 -- View end
 -- Misc
+
+
+listCheckboxUpdate : Bool -> x -> List x -> List x
+listCheckboxUpdate alreadyChecked item itemList =
+    if alreadyChecked then
+        List.Extra.remove item itemList
+
+    else
+        item :: itemList
 
 
 printFamilyEntry : FamilyEntry -> String
@@ -3512,7 +3599,7 @@ familyEntry model m entryPrompt deceasedPrompt locationPrompt updateFunction =
                 , textInput m.countryOfBirth (i18n model "country-of-birth") [] (\r -> updateFunction { m | countryOfBirth = r })
                 ]
           ]
-        , unwrappedCheckbox model deceasedPrompt m.isDeceased (\r -> updateFunction { m | isDeceased = r })
+        , unwrappedCheckbox model deceasedPrompt m.isDeceased True False (\r -> updateFunction { m | isDeceased = r })
         , countryEntry
         ]
 
@@ -3658,27 +3745,22 @@ yesNoCheckBox model promptId value updateFunction =
                 Nothing ->
                     False
     in
-    nextBackWrap model (unwrappedCheckbox model promptId value updateFunction)
+    nextBackWrap model (unwrappedCheckbox model promptId value True False updateFunction)
 
 
-unwrappedCheckbox : Model -> String -> Maybe Bool -> (Maybe Bool -> Msg) -> List (Html Msg)
-unwrappedCheckbox model promptId value updateFunction =
+unwrappedCheckbox : Model -> String -> Maybe x -> x -> x -> (Maybe x -> Msg) -> List (Html Msg)
+unwrappedCheckbox model promptId value trueValue falseValue updateFunction =
     let
         yesChecked =
-            Maybe.withDefault False value
+            value == Just trueValue
 
         noChecked =
-            case value of
-                Just b ->
-                    not b
-
-                Nothing ->
-                    False
+            value == Just falseValue
     in
     [ prompt model [] promptId
     , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-        [ checkBox model yesChecked "yes" updateFunction (setMaybe yesChecked True)
-        , checkBox model noChecked "no" updateFunction (setMaybe noChecked False)
+        [ checkBox model yesChecked "yes" updateFunction (setMaybe yesChecked trueValue)
+        , checkBox model noChecked "no" updateFunction (setMaybe noChecked falseValue)
         ]
     ]
 
@@ -3819,6 +3901,19 @@ textInput value placeholder additionalStyles updateFunction =
     input
         [ css [ inputStyles, Css.batch additionalStyles ]
         , type_ "input"
+        , Html.Styled.Attributes.value value
+        , Html.Styled.Attributes.placeholder placeholder
+        , onInput updateFunction
+        ]
+        []
+
+
+largeTextInput : String -> String -> List Style -> (String -> Msg) -> Html Msg
+largeTextInput value placeholder additionalStyles updateFunction =
+    textarea
+        [ css [ inputStyles, Css.batch additionalStyles ]
+        , Html.Styled.Attributes.rows 20
+        , Html.Styled.Attributes.cols 60
         , Html.Styled.Attributes.value value
         , Html.Styled.Attributes.placeholder placeholder
         , onInput updateFunction
