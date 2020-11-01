@@ -559,5 +559,51 @@ var translations = {
 	},
 	"sibling-info": {
 		"en": "Sibling Information"
+	},
+	"full-name": {
+		"en": "Full Name"
+	},
+	"country-of-birth": {
+		"en": "Country of Birth"
+	},
+	"mother-entry": {
+		"en": "Please enter your mother's name and country of birth."
+	},
+	"mother-deceased": {
+		"en": "Is your mother deceased?"
+	},
+	"mother-location-entry": {
+		"en": "Please enter your mother's current location (city and country)."
+	},
+	"father-entry": {
+		"en": "Please enter your father's name and country of birth."
+	},
+	"father-deceased": {
+		"en": "Is your father deceased?"
+	},
+	"father-location-entry": {
+		"en": "Please enter your father's current location (city and country)."
+	},
+	"sibling-entry": {
+		"en": "Please enter the following information for each of your siblings."
+	},
+	"sibling-deceased": {
+		"en": "Is your sibling deceased?"
+	},
+	"sibling-location-entry": {
+		"en": "Please enter your sibling's current location (city and country)."
+	},
+	"siblings": {
+		"en": "Siblings"
+	},
+	"reasons-for-applying": {
+		"en": "Reasons for Applying"
+	},
+	"experienced-harm": {
+		"en": "Experienced Harm"
+	},
+	"application-info": {
+		"en": "Application Information"
 	}
+
 }

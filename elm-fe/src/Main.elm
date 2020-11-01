@@ -84,6 +84,7 @@ type alias FormState =
     , education : EducationData
     , employment : EmploymentData
     , family : FamilyData
+    , application : ApplicationData
     }
 
 
@@ -98,6 +99,7 @@ defaultFormState =
     , education = defaultEducationData
     , employment = defaultEmploymentData
     , family = defaultFamilyData
+    , application = defaultApplicationData
     }
 
 
@@ -510,6 +512,7 @@ type alias FamilyData =
     { father : FamilyEntry
     , mother : FamilyEntry
     , siblings : List FamilyEntry
+    , siblingEntry : FamilyEntry
     }
 
 
@@ -518,6 +521,7 @@ defaultFamilyData =
     { father = defaultFamilyEntry
     , mother = defaultFamilyEntry
     , siblings = []
+    , siblingEntry = defaultFamilyEntry
     }
 
 
@@ -535,6 +539,32 @@ defaultFamilyEntry =
     , countryOfBirth = ""
     , isDeceased = Nothing
     , location = ""
+    }
+
+
+type alias ApplicationData =
+    { whyApplying : List WhyApplying
+    , experiencedHarm : ApplicationAnswer
+    }
+
+
+defaultApplicationData : ApplicationData
+defaultApplicationData =
+    { whyApplying = []
+    , experiencedHarm = defaultApplicationAnswer
+    }
+
+
+type alias ApplicationAnswer =
+    { yesNo : Maybe YesNoAnswer
+    , explanation : String
+    }
+
+
+defaultApplicationAnswer : ApplicationAnswer
+defaultApplicationAnswer =
+    { yesNo = Nothing
+    , explanation = ""
     }
 
 
@@ -614,6 +644,8 @@ type FormEntryElement
     | MotherInfo
     | FatherInfo
     | SiblingInfo
+    | WhyApplyingEntry
+    | ExperiencedHarm
 
 
 type SectionTitle
@@ -624,6 +656,7 @@ type SectionTitle
     | ChildInfo (Maybe Int)
     | AddressInfo
     | BackgroundInfo
+    | ApplicationInfo
 
 
 pathMatch : String -> Page
@@ -1285,7 +1318,13 @@ getNext entry model =
             SiblingInfo
 
         SiblingInfo ->
-            SiblingInfo
+            WhyApplyingEntry
+
+        WhyApplyingEntry ->
+            ExperiencedHarm
+
+        ExperiencedHarm ->
+            ExperiencedHarm
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -1571,6 +1610,12 @@ getBack entry model =
         SiblingInfo ->
             FatherInfo
 
+        WhyApplyingEntry ->
+            SiblingInfo
+
+        ExperiencedHarm ->
+            WhyApplyingEntry
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -1799,6 +1844,12 @@ getSectionFromElement element =
 
         SiblingInfo ->
             BackgroundInfo
+
+        WhyApplyingEntry ->
+            ApplicationInfo
+
+        ExperiencedHarm ->
+            ApplicationInfo
 
 
 validate : Model -> Bool
@@ -2233,6 +2284,16 @@ validate model =
 
             SiblingInfo ->
                 True
+
+            WhyApplyingEntry ->
+                not (List.isEmpty model.state.application.whyApplying)
+
+            ExperiencedHarm ->
+                let
+                    h =
+                        model.state.application.experiencedHarm
+                in
+                h.yesNo == Just NO || (h.yesNo == Just YES && h.explanation /= "")
 
     else
         True
@@ -3259,18 +3320,92 @@ render element model =
                 ]
 
         MotherInfo ->
-            div [] []
+            let
+                f =
+                    model.state.family
+
+                m =
+                    f.mother
+
+                updateFunction =
+                    \r -> SetFamilyData { f | mother = r }
+            in
+            nextBackWrap model (familyEntry model m "mother-entry" "mother-deceased" "mother-location-entry" updateFunction)
 
         FatherInfo ->
-            div [] []
+            let
+                f =
+                    model.state.family
+
+                m =
+                    f.father
+
+                updateFunction =
+                    \r -> SetFamilyData { f | father = r }
+            in
+            nextBackWrap model (familyEntry model m "father-entry" "father-deceased" "father-location-entry" updateFunction)
 
         SiblingInfo ->
+            let
+                f =
+                    model.state.family
+
+                input =
+                    f.siblingEntry
+
+                validInput =
+                    input.name /= "" && input.countryOfBirth /= "" && ((input.isDeceased == Just True) || (input.isDeceased == Just False && input.location /= ""))
+
+                buttonStyles =
+                    if validInput then
+                        activeButtonStyles
+
+                    else
+                        disabledButtonStyles
+
+                newList =
+                    input :: f.siblings
+
+                submitFunction =
+                    if validInput then
+                        SetFamilyData { f | siblings = newList, siblingEntry = defaultFamilyEntry }
+
+                    else
+                        SetFamilyData f
+            in
+            nextBackWrap model
+                [ form [ onSubmit submitFunction, css [ displayFlex, flexDirection column, alignItems center ] ]
+                    (List.concat
+                        [ familyEntry model input "sibling-entry" "sibling-deceased" "sibling-location-entry" (\r -> SetFamilyData { f | siblingEntry = r })
+                        , [ button [ type_ "submit", css [ buttonStyles ] ] [ text (i18n model "add") ] ]
+                        ]
+                    )
+                , removeList model f.siblings "siblings" printFamilyEntry (\r -> SetFamilyData { f | siblings = r })
+                ]
+
+        WhyApplyingEntry ->
+            div [] []
+
+        ExperiencedHarm ->
             div [] []
 
 
 
 -- View end
 -- Misc
+
+
+printFamilyEntry : FamilyEntry -> String
+printFamilyEntry e =
+    case e.isDeceased of
+        Just True ->
+            String.concat [ e.name, ", Born in ", e.countryOfBirth, ", Deceased" ]
+
+        Just False ->
+            String.concat [ e.name, ", Born in ", e.countryOfBirth, ", Currently located in ", e.location ]
+
+        _ ->
+            String.concat [ e.name, ", Born in ", e.countryOfBirth ]
 
 
 printAddressWithDates : GranularAddressWithDates -> String
@@ -3356,6 +3491,30 @@ yearList currentYear =
 
 
 -- Generic views
+
+
+familyEntry : Model -> FamilyEntry -> String -> String -> String -> (FamilyEntry -> Msg) -> List (Html Msg)
+familyEntry model m entryPrompt deceasedPrompt locationPrompt updateFunction =
+    let
+        countryEntry =
+            if m.isDeceased == Just False then
+                [ prompt model [] locationPrompt
+                , textInput m.location (i18n model "current-location") [] (\r -> updateFunction { m | location = r })
+                ]
+
+            else
+                [ div [] [] ]
+    in
+    List.concat
+        [ [ prompt model [] entryPrompt
+          , div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
+                [ textInput m.name (i18n model "full-name") [] (\r -> updateFunction { m | name = r })
+                , textInput m.countryOfBirth (i18n model "country-of-birth") [] (\r -> updateFunction { m | countryOfBirth = r })
+                ]
+          ]
+        , unwrappedCheckbox model deceasedPrompt m.isDeceased (\r -> updateFunction { m | isDeceased = r })
+        , countryEntry
+        ]
 
 
 addressWithDatesEntry : Model -> GranularAddressWithDates -> (GranularAddressWithDates -> Msg) -> Html Msg
@@ -3499,13 +3658,29 @@ yesNoCheckBox model promptId value updateFunction =
                 Nothing ->
                     False
     in
-    nextBackWrap model
-        [ prompt model [] promptId
-        , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
-            [ checkBox model yesChecked "yes" updateFunction (setMaybe yesChecked True)
-            , checkBox model noChecked "no" updateFunction (setMaybe noChecked False)
-            ]
+    nextBackWrap model (unwrappedCheckbox model promptId value updateFunction)
+
+
+unwrappedCheckbox : Model -> String -> Maybe Bool -> (Maybe Bool -> Msg) -> List (Html Msg)
+unwrappedCheckbox model promptId value updateFunction =
+    let
+        yesChecked =
+            Maybe.withDefault False value
+
+        noChecked =
+            case value of
+                Just b ->
+                    not b
+
+                Nothing ->
+                    False
+    in
+    [ prompt model [] promptId
+    , div [ css [ displayFlex, flexDirection row, justifyContent center, defaultMargin ] ]
+        [ checkBox model yesChecked "yes" updateFunction (setMaybe yesChecked True)
+        , checkBox model noChecked "no" updateFunction (setMaybe noChecked False)
         ]
+    ]
 
 
 dateSelector : Model -> String -> (String -> Msg) -> String -> (String -> Msg) -> String -> (String -> Msg) -> Html Msg
@@ -3862,6 +4037,9 @@ sectionToDescription title model =
         BackgroundInfo ->
             i18n model "background-info"
 
+        ApplicationInfo ->
+            i18n model "application-info"
+
 
 formElementToDescription : FormEntryElement -> Model -> String
 formElementToDescription element model =
@@ -4091,6 +4269,12 @@ formElementToDescription element model =
         SiblingInfo ->
             i18n model "sibling-info"
 
+        WhyApplyingEntry ->
+            i18n model "reasons-for-applying"
+
+        ExperiencedHarm ->
+            i18n model "experienced-harm"
+
 
 
 -- Help view
@@ -4180,6 +4364,9 @@ dropdownStyles =
         , padding (px 8)
         , boxSizing borderBox
         , defaultMargin
+        , borderWidth (px 2)
+        , borderColor transparent
+        , focus [ borderColor highlight ]
         ]
 
 
