@@ -5596,7 +5596,10 @@ var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$defaultGranularAddressWithDates = {cityOrTown: '', country: '', departmentProvinceOrState: '', fromMonth: '', fromYear: '', streetName: '', streetNumber: '', toMonth: '', toYear: ''};
 var $author$project$Main$defaultAddressData = {lastAddressBeforeUS: $author$project$Main$defaultGranularAddressWithDates, lastAddressFearsPersecution: $author$project$Main$defaultGranularAddressWithDates, pastAddressEntry: $author$project$Main$defaultGranularAddressWithDates, pastAddresses: _List_Nil, sameAsWhereFearsPersecution: $elm$core$Maybe$Nothing};
 var $author$project$Main$defaultApplicationAnswer = {explanation: '', yesNo: $elm$core$Maybe$Nothing};
-var $author$project$Main$defaultApplicationData = {experiencedHarm: $author$project$Main$defaultApplicationAnswer, whyApplying: _List_Nil};
+var $author$project$Main$defaultOtherApplications = {applyOtherCountry: $elm$core$Maybe$Nothing, explanation: '', travelThroughOtherCountry: $elm$core$Maybe$Nothing};
+var $author$project$Main$defaultRelative = {name: '', relationship: ''};
+var $author$project$Main$defaultRelativeHelp = {didRelativeHelp: $elm$core$Maybe$Nothing, firstRelative: $author$project$Main$defaultRelative, secondRelative: $author$project$Main$defaultRelative};
+var $author$project$Main$defaultApplicationData = {afraidOfTorture: $author$project$Main$defaultApplicationAnswer, applyAfterOneYear: $author$project$Main$defaultApplicationAnswer, arrestedInOtherCountry: $author$project$Main$defaultApplicationAnswer, associatedWithOrganizations: $author$project$Main$defaultApplicationAnswer, causedHarm: $author$project$Main$defaultApplicationAnswer, continueToParticipate: $author$project$Main$defaultApplicationAnswer, crimeInUS: $author$project$Main$defaultApplicationAnswer, experiencedHarm: $author$project$Main$defaultApplicationAnswer, fearHarm: $author$project$Main$defaultApplicationAnswer, otherCountryApplications: $author$project$Main$defaultOtherApplications, previouslyAppliedForAsylum: $author$project$Main$defaultApplicationAnswer, relativeHelpPrepare: $author$project$Main$defaultRelativeHelp, returnCountry: $author$project$Main$defaultApplicationAnswer, whyApplying: _List_Nil};
 var $author$project$Main$defaultSchoolData = {address: '', fromMonth: '', fromYear: '', name: '', schoolType: '', toMonth: '', toYear: ''};
 var $author$project$Main$defaultEducationData = {schoolEntry: $author$project$Main$defaultSchoolData, schools: _List_Nil};
 var $author$project$Main$defaultEligibilityData = {currentlyInUS: $elm$core$Maybe$Nothing, lessThanOneYear: $elm$core$Maybe$Nothing};
@@ -7681,9 +7684,136 @@ var $author$project$Main$downloadFilledForm = function (data) {
 			url: 'http://localhost:12345/fill-i589'
 		});
 };
+var $author$project$DataTypes$MALE = {$: 'MALE'};
+var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
+var $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST = {$: 'NOT_NOW_BUT_IN_THE_PAST'};
+var $author$project$DataTypes$RACE = {$: 'RACE'};
+var $author$project$DataTypes$RELIGION = {$: 'RELIGION'};
+var $author$project$DataTypes$addressWithDatesMock = {cityOrTown: 'Boston', country: 'USA', departmentProvinceOrState: 'MA', fromDate: '03/12/1988', streetName: 'Mulberry St', streetNumber: '123', toDate: '03/15/1988'};
+var $author$project$DataTypes$FEMALE = {$: 'FEMALE'};
+var $author$project$DataTypes$childInfoMock = {alienRegistrationNumber: '2145', cityOfBirth: 'Dallas', countryOfBirth: 'USA', currentImmigrationStatus: 'VISITOR', dateOfBirth: '03/04/05', dateOfLastEntry: '12/03/56', firstName: 'M', gender: $author$project$DataTypes$FEMALE, i94Number: '131352', immigrationStatusWhenLastAdmitted: 'STUDENT', inUS: true, includeInApplication: true, isInImmigrationCourt: true, lastName: 'J', location: 'Walla Walla, WA', maritalStatus: $author$project$DataTypes$MARRIED, middleName: 'F', nationality: 'US', passportNumber: '3141', placeOfLastEntry: 'Seattle', raceEthnicOrTribalGroup: 'White', socialSecurityNumber: '2145252521', statusExpirationDate: '05/09/20'};
+var $author$project$DataTypes$employmentInfoMock = {applicantOccupation: 'Welder', employerAddress: '123 A St', employerName: 'Wilson High School', fromDate: '10/12/13', toDate: '10/12/14'};
+var $author$project$DataTypes$mailingAddressMock = {apartmentNumber: '1', areaCode: '202', city: 'Washington', inCareOf: 'Albert Einstein', phoneNumber: '123-4567', state: 'DC', streetName: 'Mulberry St', streetNumber: '456', zipCode: '20000'};
+var $author$project$DataTypes$YES = {$: 'YES'};
+var $author$project$DataTypes$questionWithExplanationMock = {explanation: 'Mock explanation.', yesNoAnswer: $author$project$DataTypes$YES};
+var $author$project$DataTypes$organizationInfoMock = {associatedWithOrganizations: $author$project$DataTypes$questionWithExplanationMock, continueToParticipate: $author$project$DataTypes$questionWithExplanationMock};
+var $author$project$DataTypes$otherCountryApplicationsMock = {applyOtherCountry: $author$project$DataTypes$YES, explanation: 'Mock explanation', travelThroughOtherCountry: $author$project$DataTypes$YES};
+var $author$project$DataTypes$relativeMock = {name: 'Albert Einstein', relationship: 'Brother'};
+var $author$project$DataTypes$relativeHelpPrepareMock = {didRelativeHelp: $author$project$DataTypes$YES, firstRelative: $author$project$DataTypes$relativeMock, secondRelative: $author$project$DataTypes$relativeMock};
+var $author$project$DataTypes$relativeInfoMock = {cityOrTownOfBirth: 'Privoz', countryOfBirth: 'Austria', currentLocation: 'Arlington, VA', fullName: 'Thomas Jefferson', isDeceased: false};
+var $author$project$DataTypes$schoolInfoMock = {address: '123 A St', fromDate: '10/12/13', schoolName: 'Wilson High School', toDate: '10/12/14', typeOfSchool: 'Secondary'};
+var $author$project$DataTypes$spouseInfoMock = {
+	aliases: _List_fromArray(
+		['bbbb']),
+	alienRegistrationNumber: '2145',
+	cityOfBirth: 'Dallas',
+	countryOfBirth: 'USA',
+	currentImmigrationStatus: 'VISITOR',
+	dateOfBirth: '02/03/04',
+	dateOfLastEntry: '02/06/09',
+	dateOfMarriage: '03/04/05',
+	firstName: 'M',
+	gender: $author$project$DataTypes$FEMALE,
+	i94Number: '131352',
+	immigrationStatusWhenLastAdmitted: 'STUDENT',
+	inUS: true,
+	includeInApplication: true,
+	isInImmigrationCourt: true,
+	lastName: 'J',
+	locationInUS: 'Walla Walla, WA',
+	middleName: 'F',
+	nationality: 'US',
+	passportNumber: '3141',
+	placeOfLastEntry: 'Seattle',
+	placeOfMarriage: 'Yosemite, CA',
+	previousArrivalDate: '04/02/09',
+	raceEthnicOrTribalGroup: 'White',
+	socialSecurityNumber: '2145252521',
+	statusExpirationDate: '05/09/20'
+};
+var $author$project$DataTypes$usTravelEventMock = {date: '02/02/02', place: 'Lexington', status: 'VISITOR'};
+var $author$project$DataTypes$usTravelHistoryMock = {
+	dateStatusExpires: '06/07/08',
+	i94Number: '092491',
+	lastLeftHomeCountry: '09/10/20',
+	travelEvents: _List_fromArray(
+		[$author$project$DataTypes$usTravelEventMock])
+};
+var $author$project$Main$formStateToUserData = function (state) {
+	var p = state.personal;
+	var applicantInfo = {
+		aliases: p.aliases,
+		alienRegistrationNumber: '12345',
+		alsoApplyingConventionAgainstTorture: true,
+		cityOfBirth: 'Kansas City',
+		countryOfBirth: 'China',
+		countryWhoLastIssuedPassport: 'USA',
+		dateOfBirth: '01/01/2020',
+		firstName: p.firstName,
+		fluentInEnglish: true,
+		gender: $author$project$DataTypes$MALE,
+		immigrationCourtHistory: $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST,
+		lastName: p.lastName,
+		maritalStatus: $author$project$DataTypes$MARRIED,
+		middleName: p.middleName,
+		nationalityAtBirth: 'US',
+		nativeLanguage: 'Chinese',
+		otherLanguages: _List_fromArray(
+			['English']),
+		passportNumber: '1234',
+		presentNationality: 'Chinese',
+		raceEthnicOrTribalGroup: 'White',
+		religion: 'Christian',
+		socialSecurityNumber: '98245',
+		travelDocumentExpirationDate: '03/04/05',
+		travelDocumentNumber: '32122453521',
+		usMailingAddress: $author$project$DataTypes$mailingAddressMock,
+		usResidence: $author$project$DataTypes$mailingAddressMock,
+		uscisAccountNumber: '432525'
+	};
+	return {
+		afraidOfTorture: $author$project$DataTypes$questionWithExplanationMock,
+		applicantInfo: applicantInfo,
+		applyAfterOneYear: $author$project$DataTypes$questionWithExplanationMock,
+		arrestedInOtherCountry: $author$project$DataTypes$questionWithExplanationMock,
+		causedHarm: $author$project$DataTypes$questionWithExplanationMock,
+		childInfo: _List_fromArray(
+			[$author$project$DataTypes$childInfoMock]),
+		crimeInUS: $author$project$DataTypes$questionWithExplanationMock,
+		educationInfo: _List_fromArray(
+			[$author$project$DataTypes$schoolInfoMock]),
+		employmentInfo: _List_fromArray(
+			[$author$project$DataTypes$employmentInfoMock]),
+		experiencedHarm: $author$project$DataTypes$questionWithExplanationMock,
+		fatherInfo: $author$project$DataTypes$relativeInfoMock,
+		fearsHarm: $author$project$DataTypes$questionWithExplanationMock,
+		isMarried: true,
+		lastAddressBeforeUS: $author$project$DataTypes$addressWithDatesMock,
+		lastAddressPersecuted: $author$project$DataTypes$addressWithDatesMock,
+		motherInfo: $author$project$DataTypes$relativeInfoMock,
+		organizationInfo: $author$project$DataTypes$organizationInfoMock,
+		otherCountryApplications: $author$project$DataTypes$otherCountryApplicationsMock,
+		relativeAppliedForAsylum: $author$project$DataTypes$questionWithExplanationMock,
+		relativeHelpPrepare: $author$project$DataTypes$relativeHelpPrepareMock,
+		residencesInLastFiveYears: _List_fromArray(
+			[$author$project$DataTypes$addressWithDatesMock]),
+		returnCountry: $author$project$DataTypes$questionWithExplanationMock,
+		siblingInfo: _List_fromArray(
+			[$author$project$DataTypes$relativeInfoMock]),
+		spouseInfo: $author$project$DataTypes$spouseInfoMock,
+		usTravelHistory: $author$project$DataTypes$usTravelHistoryMock,
+		whyApplying: _List_fromArray(
+			[$author$project$DataTypes$RACE, $author$project$DataTypes$RELIGION])
+	};
+};
+var $author$project$Main$AfraidOfTorture = {$: 'AfraidOfTorture'};
 var $author$project$Main$Aliases = {$: 'Aliases'};
 var $author$project$Main$AlienRegistration = {$: 'AlienRegistration'};
+var $author$project$Main$ApplyAfterOneYear = {$: 'ApplyAfterOneYear'};
+var $author$project$Main$ArrestedInOtherCountry = {$: 'ArrestedInOtherCountry'};
+var $author$project$Main$AssociatedWithOrganizations = {$: 'AssociatedWithOrganizations'};
 var $author$project$Main$BirthInfo = {$: 'BirthInfo'};
+var $author$project$Main$CausedHarm = {$: 'CausedHarm'};
 var $author$project$Main$ChildAlienRegistration = function (a) {
 	return {$: 'ChildAlienRegistration', a: a};
 };
@@ -7732,12 +7862,16 @@ var $author$project$Main$ChildSSN = function (a) {
 var $author$project$Main$ChildTravelDoc = function (a) {
 	return {$: 'ChildTravelDoc', a: a};
 };
+var $author$project$Main$ContinueToParticipate = {$: 'ContinueToParticipate'};
+var $author$project$Main$CrimeInUS = {$: 'CrimeInUS'};
 var $author$project$Main$Education = {$: 'Education'};
 var $author$project$Main$Employment = {$: 'Employment'};
 var $author$project$Main$EnterGender = {$: 'EnterGender'};
 var $author$project$Main$EnterMailingAddress = {$: 'EnterMailingAddress'};
 var $author$project$Main$EnterMaritalStatus = {$: 'EnterMaritalStatus'};
+var $author$project$Main$ExperiencedHarm = {$: 'ExperiencedHarm'};
 var $author$project$Main$FatherInfo = {$: 'FatherInfo'};
+var $author$project$Main$FearHarm = {$: 'FearHarm'};
 var $author$project$Main$FluentInEnglish = {$: 'FluentInEnglish'};
 var $author$project$Main$HasOtherTravelDoc = {$: 'HasOtherTravelDoc'};
 var $author$project$Main$HasPassport = {$: 'HasPassport'};
@@ -7749,7 +7883,6 @@ var $author$project$Main$InUSLessThanOneYear = {$: 'InUSLessThanOneYear'};
 var $author$project$Main$LastAddressBeforeUS = {$: 'LastAddressBeforeUS'};
 var $author$project$Main$LastAddressFearsPersecution = {$: 'LastAddressFearsPersecution'};
 var $author$project$Main$LeftHomeCountry = {$: 'LeftHomeCountry'};
-var $author$project$DataTypes$MARRIED = {$: 'MARRIED'};
 var $author$project$Main$MarriageInfo = {$: 'MarriageInfo'};
 var $author$project$Main$MostRecentEntry = {$: 'MostRecentEntry'};
 var $author$project$Main$MostRecentEntryExpiration = {$: 'MostRecentEntryExpiration'};
@@ -7758,12 +7891,16 @@ var $author$project$Main$Name = {$: 'Name'};
 var $author$project$Main$NationalityAtBirth = {$: 'NationalityAtBirth'};
 var $author$project$Main$NativeLanguage = {$: 'NativeLanguage'};
 var $author$project$Main$NumberOfChildren = {$: 'NumberOfChildren'};
+var $author$project$Main$OtherCountryApplications = {$: 'OtherCountryApplications'};
 var $author$project$Main$OtherEntries = {$: 'OtherEntries'};
 var $author$project$Main$OtherLanguages = {$: 'OtherLanguages'};
 var $author$project$Main$PastAddresses = {$: 'PastAddresses'};
 var $author$project$Main$PresentNationality = {$: 'PresentNationality'};
+var $author$project$Main$PreviouslyAppliedForAsylum = {$: 'PreviouslyAppliedForAsylum'};
 var $author$project$Main$RaceEthnicity = {$: 'RaceEthnicity'};
+var $author$project$Main$RelativePrepare = {$: 'RelativePrepare'};
 var $author$project$Main$Religion = {$: 'Religion'};
+var $author$project$Main$ReturnCountry = {$: 'ReturnCountry'};
 var $author$project$Main$SSN = {$: 'SSN'};
 var $author$project$Main$SiblingInfo = {$: 'SiblingInfo'};
 var $author$project$Main$SpouseAliases = {$: 'SpouseAliases'};
@@ -8052,12 +8189,40 @@ var $author$project$Main$getBack = F2(
 				return $author$project$Main$FatherInfo;
 			case 'WhyApplyingEntry':
 				return $author$project$Main$SiblingInfo;
-			default:
+			case 'ExperiencedHarm':
 				return $author$project$Main$WhyApplyingEntry;
+			case 'FearHarm':
+				return $author$project$Main$ExperiencedHarm;
+			case 'ArrestedInOtherCountry':
+				return $author$project$Main$FearHarm;
+			case 'AssociatedWithOrganizations':
+				return $author$project$Main$ArrestedInOtherCountry;
+			case 'ContinueToParticipate':
+				return $author$project$Main$AssociatedWithOrganizations;
+			case 'AfraidOfTorture':
+				return _Utils_eq(
+					model.state.application.associatedWithOrganizations.yesNo,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES)) ? $author$project$Main$AfraidOfTorture : $author$project$Main$ContinueToParticipate;
+			case 'PreviouslyAppliedForAsylum':
+				return $author$project$Main$AfraidOfTorture;
+			case 'OtherCountryApplications':
+				return $author$project$Main$PreviouslyAppliedForAsylum;
+			case 'CausedHarm':
+				return $author$project$Main$OtherCountryApplications;
+			case 'ReturnCountry':
+				return $author$project$Main$CausedHarm;
+			case 'ApplyAfterOneYear':
+				return $author$project$Main$ReturnCountry;
+			case 'CrimeInUS':
+				return $author$project$Main$ApplyAfterOneYear;
+			case 'RelativePrepare':
+				return $author$project$Main$CrimeInUS;
+			default:
+				return $author$project$Main$RelativePrepare;
 		}
 	});
-var $author$project$Main$ExperiencedHarm = {$: 'ExperiencedHarm'};
 var $author$project$Main$NotEligible = {$: 'NotEligible'};
+var $author$project$Main$SubmitForm = {$: 'SubmitForm'};
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getNext = F2(
 	function (entry, model) {
@@ -8294,8 +8459,36 @@ var $author$project$Main$getNext = F2(
 				return $author$project$Main$WhyApplyingEntry;
 			case 'WhyApplyingEntry':
 				return $author$project$Main$ExperiencedHarm;
+			case 'ExperiencedHarm':
+				return $author$project$Main$FearHarm;
+			case 'FearHarm':
+				return $author$project$Main$ArrestedInOtherCountry;
+			case 'ArrestedInOtherCountry':
+				return $author$project$Main$AssociatedWithOrganizations;
+			case 'AssociatedWithOrganizations':
+				return _Utils_eq(
+					model.state.application.associatedWithOrganizations.yesNo,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES)) ? $author$project$Main$ContinueToParticipate : $author$project$Main$AfraidOfTorture;
+			case 'ContinueToParticipate':
+				return $author$project$Main$AfraidOfTorture;
+			case 'AfraidOfTorture':
+				return $author$project$Main$PreviouslyAppliedForAsylum;
+			case 'PreviouslyAppliedForAsylum':
+				return $author$project$Main$OtherCountryApplications;
+			case 'OtherCountryApplications':
+				return $author$project$Main$CausedHarm;
+			case 'CausedHarm':
+				return $author$project$Main$ReturnCountry;
+			case 'ReturnCountry':
+				return $author$project$Main$ApplyAfterOneYear;
+			case 'ApplyAfterOneYear':
+				return $author$project$Main$CrimeInUS;
+			case 'CrimeInUS':
+				return $author$project$Main$RelativePrepare;
+			case 'RelativePrepare':
+				return $author$project$Main$SubmitForm;
 			default:
-				return $author$project$Main$ExperiencedHarm;
+				return $author$project$Main$SubmitForm;
 		}
 	});
 var $author$project$Main$AddressInfo = {$: 'AddressInfo'};
@@ -8307,6 +8500,7 @@ var $author$project$Main$ChildInfo = function (a) {
 var $author$project$Main$ImmigrationInfo = {$: 'ImmigrationInfo'};
 var $author$project$Main$PersonalInfo = {$: 'PersonalInfo'};
 var $author$project$Main$SpouseInfo = {$: 'SpouseInfo'};
+var $author$project$Main$SubmitSection = {$: 'SubmitSection'};
 var $author$project$Main$getSectionFromElement = function (element) {
 	switch (element.$) {
 		case 'CurrentlyInUS':
@@ -8493,8 +8687,34 @@ var $author$project$Main$getSectionFromElement = function (element) {
 			return $author$project$Main$BackgroundInfo;
 		case 'WhyApplyingEntry':
 			return $author$project$Main$ApplicationInfo;
-		default:
+		case 'ExperiencedHarm':
 			return $author$project$Main$ApplicationInfo;
+		case 'FearHarm':
+			return $author$project$Main$ApplicationInfo;
+		case 'ArrestedInOtherCountry':
+			return $author$project$Main$ApplicationInfo;
+		case 'AssociatedWithOrganizations':
+			return $author$project$Main$ApplicationInfo;
+		case 'ContinueToParticipate':
+			return $author$project$Main$ApplicationInfo;
+		case 'AfraidOfTorture':
+			return $author$project$Main$ApplicationInfo;
+		case 'PreviouslyAppliedForAsylum':
+			return $author$project$Main$ApplicationInfo;
+		case 'OtherCountryApplications':
+			return $author$project$Main$ApplicationInfo;
+		case 'CausedHarm':
+			return $author$project$Main$ApplicationInfo;
+		case 'ReturnCountry':
+			return $author$project$Main$ApplicationInfo;
+		case 'ApplyAfterOneYear':
+			return $author$project$Main$ApplicationInfo;
+		case 'CrimeInUS':
+			return $author$project$Main$ApplicationInfo;
+		case 'RelativePrepare':
+			return $author$project$Main$ApplicationInfo;
+		default:
+			return $author$project$Main$SubmitSection;
 	}
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -8755,125 +8975,6 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
-var $author$project$DataTypes$RACE = {$: 'RACE'};
-var $author$project$DataTypes$RELIGION = {$: 'RELIGION'};
-var $author$project$DataTypes$addressWithDatesMock = {cityOrTown: 'Boston', country: 'USA', departmentProvinceOrState: 'MA', fromDate: '03/12/1988', streetName: 'Mulberry St', streetNumber: '123', toDate: '03/15/1988'};
-var $author$project$DataTypes$MALE = {$: 'MALE'};
-var $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST = {$: 'NOT_NOW_BUT_IN_THE_PAST'};
-var $author$project$DataTypes$mailingAddressMock = {apartmentNumber: '1', areaCode: '202', city: 'Washington', inCareOf: 'Albert Einstein', phoneNumber: '123-4567', state: 'DC', streetName: 'Mulberry St', streetNumber: '456', zipCode: '20000'};
-var $author$project$DataTypes$applicantInfoMock = {
-	aliases: _List_fromArray(
-		['ABC']),
-	alienRegistrationNumber: '12345',
-	alsoApplyingConventionAgainstTorture: true,
-	cityOfBirth: 'Kansas City',
-	countryOfBirth: 'China',
-	countryWhoLastIssuedPassport: 'USA',
-	dateOfBirth: '01/01/2020',
-	firstName: 'M',
-	fluentInEnglish: true,
-	gender: $author$project$DataTypes$MALE,
-	immigrationCourtHistory: $author$project$DataTypes$NOT_NOW_BUT_IN_THE_PAST,
-	lastName: 'K',
-	maritalStatus: $author$project$DataTypes$MARRIED,
-	middleName: 'C',
-	nationalityAtBirth: 'US',
-	nativeLanguage: 'Chinese',
-	otherLanguages: _List_fromArray(
-		['English']),
-	passportNumber: '1234',
-	presentNationality: 'Chinese',
-	raceEthnicOrTribalGroup: 'White',
-	religion: 'Christian',
-	socialSecurityNumber: '98245',
-	travelDocumentExpirationDate: '03/04/05',
-	travelDocumentNumber: '32122453521',
-	usMailingAddress: $author$project$DataTypes$mailingAddressMock,
-	usResidence: $author$project$DataTypes$mailingAddressMock,
-	uscisAccountNumber: '432525'
-};
-var $author$project$DataTypes$FEMALE = {$: 'FEMALE'};
-var $author$project$DataTypes$childInfoMock = {alienRegistrationNumber: '2145', cityOfBirth: 'Dallas', countryOfBirth: 'USA', currentImmigrationStatus: 'VISITOR', dateOfBirth: '03/04/05', dateOfLastEntry: '12/03/56', firstName: 'M', gender: $author$project$DataTypes$FEMALE, i94Number: '131352', immigrationStatusWhenLastAdmitted: 'STUDENT', inUS: true, includeInApplication: true, isInImmigrationCourt: true, lastName: 'J', location: 'Walla Walla, WA', maritalStatus: $author$project$DataTypes$MARRIED, middleName: 'F', nationality: 'US', passportNumber: '3141', placeOfLastEntry: 'Seattle', raceEthnicOrTribalGroup: 'White', socialSecurityNumber: '2145252521', statusExpirationDate: '05/09/20'};
-var $author$project$DataTypes$employmentInfoMock = {applicantOccupation: 'Welder', employerAddress: '123 A St', employerName: 'Wilson High School', fromDate: '10/12/13', toDate: '10/12/14'};
-var $author$project$DataTypes$YES = {$: 'YES'};
-var $author$project$DataTypes$questionWithExplanationMock = {explanation: 'Mock explanation.', yesNoAnswer: $author$project$DataTypes$YES};
-var $author$project$DataTypes$organizationInfoMock = {associatedWithOrganizations: $author$project$DataTypes$questionWithExplanationMock, continueToParticipate: $author$project$DataTypes$questionWithExplanationMock};
-var $author$project$DataTypes$otherCountryApplicationsMock = {applyOtherCountry: $author$project$DataTypes$YES, explanation: 'Mock explanation', travelThroughOtherCountry: $author$project$DataTypes$YES};
-var $author$project$DataTypes$relativeMock = {name: 'Albert Einstein', relationship: 'Brother'};
-var $author$project$DataTypes$relativeHelpPrepareMock = {didRelativeHelp: $author$project$DataTypes$YES, firstRelative: $author$project$DataTypes$relativeMock, secondRelative: $author$project$DataTypes$relativeMock};
-var $author$project$DataTypes$relativeInfoMock = {cityOrTownOfBirth: 'Privoz', countryOfBirth: 'Austria', currentLocation: 'Arlington, VA', fullName: 'Thomas Jefferson', isDeceased: false};
-var $author$project$DataTypes$schoolInfoMock = {address: '123 A St', fromDate: '10/12/13', schoolName: 'Wilson High School', toDate: '10/12/14', typeOfSchool: 'Secondary'};
-var $author$project$DataTypes$spouseInfoMock = {
-	aliases: _List_fromArray(
-		['bbbb']),
-	alienRegistrationNumber: '2145',
-	cityOfBirth: 'Dallas',
-	countryOfBirth: 'USA',
-	currentImmigrationStatus: 'VISITOR',
-	dateOfBirth: '02/03/04',
-	dateOfLastEntry: '02/06/09',
-	dateOfMarriage: '03/04/05',
-	firstName: 'M',
-	gender: $author$project$DataTypes$FEMALE,
-	i94Number: '131352',
-	immigrationStatusWhenLastAdmitted: 'STUDENT',
-	inUS: true,
-	includeInApplication: true,
-	isInImmigrationCourt: true,
-	lastName: 'J',
-	locationInUS: 'Walla Walla, WA',
-	middleName: 'F',
-	nationality: 'US',
-	passportNumber: '3141',
-	placeOfLastEntry: 'Seattle',
-	placeOfMarriage: 'Yosemite, CA',
-	previousArrivalDate: '04/02/09',
-	raceEthnicOrTribalGroup: 'White',
-	socialSecurityNumber: '2145252521',
-	statusExpirationDate: '05/09/20'
-};
-var $author$project$DataTypes$usTravelEventMock = {date: '02/02/02', place: 'Lexington', status: 'VISITOR'};
-var $author$project$DataTypes$usTravelHistoryMock = {
-	dateStatusExpires: '06/07/08',
-	i94Number: '092491',
-	lastLeftHomeCountry: '09/10/20',
-	travelEvents: _List_fromArray(
-		[$author$project$DataTypes$usTravelEventMock])
-};
-var $author$project$DataTypes$userDataMock = {
-	afraidOfTorture: $author$project$DataTypes$questionWithExplanationMock,
-	applicantInfo: $author$project$DataTypes$applicantInfoMock,
-	applyAfterOneYear: $author$project$DataTypes$questionWithExplanationMock,
-	arrestedInOtherCountry: $author$project$DataTypes$questionWithExplanationMock,
-	causedHarm: $author$project$DataTypes$questionWithExplanationMock,
-	childInfo: _List_fromArray(
-		[$author$project$DataTypes$childInfoMock]),
-	crimeInUS: $author$project$DataTypes$questionWithExplanationMock,
-	educationInfo: _List_fromArray(
-		[$author$project$DataTypes$schoolInfoMock]),
-	employmentInfo: _List_fromArray(
-		[$author$project$DataTypes$employmentInfoMock]),
-	experiencedHarm: $author$project$DataTypes$questionWithExplanationMock,
-	fatherInfo: $author$project$DataTypes$relativeInfoMock,
-	fearsHarm: $author$project$DataTypes$questionWithExplanationMock,
-	isMarried: true,
-	lastAddressBeforeUS: $author$project$DataTypes$addressWithDatesMock,
-	lastAddressPersecuted: $author$project$DataTypes$addressWithDatesMock,
-	motherInfo: $author$project$DataTypes$relativeInfoMock,
-	organizationInfo: $author$project$DataTypes$organizationInfoMock,
-	otherCountryApplications: $author$project$DataTypes$otherCountryApplicationsMock,
-	relativeAppliedForAsylum: $author$project$DataTypes$questionWithExplanationMock,
-	relativeHelpPrepare: $author$project$DataTypes$relativeHelpPrepareMock,
-	residencesInLastFiveYears: _List_fromArray(
-		[$author$project$DataTypes$addressWithDatesMock]),
-	returnCountry: $author$project$DataTypes$questionWithExplanationMock,
-	siblingInfo: _List_fromArray(
-		[$author$project$DataTypes$relativeInfoMock]),
-	spouseInfo: $author$project$DataTypes$spouseInfoMock,
-	usTravelHistory: $author$project$DataTypes$usTravelHistoryMock,
-	whyApplying: _List_fromArray(
-		[$author$project$DataTypes$RACE, $author$project$DataTypes$RELIGION])
-};
 var $justinmimbs$date$Date$divWithRemainder = F2(
 	function (a, b) {
 		return _Utils_Tuple2(
@@ -8939,7 +9040,8 @@ var $author$project$Main$update = F2(
 			case 'StartDownload':
 				return _Utils_Tuple2(
 					model,
-					$author$project$Main$downloadFilledForm($author$project$DataTypes$userDataMock));
+					$author$project$Main$downloadFilledForm(
+						$author$project$Main$formStateToUserData(model.state)));
 			case 'FinishDownload':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
@@ -12498,6 +12600,54 @@ var $author$project$Main$addressWithDatesEntry = F3(
 					A3($author$project$Main$fromToSelector, model, last, updateFunction)
 				]));
 	});
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$cols = function (n) {
+	return A2(
+		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
+		'cols',
+		$elm$core$String$fromInt(n));
+};
+var $rtfeldman$elm_css$Html$Styled$Attributes$rows = function (n) {
+	return A2(
+		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
+		'rows',
+		$elm$core$String$fromInt(n));
+};
+var $rtfeldman$elm_css$Html$Styled$textarea = $rtfeldman$elm_css$Html$Styled$node('textarea');
+var $author$project$Main$largeTextInput = F4(
+	function (value, placeholder, additionalStyles, updateFunction) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$textarea,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$author$project$Main$inputStyles,
+							$rtfeldman$elm_css$Css$batch(additionalStyles)
+						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$rows(20),
+					$rtfeldman$elm_css$Html$Styled$Attributes$cols(80),
+					$rtfeldman$elm_css$Html$Styled$Attributes$value(value),
+					$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(placeholder),
+					$rtfeldman$elm_css$Html$Styled$Events$onInput(updateFunction)
+				]),
+			_List_Nil);
+	});
 var $author$project$Main$Back = {$: 'Back'};
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -12533,6 +12683,9 @@ var $author$project$Main$backButton = function (model) {
 			]));
 };
 var $author$project$Main$accent = $rtfeldman$elm_css$Css$hex('4F7CAC');
+var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
+var $rtfeldman$elm_css$Css$PcUnits = {$: 'PcUnits'};
+var $rtfeldman$elm_css$Css$pc = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PcUnits, 'pc');
 var $author$project$Main$centerWrap = function (list) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -12545,7 +12698,9 @@ var $author$project$Main$centerWrap = function (list) {
 						$rtfeldman$elm_css$Css$displayFlex,
 						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
 						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+						$rtfeldman$elm_css$Css$maxHeight(
+						$rtfeldman$elm_css$Css$pc(100))
 					]))
 			]),
 		_List_fromArray(
@@ -12569,263 +12724,7 @@ var $author$project$Main$centerWrap = function (list) {
 				list)
 			]));
 };
-var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
-var $rtfeldman$elm_css$Css$checked = $rtfeldman$elm_css$Css$pseudoClass('checked');
-var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
-var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
-var $elm$json$Json$Decode$bool = _Json_decodeBool;
-var $rtfeldman$elm_css$Html$Styled$Events$targetChecked = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'checked']),
-	$elm$json$Json$Decode$bool);
-var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$Events$on,
-		'change',
-		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
-};
-var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
-var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
-var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
-var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
-var $author$project$Main$checkBox = F5(
-	function (model, isChecked, labelTextId, dataMessage, newData) {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$label,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$padding(
-							$rtfeldman$elm_css$Css$em(1)),
-							$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative)
-						]))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$input,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
-							$rtfeldman$elm_css$Html$Styled$Attributes$checked(isChecked),
-							$rtfeldman$elm_css$Html$Styled$Events$onCheck(
-							function (_v0) {
-								return dataMessage(newData);
-							}),
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
-									$rtfeldman$elm_css$Css$width(
-									$rtfeldman$elm_css$Css$em(1)),
-									$rtfeldman$elm_css$Css$height(
-									$rtfeldman$elm_css$Css$em(1)),
-									$rtfeldman$elm_css$Css$border(
-									$rtfeldman$elm_css$Css$px(1)),
-									$rtfeldman$elm_css$Css$borderRadius(
-									$rtfeldman$elm_css$Css$px(2)),
-									$rtfeldman$elm_css$Css$top(
-									$rtfeldman$elm_css$Css$em(0.3)),
-									$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
-									$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
-									A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
-									A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
-									$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
-									$rtfeldman$elm_css$Css$checked(
-									_List_fromArray(
-										[
-											$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark)
-										]))
-								]))
-						]),
-					_List_Nil),
-					$rtfeldman$elm_css$Html$Styled$text(
-					A2($author$project$Main$i18n, model, labelTextId))
-				]));
-	});
-var $author$project$Main$dayList = _List_fromArray(
-	['', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']);
-var $author$project$Main$dateSelector = F7(
-	function (model, dayValue, dayInput, monthValue, monthInput, yearValue, yearInput) {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$div,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$displayFlex,
-							$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-						]))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$div,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Css$displayFlex,
-									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-									$author$project$Main$defaultMargin
-								]))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[$author$project$Main$defaultMargin]))
-								]),
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$text(
-									A2($author$project$Main$i18n, model, 'month'))
-								])),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$select,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Events$onInput(monthInput),
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[$author$project$Main$dropdownStyles]))
-								]),
-							A2(
-								$elm$core$List$map,
-								function (r) {
-									return A2(
-										$rtfeldman$elm_css$Html$Styled$option,
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-												_Utils_eq(r, monthValue))
-											]),
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$text(r)
-											]));
-								},
-								$author$project$Main$monthList))
-						])),
-					A2(
-					$rtfeldman$elm_css$Html$Styled$div,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Css$displayFlex,
-									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-									$author$project$Main$defaultMargin
-								]))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[$author$project$Main$defaultMargin]))
-								]),
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$text(
-									A2($author$project$Main$i18n, model, 'day'))
-								])),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$select,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Events$onInput(dayInput),
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[$author$project$Main$dropdownStyles]))
-								]),
-							A2(
-								$elm$core$List$map,
-								function (r) {
-									return A2(
-										$rtfeldman$elm_css$Html$Styled$option,
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-												_Utils_eq(r, dayValue))
-											]),
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$text(r)
-											]));
-								},
-								$author$project$Main$dayList))
-						])),
-					A2(
-					$rtfeldman$elm_css$Html$Styled$div,
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Css$displayFlex,
-									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-									$author$project$Main$defaultMargin
-								]))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$rtfeldman$elm_css$Html$Styled$div,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[$author$project$Main$defaultMargin]))
-								]),
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$text(
-									A2($author$project$Main$i18n, model, 'year'))
-								])),
-							A2(
-							$rtfeldman$elm_css$Html$Styled$select,
-							_List_fromArray(
-								[
-									$rtfeldman$elm_css$Html$Styled$Events$onInput(yearInput),
-									$rtfeldman$elm_css$Html$Styled$Attributes$css(
-									_List_fromArray(
-										[$author$project$Main$dropdownStyles]))
-								]),
-							A2(
-								$elm$core$List$map,
-								function (r) {
-									return A2(
-										$rtfeldman$elm_css$Html$Styled$option,
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
-												_Utils_eq(r, yearValue))
-											]),
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Html$Styled$text(r)
-											]));
-								},
-								$author$project$Main$yearList(model.currentYear)))
-						]))
-				]));
-	});
+var $author$project$Main$Next = {$: 'Next'};
 var $rtfeldman$elm_css$Css$notAllowed = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'not-allowed'};
 var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(
@@ -12847,163 +12746,13 @@ var $author$project$Main$disabledButtonStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$px(8)),
 			$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero)
 		]));
-var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
-var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
-var $author$project$Main$prompt = F3(
-	function (model, additionalStyles, textId) {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$p,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
-							$rtfeldman$elm_css$Css$maxWidth(
-							$rtfeldman$elm_css$Css$px(500)),
-							$author$project$Main$defaultMargin,
-							$rtfeldman$elm_css$Css$batch(additionalStyles)
-						]))
-				]),
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$text(
-					A2($author$project$Main$i18n, model, textId))
-				]));
-	});
-var $author$project$Main$setMaybe = F2(
-	function (isAlreadyChecked, x) {
-		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(x);
-	});
-var $author$project$Main$unwrappedCheckbox = F6(
-	function (model, promptId, value, trueValue, falseValue, updateFunction) {
-		var yesChecked = _Utils_eq(
-			value,
-			$elm$core$Maybe$Just(trueValue));
-		var noChecked = _Utils_eq(
-			value,
-			$elm$core$Maybe$Just(falseValue));
-		return _List_fromArray(
-			[
-				A3($author$project$Main$prompt, model, _List_Nil, promptId),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$div,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Css$displayFlex,
-								$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
-								$author$project$Main$defaultMargin
-							]))
-					]),
-				_List_fromArray(
-					[
-						A5(
-						$author$project$Main$checkBox,
-						model,
-						yesChecked,
-						'yes',
-						updateFunction,
-						A2($author$project$Main$setMaybe, yesChecked, trueValue)),
-						A5(
-						$author$project$Main$checkBox,
-						model,
-						noChecked,
-						'no',
-						updateFunction,
-						A2($author$project$Main$setMaybe, noChecked, falseValue))
-					]))
-			]);
-	});
-var $author$project$Main$familyEntry = F6(
-	function (model, m, entryPrompt, deceasedPrompt, locationPrompt, updateFunction) {
-		var countryEntry = _Utils_eq(
-			m.isDeceased,
-			$elm$core$Maybe$Just(false)) ? _List_fromArray(
-			[
-				A3($author$project$Main$prompt, model, _List_Nil, locationPrompt),
-				A4(
-				$author$project$Main$textInput,
-				m.location,
-				A2($author$project$Main$i18n, model, 'current-location'),
-				_List_Nil,
-				function (r) {
-					return updateFunction(
-						_Utils_update(
-							m,
-							{location: r}));
-				})
-			]) : _List_fromArray(
-			[
-				A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil)
-			]);
-		return $elm$core$List$concat(
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						A3($author$project$Main$prompt, model, _List_Nil, entryPrompt),
-						A2(
-						$rtfeldman$elm_css$Html$Styled$div,
-						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Html$Styled$Attributes$css(
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Css$displayFlex,
-										$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-										$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
-										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
-									]))
-							]),
-						_List_fromArray(
-							[
-								A4(
-								$author$project$Main$textInput,
-								m.name,
-								A2($author$project$Main$i18n, model, 'full-name'),
-								_List_Nil,
-								function (r) {
-									return updateFunction(
-										_Utils_update(
-											m,
-											{name: r}));
-								}),
-								A4(
-								$author$project$Main$textInput,
-								m.countryOfBirth,
-								A2($author$project$Main$i18n, model, 'country-of-birth'),
-								_List_Nil,
-								function (r) {
-									return updateFunction(
-										_Utils_update(
-											m,
-											{countryOfBirth: r}));
-								})
-							]))
-					]),
-					A6(
-					$author$project$Main$unwrappedCheckbox,
-					model,
-					deceasedPrompt,
-					m.isDeceased,
-					true,
-					false,
-					function (r) {
-						return updateFunction(
-							_Utils_update(
-								m,
-								{isDeceased: r}));
-					}),
-					countryEntry
-				]));
-	});
-var $rtfeldman$elm_css$Css$flexEnd = $rtfeldman$elm_css$Css$prop1('flex-end');
-var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
-var $author$project$Main$Next = {$: 'Next'};
+var $author$project$Main$applicationAnswerValid = function (a) {
+	return _Utils_eq(
+		a.yesNo,
+		$elm$core$Maybe$Just($author$project$DataTypes$NO)) || (_Utils_eq(
+		a.yesNo,
+		$elm$core$Maybe$Just($author$project$DataTypes$YES)) && (a.explanation !== ''));
+};
 var $author$project$Main$validate = function (model) {
 	var s = model.state.spouse;
 	var elig = model.state.eligibility;
@@ -13288,13 +13037,44 @@ var $author$project$Main$validate = function (model) {
 				return true;
 			case 'WhyApplyingEntry':
 				return !$elm$core$List$isEmpty(model.state.application.whyApplying);
-			default:
-				var h = model.state.application.experiencedHarm;
+			case 'ExperiencedHarm':
+				return $author$project$Main$applicationAnswerValid(model.state.application.experiencedHarm);
+			case 'FearHarm':
+				return $author$project$Main$applicationAnswerValid(model.state.application.fearHarm);
+			case 'ArrestedInOtherCountry':
+				return $author$project$Main$applicationAnswerValid(model.state.application.arrestedInOtherCountry);
+			case 'AssociatedWithOrganizations':
+				return $author$project$Main$applicationAnswerValid(model.state.application.associatedWithOrganizations);
+			case 'ContinueToParticipate':
+				return $author$project$Main$applicationAnswerValid(model.state.application.continueToParticipate);
+			case 'AfraidOfTorture':
+				return $author$project$Main$applicationAnswerValid(model.state.application.afraidOfTorture);
+			case 'PreviouslyAppliedForAsylum':
+				return $author$project$Main$applicationAnswerValid(model.state.application.previouslyAppliedForAsylum);
+			case 'OtherCountryApplications':
+				var r = model.state.application.otherCountryApplications;
+				return (_Utils_eq(
+					r.travelThroughOtherCountry,
+					$elm$core$Maybe$Just($author$project$DataTypes$NO)) && _Utils_eq(
+					r.applyOtherCountry,
+					$elm$core$Maybe$Just($author$project$DataTypes$NO))) || ((!_Utils_eq(r.travelThroughOtherCountry, $elm$core$Maybe$Nothing)) && ((!_Utils_eq(r.applyOtherCountry, $elm$core$Maybe$Nothing)) && (r.explanation !== '')));
+			case 'CausedHarm':
+				return $author$project$Main$applicationAnswerValid(model.state.application.causedHarm);
+			case 'ReturnCountry':
+				return $author$project$Main$applicationAnswerValid(model.state.application.returnCountry);
+			case 'ApplyAfterOneYear':
+				return $author$project$Main$applicationAnswerValid(model.state.application.applyAfterOneYear);
+			case 'CrimeInUS':
+				return $author$project$Main$applicationAnswerValid(model.state.application.crimeInUS);
+			case 'RelativePrepare':
+				var r = model.state.application.relativeHelpPrepare;
 				return _Utils_eq(
-					h.yesNo,
+					r.didRelativeHelp,
 					$elm$core$Maybe$Just($author$project$DataTypes$NO)) || (_Utils_eq(
-					h.yesNo,
-					$elm$core$Maybe$Just($author$project$DataTypes$YES)) && (h.explanation !== ''));
+					r.didRelativeHelp,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES)) && ((r.firstRelative.name !== '') && (r.firstRelative.relationship !== '')));
+			default:
+				return true;
 		}
 	} else {
 		return true;
@@ -13345,6 +13125,466 @@ var $author$project$Main$nextBackWrap = F2(
 						])
 					])));
 	});
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
+var $author$project$Main$prompt = F3(
+	function (model, additionalStyles, textId) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$p,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+							$rtfeldman$elm_css$Css$maxWidth(
+							$rtfeldman$elm_css$Css$px(500)),
+							$author$project$Main$defaultMargin,
+							$rtfeldman$elm_css$Css$batch(additionalStyles)
+						]))
+				]),
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$text(
+					A2($author$project$Main$i18n, model, textId))
+				]));
+	});
+var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
+var $rtfeldman$elm_css$Css$checked = $rtfeldman$elm_css$Css$pseudoClass('checked');
+var $rtfeldman$elm_css$Html$Styled$Attributes$checked = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('checked');
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
+var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $rtfeldman$elm_css$Html$Styled$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $rtfeldman$elm_css$Html$Styled$Events$onCheck = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetChecked));
+};
+var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
+var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
+var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
+var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $author$project$Main$checkBox = F5(
+	function (model, isChecked, labelTextId, dataMessage, newData) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$label,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$padding(
+							$rtfeldman$elm_css$Css$em(1)),
+							$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$input,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$type_('checkbox'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$checked(isChecked),
+							$rtfeldman$elm_css$Html$Styled$Events$onCheck(
+							function (_v0) {
+								return dataMessage(newData);
+							}),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
+									$rtfeldman$elm_css$Css$width(
+									$rtfeldman$elm_css$Css$em(1)),
+									$rtfeldman$elm_css$Css$height(
+									$rtfeldman$elm_css$Css$em(1)),
+									$rtfeldman$elm_css$Css$border(
+									$rtfeldman$elm_css$Css$px(1)),
+									$rtfeldman$elm_css$Css$borderRadius(
+									$rtfeldman$elm_css$Css$px(2)),
+									$rtfeldman$elm_css$Css$top(
+									$rtfeldman$elm_css$Css$em(0.3)),
+									$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+									$rtfeldman$elm_css$Css$outline($rtfeldman$elm_css$Css$zero),
+									A2($rtfeldman$elm_css$Css$property, 'appearance', 'none'),
+									A2($rtfeldman$elm_css$Css$property, '-webkit-appearance', 'none'),
+									$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
+									$rtfeldman$elm_css$Css$checked(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$dark)
+										]))
+								]))
+						]),
+					_List_Nil),
+					$rtfeldman$elm_css$Html$Styled$text(
+					A2($author$project$Main$i18n, model, labelTextId))
+				]));
+	});
+var $author$project$Main$setMaybe = F2(
+	function (isAlreadyChecked, x) {
+		return isAlreadyChecked ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(x);
+	});
+var $author$project$Main$unwrappedCheckbox = F6(
+	function (model, promptId, value, trueValue, falseValue, updateFunction) {
+		var yesChecked = _Utils_eq(
+			value,
+			$elm$core$Maybe$Just(trueValue));
+		var noChecked = _Utils_eq(
+			value,
+			$elm$core$Maybe$Just(falseValue));
+		return _List_fromArray(
+			[
+				A3($author$project$Main$prompt, model, _List_Nil, promptId),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+								$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
+								$author$project$Main$defaultMargin
+							]))
+					]),
+				_List_fromArray(
+					[
+						A5(
+						$author$project$Main$checkBox,
+						model,
+						yesChecked,
+						'yes',
+						updateFunction,
+						A2($author$project$Main$setMaybe, yesChecked, trueValue)),
+						A5(
+						$author$project$Main$checkBox,
+						model,
+						noChecked,
+						'no',
+						updateFunction,
+						A2($author$project$Main$setMaybe, noChecked, falseValue))
+					]))
+			]);
+	});
+var $author$project$Main$applicationAnswer = F4(
+	function (model, promptId, h, updateFunction) {
+		var explanationEntry = _Utils_eq(
+			h.yesNo,
+			$elm$core$Maybe$Just($author$project$DataTypes$YES)) ? _List_fromArray(
+			[
+				A3($author$project$Main$prompt, model, _List_Nil, 'explain-below'),
+				A4(
+				$author$project$Main$largeTextInput,
+				h.explanation,
+				A2($author$project$Main$i18n, model, 'explain-here'),
+				_List_Nil,
+				function (r) {
+					return updateFunction(
+						_Utils_update(
+							h,
+							{explanation: r}));
+				})
+			]) : _List_fromArray(
+			[
+				A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil)
+			]);
+		return A2(
+			$author$project$Main$nextBackWrap,
+			model,
+			$elm$core$List$concat(
+				_List_fromArray(
+					[
+						A6(
+						$author$project$Main$unwrappedCheckbox,
+						model,
+						promptId,
+						h.yesNo,
+						$author$project$DataTypes$YES,
+						$author$project$DataTypes$NO,
+						function (r) {
+							return updateFunction(
+								_Utils_update(
+									h,
+									{yesNo: r}));
+						}),
+						explanationEntry
+					])));
+	});
+var $author$project$Main$dayList = _List_fromArray(
+	['', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']);
+var $author$project$Main$dateSelector = F7(
+	function (model, dayValue, dayInput, monthValue, monthInput, yearValue, yearInput) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$displayFlex,
+							$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+							$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$displayFlex,
+									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'month'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$select,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onInput(monthInput),
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$dropdownStyles]))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (r) {
+									return A2(
+										$rtfeldman$elm_css$Html$Styled$option,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+												_Utils_eq(r, monthValue))
+											]),
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$text(r)
+											]));
+								},
+								$author$project$Main$monthList))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$displayFlex,
+									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'day'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$select,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onInput(dayInput),
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$dropdownStyles]))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (r) {
+									return A2(
+										$rtfeldman$elm_css$Html$Styled$option,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+												_Utils_eq(r, dayValue))
+											]),
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$text(r)
+											]));
+								},
+								$author$project$Main$dayList))
+						])),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$displayFlex,
+									$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+										]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text(
+									A2($author$project$Main$i18n, model, 'year'))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$select,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Events$onInput(yearInput),
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$author$project$Main$dropdownStyles]))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (r) {
+									return A2(
+										$rtfeldman$elm_css$Html$Styled$option,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$Attributes$selected(
+												_Utils_eq(r, yearValue))
+											]),
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$text(r)
+											]));
+								},
+								$author$project$Main$yearList(model.currentYear)))
+						]))
+				]));
+	});
+var $author$project$Main$familyEntry = F6(
+	function (model, m, entryPrompt, deceasedPrompt, locationPrompt, updateFunction) {
+		var countryEntry = _Utils_eq(
+			m.isDeceased,
+			$elm$core$Maybe$Just(false)) ? _List_fromArray(
+			[
+				A3($author$project$Main$prompt, model, _List_Nil, locationPrompt),
+				A4(
+				$author$project$Main$textInput,
+				m.location,
+				A2($author$project$Main$i18n, model, 'current-location'),
+				_List_Nil,
+				function (r) {
+					return updateFunction(
+						_Utils_update(
+							m,
+							{location: r}));
+				})
+			]) : _List_fromArray(
+			[
+				A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil)
+			]);
+		return $elm$core$List$concat(
+			_List_fromArray(
+				[
+					_List_fromArray(
+					[
+						A3($author$project$Main$prompt, model, _List_Nil, entryPrompt),
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+										$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+									]))
+							]),
+						_List_fromArray(
+							[
+								A4(
+								$author$project$Main$textInput,
+								m.name,
+								A2($author$project$Main$i18n, model, 'full-name'),
+								_List_Nil,
+								function (r) {
+									return updateFunction(
+										_Utils_update(
+											m,
+											{name: r}));
+								}),
+								A4(
+								$author$project$Main$textInput,
+								m.countryOfBirth,
+								A2($author$project$Main$i18n, model, 'country-of-birth'),
+								_List_Nil,
+								function (r) {
+									return updateFunction(
+										_Utils_update(
+											m,
+											{countryOfBirth: r}));
+								})
+							]))
+					]),
+					A6(
+					$author$project$Main$unwrappedCheckbox,
+					model,
+					deceasedPrompt,
+					m.isDeceased,
+					true,
+					false,
+					function (r) {
+						return updateFunction(
+							_Utils_update(
+								m,
+								{isDeceased: r}));
+					}),
+					countryEntry
+				]));
+	});
+var $rtfeldman$elm_css$Css$flexEnd = $rtfeldman$elm_css$Css$prop1('flex-end');
+var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
 var $author$project$Main$genderSelector = F4(
 	function (model, currentGender, promptId, updateFunction) {
 		var maleChecked = function () {
@@ -13402,8 +13642,8 @@ var $author$project$Main$genderSelector = F4(
 				]));
 	});
 var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
-var $author$project$Main$labeledTextInput = F4(
-	function (model, labelId, value, updateFunction) {
+var $author$project$Main$labeledTextInput = F5(
+	function (model, labelId, placeholder, value, updateFunction) {
 		return A2(
 			$rtfeldman$elm_css$Html$Styled$div,
 			_List_fromArray(
@@ -13433,56 +13673,8 @@ var $author$project$Main$labeledTextInput = F4(
 							$rtfeldman$elm_css$Html$Styled$text(
 							A2($author$project$Main$i18n, model, labelId))
 						])),
-					A4($author$project$Main$textInput, value, '', _List_Nil, updateFunction)
+					A4($author$project$Main$textInput, value, placeholder, _List_Nil, updateFunction)
 				]));
-	});
-var $elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
-			_List_Nil,
-			'');
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$cols = function (n) {
-	return A2(
-		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
-		'cols',
-		$elm$core$String$fromInt(n));
-};
-var $rtfeldman$elm_css$Html$Styled$Attributes$rows = function (n) {
-	return A2(
-		$rtfeldman$elm_css$VirtualDom$Styled$attribute,
-		'rows',
-		$elm$core$String$fromInt(n));
-};
-var $rtfeldman$elm_css$Html$Styled$textarea = $rtfeldman$elm_css$Html$Styled$node('textarea');
-var $author$project$Main$largeTextInput = F4(
-	function (value, placeholder, additionalStyles, updateFunction) {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$textarea,
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[
-							$author$project$Main$inputStyles,
-							$rtfeldman$elm_css$Css$batch(additionalStyles)
-						])),
-					$rtfeldman$elm_css$Html$Styled$Attributes$rows(20),
-					$rtfeldman$elm_css$Html$Styled$Attributes$cols(60),
-					$rtfeldman$elm_css$Html$Styled$Attributes$value(value),
-					$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(placeholder),
-					$rtfeldman$elm_css$Html$Styled$Events$onInput(updateFunction)
-				]),
-			_List_Nil);
 	});
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $elm_community$list_extra$List$Extra$remove = F2(
@@ -13806,8 +13998,6 @@ var $author$project$Main$numChildrenList = A2(
 		$elm$core$List$map,
 		$elm$core$String$fromInt,
 		A2($elm$core$List$range, 0, 20)));
-var $rtfeldman$elm_css$Css$PcUnits = {$: 'PcUnits'};
-var $rtfeldman$elm_css$Css$pc = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PcUnits, 'pc');
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
@@ -13860,6 +14050,23 @@ var $author$project$Main$singleTextEntry = F4(
 					A4($author$project$Main$textInput, value, '', _List_Nil, updateFunction)
 				]));
 	});
+var $author$project$Main$StartDownload = {$: 'StartDownload'};
+var $author$project$Main$submitButton = function (model) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$button,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[$author$project$Main$activeButtonStyles])),
+				$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$StartDownload)
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$text(
+				A2($author$project$Main$i18n, model, 'submit'))
+			]));
+};
 var $author$project$Main$yesNoCheckBox = F4(
 	function (model, promptId, value, updateFunction) {
 		var yesChecked = A2($elm$core$Maybe$withDefault, false, value);
@@ -13882,6 +14089,8 @@ var $author$project$Main$render = F2(
 		var elig = model.state.eligibility;
 		var d = model.state.personal;
 		var c = model.state.children;
+		var app = model.state.application;
+		var a = model.state.addresses;
 		switch (element.$) {
 			case 'CurrentlyInUS':
 				return A4(
@@ -13937,10 +14146,10 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'first-name',
+									$author$project$Main$textInput,
 									d.firstName,
+									A2($author$project$Main$i18n, model, 'first-name'),
+									_List_Nil,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
 											_Utils_update(
@@ -13948,10 +14157,10 @@ var $author$project$Main$render = F2(
 												{firstName: r}));
 									}),
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'middle-name',
+									$author$project$Main$textInput,
 									d.middleName,
+									A2($author$project$Main$i18n, model, 'middle-name'),
+									_List_Nil,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
 											_Utils_update(
@@ -13959,10 +14168,10 @@ var $author$project$Main$render = F2(
 												{middleName: r}));
 									}),
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'last-name',
+									$author$project$Main$textInput,
 									d.lastName,
+									A2($author$project$Main$i18n, model, 'last-name'),
+									_List_Nil,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
 											_Utils_update(
@@ -14505,10 +14714,11 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'city',
+									'',
 									d.cityOfBirth,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
@@ -14516,10 +14726,11 @@ var $author$project$Main$render = F2(
 												d,
 												{cityOfBirth: r}));
 									}),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'country',
+									'',
 									d.countryOfBirth,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
@@ -14816,17 +15027,18 @@ var $author$project$Main$render = F2(
 										[
 											$rtfeldman$elm_css$Css$displayFlex,
 											$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+											$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
 											$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
 										]))
 								]),
 							_List_fromArray(
 								[
 									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'place',
+									'',
 									e.place,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
@@ -14838,10 +15050,11 @@ var $author$project$Main$render = F2(
 														{place: r})
 												}));
 									}),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'immigration-status',
+									'',
 									e.status,
 									function (r) {
 										return $author$project$Main$SetPersonalData(
@@ -14975,9 +15188,9 @@ var $author$project$Main$render = F2(
 												]),
 											_List_fromArray(
 												[
-													A4($author$project$Main$labeledTextInput, model, 'place', place, placeUpdate),
+													A5($author$project$Main$labeledTextInput, model, 'place', '', place, placeUpdate),
 													A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-													A4($author$project$Main$labeledTextInput, model, 'immigration-status', status, statusUpdate),
+													A5($author$project$Main$labeledTextInput, model, 'immigration-status', '', status, statusUpdate),
 													A2(
 													$rtfeldman$elm_css$Html$Styled$button,
 													_List_fromArray(
@@ -15118,10 +15331,10 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'first-name',
+									$author$project$Main$textInput,
 									s.firstName,
+									A2($author$project$Main$i18n, model, 'first-name'),
+									_List_Nil,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
 											_Utils_update(
@@ -15129,10 +15342,10 @@ var $author$project$Main$render = F2(
 												{firstName: r}));
 									}),
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'middle-name',
+									$author$project$Main$textInput,
 									s.middleName,
+									A2($author$project$Main$i18n, model, 'middle-name'),
+									_List_Nil,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
 											_Utils_update(
@@ -15140,10 +15353,10 @@ var $author$project$Main$render = F2(
 												{middleName: r}));
 									}),
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'last-name',
+									$author$project$Main$textInput,
 									s.lastName,
+									A2($author$project$Main$i18n, model, 'last-name'),
+									_List_Nil,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
 											_Utils_update(
@@ -15222,10 +15435,11 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'city',
+									'',
 									s.cityOfBirth,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
@@ -15233,10 +15447,11 @@ var $author$project$Main$render = F2(
 												s,
 												{cityOfBirth: r}));
 									}),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'country',
+									'',
 									s.countryOfBirth,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
@@ -15361,10 +15576,11 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'place',
+									'',
 									s.placeOfMarriage,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
@@ -15442,10 +15658,11 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'place',
+									'',
 									s.lastEntryPlace,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
@@ -15454,10 +15671,11 @@ var $author$project$Main$render = F2(
 												{lastEntryPlace: r}));
 									}),
 									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'immigration-status',
+									'',
 									s.statusOnLastAdmission,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
@@ -15522,10 +15740,11 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'immigration-status',
+									'',
 									s.currentStatus,
 									function (r) {
 										return $author$project$Main$SetSpouseData(
@@ -15668,10 +15887,10 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'first-name',
+									$author$project$Main$textInput,
 									child.firstName,
+									A2($author$project$Main$i18n, model, 'first-name'),
+									_List_Nil,
 									function (r) {
 										return A2(
 											$author$project$Main$SetChildData,
@@ -15681,10 +15900,10 @@ var $author$project$Main$render = F2(
 												{firstName: r}));
 									}),
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'middle-name',
+									$author$project$Main$textInput,
 									child.middleName,
+									A2($author$project$Main$i18n, model, 'middle-name'),
+									_List_Nil,
 									function (r) {
 										return A2(
 											$author$project$Main$SetChildData,
@@ -15694,10 +15913,10 @@ var $author$project$Main$render = F2(
 												{middleName: r}));
 									}),
 									A4(
-									$author$project$Main$labeledTextInput,
-									model,
-									'last-name',
+									$author$project$Main$textInput,
 									child.lastName,
+									A2($author$project$Main$i18n, model, 'last-name'),
+									_List_Nil,
 									function (r) {
 										return A2(
 											$author$project$Main$SetChildData,
@@ -15760,10 +15979,11 @@ var $author$project$Main$render = F2(
 							_List_fromArray(
 								[
 									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'city',
+									'',
 									child.cityOfBirth,
 									function (r) {
 										return A2(
@@ -15773,10 +15993,11 @@ var $author$project$Main$render = F2(
 												child,
 												{cityOfBirth: r}));
 									}),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'country',
+									'',
 									child.countryOfBirth,
 									function (r) {
 										return A2(
@@ -15983,10 +16204,11 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'place',
+									'',
 									child.lastEntryPlace,
 									function (r) {
 										return A2(
@@ -15997,10 +16219,11 @@ var $author$project$Main$render = F2(
 												{lastEntryPlace: r}));
 									}),
 									A7($author$project$Main$dateSelector, model, day, dayUpdate, month, monthUpdate, year, yearUpdate),
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'immigration-status',
+									'',
 									child.statusOnLastAdmission,
 									function (r) {
 										return A2(
@@ -16079,10 +16302,11 @@ var $author$project$Main$render = F2(
 								]),
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									$author$project$Main$labeledTextInput,
 									model,
 									'immigration-status',
+									'',
 									child.currentStatus,
 									function (r) {
 										return A2(
@@ -16128,14 +16352,13 @@ var $author$project$Main$render = F2(
 								{includedInApplication: r}));
 					});
 			case 'LastAddressBeforeUS':
-				var a = model.state.addresses;
-				var last = a.lastAddressBeforeUS;
-				var noChecked = _Utils_eq(
-					a.sameAsWhereFearsPersecution,
-					$elm$core$Maybe$Just(false));
 				var yesChecked = _Utils_eq(
 					a.sameAsWhereFearsPersecution,
 					$elm$core$Maybe$Just(true));
+				var noChecked = _Utils_eq(
+					a.sameAsWhereFearsPersecution,
+					$elm$core$Maybe$Just(false));
+				var last = a.lastAddressBeforeUS;
 				return A2(
 					$author$project$Main$nextBackWrap,
 					model,
@@ -16203,7 +16426,6 @@ var $author$project$Main$render = F2(
 								]))
 						]));
 			case 'LastAddressFearsPersecution':
-				var a = model.state.addresses;
 				var last = a.lastAddressFearsPersecution;
 				return A2(
 					$author$project$Main$nextBackWrap,
@@ -16223,15 +16445,14 @@ var $author$project$Main$render = F2(
 							})
 						]));
 			case 'PastAddresses':
-				var a = model.state.addresses;
 				var input = a.pastAddressEntry;
-				var validInput = (input.streetNumber !== '') && ((input.streetName !== '') && ((input.cityOrTown !== '') && ((input.country !== '') && ((input.departmentProvinceOrState !== '') && ((input.fromMonth !== '') && ((input.fromYear !== '') && ((input.toMonth !== '') && (input.toYear !== ''))))))));
-				var buttonStyles = validInput ? $author$project$Main$activeButtonStyles : $author$project$Main$disabledButtonStyles;
 				var newList = A2($elm$core$List$cons, input, a.pastAddresses);
+				var validInput = (input.streetNumber !== '') && ((input.streetName !== '') && ((input.cityOrTown !== '') && ((input.country !== '') && ((input.departmentProvinceOrState !== '') && ((input.fromMonth !== '') && ((input.fromYear !== '') && ((input.toMonth !== '') && (input.toYear !== ''))))))));
 				var submitFunction = validInput ? $author$project$Main$SetAddressData(
 					_Utils_update(
 						a,
 						{pastAddressEntry: $author$project$Main$defaultGranularAddressWithDates, pastAddresses: newList})) : $author$project$Main$SetAddressData(a);
+				var buttonStyles = validInput ? $author$project$Main$activeButtonStyles : $author$project$Main$disabledButtonStyles;
 				return A2(
 					$author$project$Main$nextBackWrap,
 					model,
@@ -16666,20 +16887,19 @@ var $author$project$Main$render = F2(
 							})
 						]));
 			case 'WhyApplyingEntry':
-				var a = model.state.application;
-				var reasons = a.whyApplying;
-				var membershipChecked = A2($elm$core$List$member, $author$project$DataTypes$MEMBERSHIP_IN_SOCIAL_GROUP, reasons);
-				var nationalityChecked = A2($elm$core$List$member, $author$project$DataTypes$NATIONALITY, reasons);
-				var politicalChecked = A2($elm$core$List$member, $author$project$DataTypes$POLITICAL_OPINION, reasons);
-				var raceChecked = A2($elm$core$List$member, $author$project$DataTypes$RACE, reasons);
-				var religionChecked = A2($elm$core$List$member, $author$project$DataTypes$RELIGION, reasons);
-				var tortureChecked = A2($elm$core$List$member, $author$project$DataTypes$TORTURE_CONVENTION, reasons);
 				var updateFunction = function (r) {
 					return $author$project$Main$SetApplicationData(
 						_Utils_update(
-							a,
+							app,
 							{whyApplying: r}));
 				};
+				var reasons = app.whyApplying;
+				var religionChecked = A2($elm$core$List$member, $author$project$DataTypes$RELIGION, reasons);
+				var tortureChecked = A2($elm$core$List$member, $author$project$DataTypes$TORTURE_CONVENTION, reasons);
+				var raceChecked = A2($elm$core$List$member, $author$project$DataTypes$RACE, reasons);
+				var politicalChecked = A2($elm$core$List$member, $author$project$DataTypes$POLITICAL_OPINION, reasons);
+				var nationalityChecked = A2($elm$core$List$member, $author$project$DataTypes$NATIONALITY, reasons);
+				var membershipChecked = A2($elm$core$List$member, $author$project$DataTypes$MEMBERSHIP_IN_SOCIAL_GROUP, reasons);
 				return A2(
 					$author$project$Main$nextBackWrap,
 					model,
@@ -16777,30 +16997,117 @@ var $author$project$Main$render = F2(
 										]))
 								]))
 						]));
-			default:
-				var a = model.state.application;
-				var h = a.experiencedHarm;
+			case 'ExperiencedHarm':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'experienced-harm-entry',
+					app.experiencedHarm,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{experiencedHarm: r}));
+					});
+			case 'FearHarm':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'fear-harm-entry',
+					app.fearHarm,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{fearHarm: r}));
+					});
+			case 'ArrestedInOtherCountry':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'arrested-in-other-country-entry',
+					app.arrestedInOtherCountry,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{arrestedInOtherCountry: r}));
+					});
+			case 'AssociatedWithOrganizations':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'associated-with-organizations-entry',
+					app.associatedWithOrganizations,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{associatedWithOrganizations: r}));
+					});
+			case 'ContinueToParticipate':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'continue-to-participate-entry',
+					app.continueToParticipate,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{continueToParticipate: r}));
+					});
+			case 'AfraidOfTorture':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'afraid-of-torture-entry',
+					app.afraidOfTorture,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{afraidOfTorture: r}));
+					});
+			case 'PreviouslyAppliedForAsylum':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'previously-applied-entry',
+					app.previouslyAppliedForAsylum,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{previouslyAppliedForAsylum: r}));
+					});
+			case 'OtherCountryApplications':
 				var updateFunction = function (r) {
 					return $author$project$Main$SetApplicationData(
 						_Utils_update(
-							a,
-							{
-								experiencedHarm: _Utils_update(
-									h,
-									{explanation: r})
-							}));
+							app,
+							{otherCountryApplications: r}));
 				};
-				var explanationEntry = _Utils_eq(
-					h.yesNo,
-					$elm$core$Maybe$Just($author$project$DataTypes$YES)) ? _List_fromArray(
+				var h = app.otherCountryApplications;
+				var needsExplanation = (_Utils_eq(
+					h.travelThroughOtherCountry,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES)) || _Utils_eq(
+					h.applyOtherCountry,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES))) && ((!_Utils_eq(h.travelThroughOtherCountry, $elm$core$Maybe$Nothing)) && (!_Utils_eq(h.applyOtherCountry, $elm$core$Maybe$Nothing)));
+				var explanationEntry = needsExplanation ? _List_fromArray(
 					[
-						A3($author$project$Main$prompt, model, _List_Nil, 'explain-below'),
+						A3($author$project$Main$prompt, model, _List_Nil, 'list-other-country-applications'),
 						A4(
 						$author$project$Main$largeTextInput,
 						h.explanation,
 						A2($author$project$Main$i18n, model, 'explain-here'),
 						_List_Nil,
-						updateFunction)
+						function (r) {
+							return updateFunction(
+								_Utils_update(
+									h,
+									{explanation: r}));
+						})
 					]) : _List_fromArray(
 					[
 						A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil)
@@ -16814,22 +17121,237 @@ var $author$project$Main$render = F2(
 								A6(
 								$author$project$Main$unwrappedCheckbox,
 								model,
-								'experienced-harm-entry',
-								h.yesNo,
+								'travel-through-entry',
+								h.travelThroughOtherCountry,
 								$author$project$DataTypes$YES,
 								$author$project$DataTypes$NO,
 								function (r) {
-									return $author$project$Main$SetApplicationData(
+									return updateFunction(
 										_Utils_update(
-											a,
-											{
-												experiencedHarm: _Utils_update(
-													h,
-													{yesNo: r})
-											}));
+											h,
+											{travelThroughOtherCountry: r}));
+								}),
+								A6(
+								$author$project$Main$unwrappedCheckbox,
+								model,
+								'apply-other-country-entry',
+								h.applyOtherCountry,
+								$author$project$DataTypes$YES,
+								$author$project$DataTypes$NO,
+								function (r) {
+									return updateFunction(
+										_Utils_update(
+											h,
+											{applyOtherCountry: r}));
 								}),
 								explanationEntry
 							])));
+			case 'CausedHarm':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'caused-harm-entry',
+					app.causedHarm,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{causedHarm: r}));
+					});
+			case 'ReturnCountry':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'return-country-entry',
+					app.returnCountry,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{returnCountry: r}));
+					});
+			case 'ApplyAfterOneYear':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'apply-after-one-year-entry',
+					app.applyAfterOneYear,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{applyAfterOneYear: r}));
+					});
+			case 'CrimeInUS':
+				return A4(
+					$author$project$Main$applicationAnswer,
+					model,
+					'crime-in-us-entry',
+					app.crimeInUS,
+					function (r) {
+						return $author$project$Main$SetApplicationData(
+							_Utils_update(
+								app,
+								{crimeInUS: r}));
+					});
+			case 'RelativePrepare':
+				var updateFunction = function (r) {
+					return $author$project$Main$SetApplicationData(
+						_Utils_update(
+							app,
+							{relativeHelpPrepare: r}));
+				};
+				var h = app.relativeHelpPrepare;
+				var needsExplanation = _Utils_eq(
+					h.didRelativeHelp,
+					$elm$core$Maybe$Just($author$project$DataTypes$YES));
+				var ftwo = h.secondRelative;
+				var fone = h.firstRelative;
+				var relativeEntry = needsExplanation ? _List_fromArray(
+					[
+						A2(
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+										$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+										$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+									]))
+							]),
+						_List_fromArray(
+							[
+								A3($author$project$Main$prompt, model, _List_Nil, 'add-relative-entry'),
+								A2(
+								$rtfeldman$elm_css$Html$Styled$div,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$css(
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Css$displayFlex,
+												$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+												$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+												$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+											]))
+									]),
+								_List_fromArray(
+									[
+										A5(
+										$author$project$Main$labeledTextInput,
+										model,
+										'first-relative',
+										A2($author$project$Main$i18n, model, 'full-name'),
+										fone.name,
+										function (r) {
+											return updateFunction(
+												_Utils_update(
+													h,
+													{
+														firstRelative: _Utils_update(
+															fone,
+															{name: r})
+													}));
+										}),
+										A4(
+										$author$project$Main$textInput,
+										fone.relationship,
+										A2($author$project$Main$i18n, model, 'relationship'),
+										_List_Nil,
+										function (r) {
+											return updateFunction(
+												_Utils_update(
+													h,
+													{
+														firstRelative: _Utils_update(
+															fone,
+															{relationship: r})
+													}));
+										})
+									])),
+								A2(
+								$rtfeldman$elm_css$Html$Styled$div,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$css(
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Css$displayFlex,
+												$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+												$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$flexEnd),
+												$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+											]))
+									]),
+								_List_fromArray(
+									[
+										A5(
+										$author$project$Main$labeledTextInput,
+										model,
+										'second-relative',
+										A2($author$project$Main$i18n, model, 'full-name'),
+										ftwo.name,
+										function (r) {
+											return updateFunction(
+												_Utils_update(
+													h,
+													{
+														secondRelative: _Utils_update(
+															ftwo,
+															{name: r})
+													}));
+										}),
+										A4(
+										$author$project$Main$textInput,
+										ftwo.relationship,
+										A2($author$project$Main$i18n, model, 'relationship'),
+										_List_Nil,
+										function (r) {
+											return updateFunction(
+												_Utils_update(
+													h,
+													{
+														secondRelative: _Utils_update(
+															ftwo,
+															{relationship: r})
+													}));
+										})
+									]))
+							]))
+					]) : _List_fromArray(
+					[
+						A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, _List_Nil)
+					]);
+				return A2(
+					$author$project$Main$nextBackWrap,
+					model,
+					$elm$core$List$concat(
+						_List_fromArray(
+							[
+								A6(
+								$author$project$Main$unwrappedCheckbox,
+								model,
+								'relative-prepare-entry',
+								h.didRelativeHelp,
+								$author$project$DataTypes$YES,
+								$author$project$DataTypes$NO,
+								function (r) {
+									return updateFunction(
+										_Utils_update(
+											h,
+											{didRelativeHelp: r}));
+								}),
+								relativeEntry
+							])));
+			default:
+				return $author$project$Main$centerWrap(
+					_List_fromArray(
+						[
+							$author$project$Main$backButton(model),
+							$author$project$Main$submitButton(model)
+						]));
 		}
 	});
 var $author$project$Main$formEntryView = function (model) {
@@ -16847,9 +17369,7 @@ var $author$project$Main$helpView = function (model) {
 						A2($rtfeldman$elm_css$Css$property, 'grid-column', '3'),
 						$rtfeldman$elm_css$Css$displayFlex,
 						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$top),
-						$rtfeldman$elm_css$Css$margin(
-						$rtfeldman$elm_css$Css$em(3))
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$top)
 					]))
 			]),
 		_List_fromArray(
@@ -17043,8 +17563,34 @@ var $author$project$Main$formElementToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'sibling-info');
 			case 'WhyApplyingEntry':
 				return A2($author$project$Main$i18n, model, 'reasons-for-applying');
-			default:
+			case 'ExperiencedHarm':
 				return A2($author$project$Main$i18n, model, 'experienced-harm');
+			case 'FearHarm':
+				return A2($author$project$Main$i18n, model, 'fear-harm');
+			case 'ArrestedInOtherCountry':
+				return A2($author$project$Main$i18n, model, 'arrested-in-other-country');
+			case 'AssociatedWithOrganizations':
+				return A2($author$project$Main$i18n, model, 'associated-with-organizations');
+			case 'ContinueToParticipate':
+				return A2($author$project$Main$i18n, model, 'continue-to-participate');
+			case 'AfraidOfTorture':
+				return A2($author$project$Main$i18n, model, 'afraid-of-torture');
+			case 'PreviouslyAppliedForAsylum':
+				return A2($author$project$Main$i18n, model, 'previously-applied');
+			case 'OtherCountryApplications':
+				return A2($author$project$Main$i18n, model, 'other-country-applications');
+			case 'CausedHarm':
+				return A2($author$project$Main$i18n, model, 'caused-harm');
+			case 'ReturnCountry':
+				return A2($author$project$Main$i18n, model, 'return-country');
+			case 'ApplyAfterOneYear':
+				return A2($author$project$Main$i18n, model, 'apply-after-one-year');
+			case 'CrimeInUS':
+				return A2($author$project$Main$i18n, model, 'crime-in-us');
+			case 'RelativePrepare':
+				return A2($author$project$Main$i18n, model, 'relative-help-prepare');
+			default:
+				return A2($author$project$Main$i18n, model, 'download');
 		}
 	});
 var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
@@ -17125,8 +17671,10 @@ var $author$project$Main$sectionToDescription = F2(
 				return A2($author$project$Main$i18n, model, 'address-info');
 			case 'BackgroundInfo':
 				return A2($author$project$Main$i18n, model, 'background-info');
-			default:
+			case 'ApplicationInfo':
 				return A2($author$project$Main$i18n, model, 'application-info');
+			default:
+				return A2($author$project$Main$i18n, model, 'submit');
 		}
 	});
 var $author$project$Main$titleHtml = F4(
@@ -17211,9 +17759,7 @@ var $author$project$Main$progressView = function (model) {
 						A2($rtfeldman$elm_css$Css$property, 'grid-column', '1'),
 						$rtfeldman$elm_css$Css$displayFlex,
 						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
-						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$top),
-						$rtfeldman$elm_css$Css$margin(
-						$rtfeldman$elm_css$Css$em(3))
+						$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$top)
 					]))
 			]),
 		A2(
@@ -17253,6 +17799,8 @@ var $author$project$Main$i589View = function (model) {
 						$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$background),
 						$rtfeldman$elm_css$Css$minHeight(
 						$rtfeldman$elm_css$Css$vh(95)),
+						$rtfeldman$elm_css$Css$padding(
+						$rtfeldman$elm_css$Css$em(2)),
 						$rtfeldman$elm_css$Css$color($author$project$Main$dark)
 					]))
 			]),
@@ -17282,7 +17830,6 @@ var $author$project$Main$linkStyles = $rtfeldman$elm_css$Css$batch(
 			$rtfeldman$elm_css$Css$padding(
 			$rtfeldman$elm_css$Css$px(10))
 		]));
-var $rtfeldman$elm_css$Css$maxHeight = $rtfeldman$elm_css$Css$prop1('max-height');
 var $rtfeldman$elm_css$Css$start = $rtfeldman$elm_css$Css$prop1('start');
 var $author$project$Main$navContainerStyles = $rtfeldman$elm_css$Css$batch(
 	_List_fromArray(

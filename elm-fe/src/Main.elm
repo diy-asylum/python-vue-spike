@@ -88,6 +88,71 @@ type alias FormState =
     }
 
 
+formStateToUserData : FormState -> UserData
+formStateToUserData state =
+    let
+        p =
+            state.personal
+
+        applicantInfo =
+            { lastName = p.lastName
+            , firstName = p.firstName
+            , middleName = p.middleName
+            , aliases = p.aliases
+            , usResidence = mailingAddressMock
+            , usMailingAddress = mailingAddressMock
+            , gender = MALE
+            , maritalStatus = MARRIED
+            , dateOfBirth = "01/01/2020"
+            , cityOfBirth = "Kansas City"
+            , countryOfBirth = "China"
+            , presentNationality = "Chinese"
+            , nationalityAtBirth = "US"
+            , raceEthnicOrTribalGroup = "White"
+            , religion = "Christian"
+            , nativeLanguage = "Chinese"
+            , fluentInEnglish = True
+            , otherLanguages = [ "English" ]
+            , alsoApplyingConventionAgainstTorture = True
+            , alienRegistrationNumber = "12345"
+            , socialSecurityNumber = "98245"
+            , uscisAccountNumber = "432525"
+            , immigrationCourtHistory = NOT_NOW_BUT_IN_THE_PAST
+            , countryWhoLastIssuedPassport = "USA"
+            , passportNumber = "1234"
+            , travelDocumentNumber = "32122453521"
+            , travelDocumentExpirationDate = "03/04/05"
+            }
+    in
+    { applicantInfo = applicantInfo
+    , usTravelHistory = usTravelHistoryMock
+    , isMarried = True
+    , spouseInfo = spouseInfoMock
+    , childInfo = [ childInfoMock ]
+    , lastAddressBeforeUS = addressWithDatesMock
+    , lastAddressPersecuted = addressWithDatesMock
+    , residencesInLastFiveYears = [ addressWithDatesMock ]
+    , educationInfo = [ schoolInfoMock ]
+    , employmentInfo = [ employmentInfoMock ]
+    , motherInfo = relativeInfoMock
+    , fatherInfo = relativeInfoMock
+    , siblingInfo = [ relativeInfoMock ]
+    , whyApplying = [ RACE, RELIGION ]
+    , experiencedHarm = questionWithExplanationMock
+    , fearsHarm = questionWithExplanationMock
+    , arrestedInOtherCountry = questionWithExplanationMock
+    , organizationInfo = organizationInfoMock
+    , afraidOfTorture = questionWithExplanationMock
+    , relativeAppliedForAsylum = questionWithExplanationMock
+    , otherCountryApplications = otherCountryApplicationsMock
+    , causedHarm = questionWithExplanationMock
+    , returnCountry = questionWithExplanationMock
+    , applyAfterOneYear = questionWithExplanationMock
+    , crimeInUS = questionWithExplanationMock
+    , relativeHelpPrepare = relativeHelpPrepareMock
+    }
+
+
 defaultFormState : FormState
 defaultFormState =
     { eligibility = defaultEligibilityData
@@ -545,6 +610,18 @@ defaultFamilyEntry =
 type alias ApplicationData =
     { whyApplying : List WhyApplying
     , experiencedHarm : ApplicationAnswer
+    , fearHarm : ApplicationAnswer
+    , arrestedInOtherCountry : ApplicationAnswer
+    , associatedWithOrganizations : ApplicationAnswer
+    , continueToParticipate : ApplicationAnswer
+    , afraidOfTorture : ApplicationAnswer
+    , previouslyAppliedForAsylum : ApplicationAnswer
+    , otherCountryApplications : OtherApplications
+    , causedHarm : ApplicationAnswer
+    , returnCountry : ApplicationAnswer
+    , applyAfterOneYear : ApplicationAnswer
+    , crimeInUS : ApplicationAnswer
+    , relativeHelpPrepare : RelativeHelp
     }
 
 
@@ -552,6 +629,18 @@ defaultApplicationData : ApplicationData
 defaultApplicationData =
     { whyApplying = []
     , experiencedHarm = defaultApplicationAnswer
+    , fearHarm = defaultApplicationAnswer
+    , arrestedInOtherCountry = defaultApplicationAnswer
+    , associatedWithOrganizations = defaultApplicationAnswer
+    , continueToParticipate = defaultApplicationAnswer
+    , afraidOfTorture = defaultApplicationAnswer
+    , previouslyAppliedForAsylum = defaultApplicationAnswer
+    , otherCountryApplications = defaultOtherApplications
+    , causedHarm = defaultApplicationAnswer
+    , returnCountry = defaultApplicationAnswer
+    , applyAfterOneYear = defaultApplicationAnswer
+    , crimeInUS = defaultApplicationAnswer
+    , relativeHelpPrepare = defaultRelativeHelp
     }
 
 
@@ -565,6 +654,43 @@ defaultApplicationAnswer : ApplicationAnswer
 defaultApplicationAnswer =
     { yesNo = Nothing
     , explanation = ""
+    }
+
+
+type alias OtherApplications =
+    { travelThroughOtherCountry : Maybe YesNoAnswer
+    , applyOtherCountry : Maybe YesNoAnswer
+    , explanation : String
+    }
+
+
+defaultOtherApplications : OtherApplications
+defaultOtherApplications =
+    { travelThroughOtherCountry = Nothing
+    , applyOtherCountry = Nothing
+    , explanation = ""
+    }
+
+
+type alias RelativeHelp =
+    { didRelativeHelp : Maybe YesNoAnswer
+    , firstRelative : Relative
+    , secondRelative : Relative
+    }
+
+
+defaultRelative : Relative
+defaultRelative =
+    { name = ""
+    , relationship = ""
+    }
+
+
+defaultRelativeHelp : RelativeHelp
+defaultRelativeHelp =
+    { didRelativeHelp = Nothing
+    , firstRelative = defaultRelative
+    , secondRelative = defaultRelative
     }
 
 
@@ -646,6 +772,19 @@ type FormEntryElement
     | SiblingInfo
     | WhyApplyingEntry
     | ExperiencedHarm
+    | FearHarm
+    | ArrestedInOtherCountry
+    | AssociatedWithOrganizations
+    | ContinueToParticipate
+    | AfraidOfTorture
+    | PreviouslyAppliedForAsylum
+    | OtherCountryApplications
+    | CausedHarm
+    | ReturnCountry
+    | ApplyAfterOneYear
+    | CrimeInUS
+    | RelativePrepare
+    | SubmitForm
 
 
 type SectionTitle
@@ -657,6 +796,7 @@ type SectionTitle
     | AddressInfo
     | BackgroundInfo
     | ApplicationInfo
+    | SubmitSection
 
 
 pathMatch : String -> Page
@@ -819,7 +959,7 @@ update msg model =
             ( { model | device = device }, Cmd.none )
 
         StartDownload ->
-            ( model, downloadFilledForm userDataMock )
+            ( model, downloadFilledForm (formStateToUserData model.state) )
 
         FinishDownload result ->
             case result of
@@ -1335,7 +1475,50 @@ getNext entry model =
             ExperiencedHarm
 
         ExperiencedHarm ->
-            ExperiencedHarm
+            FearHarm
+
+        FearHarm ->
+            ArrestedInOtherCountry
+
+        ArrestedInOtherCountry ->
+            AssociatedWithOrganizations
+
+        AssociatedWithOrganizations ->
+            if model.state.application.associatedWithOrganizations.yesNo == Just YES then
+                ContinueToParticipate
+
+            else
+                AfraidOfTorture
+
+        ContinueToParticipate ->
+            AfraidOfTorture
+
+        AfraidOfTorture ->
+            PreviouslyAppliedForAsylum
+
+        PreviouslyAppliedForAsylum ->
+            OtherCountryApplications
+
+        OtherCountryApplications ->
+            CausedHarm
+
+        CausedHarm ->
+            ReturnCountry
+
+        ReturnCountry ->
+            ApplyAfterOneYear
+
+        ApplyAfterOneYear ->
+            CrimeInUS
+
+        CrimeInUS ->
+            RelativePrepare
+
+        RelativePrepare ->
+            SubmitForm
+
+        SubmitForm ->
+            SubmitForm
 
 
 getBack : FormEntryElement -> Model -> FormEntryElement
@@ -1627,6 +1810,49 @@ getBack entry model =
         ExperiencedHarm ->
             WhyApplyingEntry
 
+        FearHarm ->
+            ExperiencedHarm
+
+        ArrestedInOtherCountry ->
+            FearHarm
+
+        AssociatedWithOrganizations ->
+            ArrestedInOtherCountry
+
+        ContinueToParticipate ->
+            AssociatedWithOrganizations
+
+        AfraidOfTorture ->
+            if model.state.application.associatedWithOrganizations.yesNo == Just YES then
+                AfraidOfTorture
+
+            else
+                ContinueToParticipate
+
+        PreviouslyAppliedForAsylum ->
+            AfraidOfTorture
+
+        OtherCountryApplications ->
+            PreviouslyAppliedForAsylum
+
+        CausedHarm ->
+            OtherCountryApplications
+
+        ReturnCountry ->
+            CausedHarm
+
+        ApplyAfterOneYear ->
+            ReturnCountry
+
+        CrimeInUS ->
+            ApplyAfterOneYear
+
+        RelativePrepare ->
+            CrimeInUS
+
+        SubmitForm ->
+            RelativePrepare
+
 
 getSectionFromElement : FormEntryElement -> SectionTitle
 getSectionFromElement element =
@@ -1861,6 +2087,45 @@ getSectionFromElement element =
 
         ExperiencedHarm ->
             ApplicationInfo
+
+        FearHarm ->
+            ApplicationInfo
+
+        ArrestedInOtherCountry ->
+            ApplicationInfo
+
+        AssociatedWithOrganizations ->
+            ApplicationInfo
+
+        ContinueToParticipate ->
+            ApplicationInfo
+
+        AfraidOfTorture ->
+            ApplicationInfo
+
+        PreviouslyAppliedForAsylum ->
+            ApplicationInfo
+
+        OtherCountryApplications ->
+            ApplicationInfo
+
+        CausedHarm ->
+            ApplicationInfo
+
+        ReturnCountry ->
+            ApplicationInfo
+
+        ApplyAfterOneYear ->
+            ApplicationInfo
+
+        CrimeInUS ->
+            ApplicationInfo
+
+        RelativePrepare ->
+            ApplicationInfo
+
+        SubmitForm ->
+            SubmitSection
 
 
 validate : Model -> Bool
@@ -2300,14 +2565,62 @@ validate model =
                 not (List.isEmpty model.state.application.whyApplying)
 
             ExperiencedHarm ->
+                applicationAnswerValid model.state.application.experiencedHarm
+
+            FearHarm ->
+                applicationAnswerValid model.state.application.fearHarm
+
+            ArrestedInOtherCountry ->
+                applicationAnswerValid model.state.application.arrestedInOtherCountry
+
+            AssociatedWithOrganizations ->
+                applicationAnswerValid model.state.application.associatedWithOrganizations
+
+            ContinueToParticipate ->
+                applicationAnswerValid model.state.application.continueToParticipate
+
+            AfraidOfTorture ->
+                applicationAnswerValid model.state.application.afraidOfTorture
+
+            PreviouslyAppliedForAsylum ->
+                applicationAnswerValid model.state.application.previouslyAppliedForAsylum
+
+            OtherCountryApplications ->
                 let
-                    h =
-                        model.state.application.experiencedHarm
+                    r =
+                        model.state.application.otherCountryApplications
                 in
-                h.yesNo == Just NO || (h.yesNo == Just YES && h.explanation /= "")
+                (r.travelThroughOtherCountry == Just NO && r.applyOtherCountry == Just NO) || (r.travelThroughOtherCountry /= Nothing && r.applyOtherCountry /= Nothing && r.explanation /= "")
+
+            CausedHarm ->
+                applicationAnswerValid model.state.application.causedHarm
+
+            ReturnCountry ->
+                applicationAnswerValid model.state.application.returnCountry
+
+            ApplyAfterOneYear ->
+                applicationAnswerValid model.state.application.applyAfterOneYear
+
+            CrimeInUS ->
+                applicationAnswerValid model.state.application.crimeInUS
+
+            RelativePrepare ->
+                let
+                    r =
+                        model.state.application.relativeHelpPrepare
+                in
+                r.didRelativeHelp == Just NO || (r.didRelativeHelp == Just YES && r.firstRelative.name /= "" && r.firstRelative.relationship /= "")
+
+            SubmitForm ->
+                True
 
     else
         True
+
+
+applicationAnswerValid : ApplicationAnswer -> Bool
+applicationAnswerValid a =
+    a.yesNo == Just NO || (a.yesNo == Just YES && a.explanation /= "")
 
 
 
@@ -2363,7 +2676,7 @@ webView model =
 
 i589View : Model -> Html Msg
 i589View model =
-    div [ css [ gridStyles, standardStyles, backgroundColor background, minHeight (vh 95), color dark ] ]
+    div [ css [ gridStyles, standardStyles, backgroundColor background, minHeight (vh 95), padding (Css.em 2), color dark ] ]
         [ lazy progressView model
         , lazy formEntryView model
         , lazy helpView model
@@ -2389,6 +2702,12 @@ render element model =
 
         c =
             model.state.children
+
+        a =
+            model.state.addresses
+
+        app =
+            model.state.application
     in
     case element of
         CurrentlyInUS ->
@@ -2404,9 +2723,9 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "name-entry"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "first-name" d.firstName (\r -> SetPersonalData { d | firstName = r })
-                    , labeledTextInput model "middle-name" d.middleName (\r -> SetPersonalData { d | middleName = r })
-                    , labeledTextInput model "last-name" d.lastName (\r -> SetPersonalData { d | lastName = r })
+                    [ textInput d.firstName (i18n model "first-name") [] (\r -> SetPersonalData { d | firstName = r })
+                    , textInput d.middleName (i18n model "middle-name") [] (\r -> SetPersonalData { d | middleName = r })
+                    , textInput d.lastName (i18n model "last-name") [] (\r -> SetPersonalData { d | lastName = r })
                     ]
                 ]
 
@@ -2493,8 +2812,8 @@ render element model =
                 [ prompt model [] "birth-prompt"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
                     [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                    , labeledTextInput model "city" d.cityOfBirth (\r -> SetPersonalData { d | cityOfBirth = r })
-                    , labeledTextInput model "country" d.countryOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
+                    , labeledTextInput model "city" "" d.cityOfBirth (\r -> SetPersonalData { d | cityOfBirth = r })
+                    , labeledTextInput model "country" "" d.countryOfBirth (\r -> SetPersonalData { d | countryOfBirth = r })
                     ]
                 ]
 
@@ -2614,10 +2933,10 @@ render element model =
             in
             nextBackWrap model
                 [ prompt model [] "most-recent-entry-prompt"
-                , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
+                , div [ css [ displayFlex, flexDirection row, alignItems center, flexWrap wrap ] ]
                     [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                    , labeledTextInput model "place" e.place (\r -> SetPersonalData { d | mostRecentEntry = { e | place = r } })
-                    , labeledTextInput model "immigration-status" e.status (\r -> SetPersonalData { d | mostRecentEntry = { e | status = r } })
+                    , labeledTextInput model "place" "" e.place (\r -> SetPersonalData { d | mostRecentEntry = { e | place = r } })
+                    , labeledTextInput model "immigration-status" "" e.status (\r -> SetPersonalData { d | mostRecentEntry = { e | status = r } })
                     ]
                 ]
 
@@ -2700,9 +3019,9 @@ render element model =
                 , div [ css [ displayFlex, flexDirection column, alignItems center ] ]
                     [ form [ onSubmit submitFunction ]
                         [ div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                            [ labeledTextInput model "place" place placeUpdate
+                            [ labeledTextInput model "place" "" place placeUpdate
                             , dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                            , labeledTextInput model "immigration-status" status statusUpdate
+                            , labeledTextInput model "immigration-status" "" status statusUpdate
                             , button
                                 [ type_ "submit"
                                 , css [ activeButtonStyles ]
@@ -2778,9 +3097,9 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "spouse-name-entry"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "first-name" s.firstName (\r -> SetSpouseData { s | firstName = r })
-                    , labeledTextInput model "middle-name" s.middleName (\r -> SetSpouseData { s | middleName = r })
-                    , labeledTextInput model "last-name" s.lastName (\r -> SetSpouseData { s | lastName = r })
+                    [ textInput s.firstName (i18n model "first-name") [] (\r -> SetSpouseData { s | firstName = r })
+                    , textInput s.middleName (i18n model "middle-name") [] (\r -> SetSpouseData { s | middleName = r })
+                    , textInput s.lastName (i18n model "last-name") [] (\r -> SetSpouseData { s | lastName = r })
                     ]
                 ]
 
@@ -2811,8 +3130,8 @@ render element model =
                 [ prompt model [] "spouse-birth"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
                     [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                    , labeledTextInput model "city" s.cityOfBirth (\r -> SetSpouseData { s | cityOfBirth = r })
-                    , labeledTextInput model "country" s.countryOfBirth (\r -> SetSpouseData { s | countryOfBirth = r })
+                    , labeledTextInput model "city" "" s.cityOfBirth (\r -> SetSpouseData { s | cityOfBirth = r })
+                    , labeledTextInput model "country" "" s.countryOfBirth (\r -> SetSpouseData { s | countryOfBirth = r })
                     ]
                 ]
 
@@ -2857,7 +3176,7 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "marriage-info-entry"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "place" s.placeOfMarriage (\r -> SetSpouseData { s | placeOfMarriage = r })
+                    [ labeledTextInput model "place" "" s.placeOfMarriage (\r -> SetSpouseData { s | placeOfMarriage = r })
                     , dateSelector model day dayUpdate month monthUpdate year yearUpdate
                     ]
                 ]
@@ -2891,9 +3210,9 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "spouse-last-entry"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "place" s.lastEntryPlace (\r -> SetSpouseData { s | lastEntryPlace = r })
+                    [ labeledTextInput model "place" "" s.lastEntryPlace (\r -> SetSpouseData { s | lastEntryPlace = r })
                     , dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                    , labeledTextInput model "immigration-status" s.statusOnLastAdmission (\r -> SetSpouseData { s | statusOnLastAdmission = r })
+                    , labeledTextInput model "immigration-status" "" s.statusOnLastAdmission (\r -> SetSpouseData { s | statusOnLastAdmission = r })
                     ]
                 ]
 
@@ -2923,7 +3242,7 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "spouse-current-status"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "immigration-status" s.currentStatus (\r -> SetSpouseData { s | currentStatus = r })
+                    [ labeledTextInput model "immigration-status" "" s.currentStatus (\r -> SetSpouseData { s | currentStatus = r })
                     , dateSelector model day dayUpdate month monthUpdate year yearUpdate
                     ]
                 ]
@@ -2985,9 +3304,9 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "child-name-entry"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "first-name" child.firstName (\r -> SetChildData n { child | firstName = r })
-                    , labeledTextInput model "middle-name" child.middleName (\r -> SetChildData n { child | middleName = r })
-                    , labeledTextInput model "last-name" child.lastName (\r -> SetChildData n { child | lastName = r })
+                    [ textInput child.firstName (i18n model "first-name") [] (\r -> SetChildData n { child | firstName = r })
+                    , textInput child.middleName (i18n model "middle-name") [] (\r -> SetChildData n { child | middleName = r })
+                    , textInput child.lastName (i18n model "last-name") [] (\r -> SetChildData n { child | lastName = r })
                     ]
                 ]
 
@@ -3018,8 +3337,8 @@ render element model =
                 [ prompt model [] "child-birth"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
                     [ dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                    , labeledTextInput model "city" child.cityOfBirth (\r -> SetChildData n { child | cityOfBirth = r })
-                    , labeledTextInput model "country" child.countryOfBirth (\r -> SetChildData n { child | countryOfBirth = r })
+                    , labeledTextInput model "city" "" child.cityOfBirth (\r -> SetChildData n { child | cityOfBirth = r })
+                    , labeledTextInput model "country" "" child.countryOfBirth (\r -> SetChildData n { child | countryOfBirth = r })
                     ]
                 ]
 
@@ -3112,9 +3431,9 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "child-last-entry"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "place" child.lastEntryPlace (\r -> SetChildData n { child | lastEntryPlace = r })
+                    [ labeledTextInput model "place" "" child.lastEntryPlace (\r -> SetChildData n { child | lastEntryPlace = r })
                     , dateSelector model day dayUpdate month monthUpdate year yearUpdate
-                    , labeledTextInput model "immigration-status" child.statusOnLastAdmission (\r -> SetChildData n { child | statusOnLastAdmission = r })
+                    , labeledTextInput model "immigration-status" "" child.statusOnLastAdmission (\r -> SetChildData n { child | statusOnLastAdmission = r })
                     ]
                 ]
 
@@ -3151,7 +3470,7 @@ render element model =
             nextBackWrap model
                 [ prompt model [] "child-current-status"
                 , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, flexWrap wrap ] ]
-                    [ labeledTextInput model "immigration-status" child.currentStatus (\r -> SetChildData n { child | currentStatus = r })
+                    [ labeledTextInput model "immigration-status" "" child.currentStatus (\r -> SetChildData n { child | currentStatus = r })
                     , dateSelector model day dayUpdate month monthUpdate year yearUpdate
                     ]
                 ]
@@ -3172,9 +3491,6 @@ render element model =
 
         LastAddressBeforeUS ->
             let
-                a =
-                    model.state.addresses
-
                 last =
                     a.lastAddressBeforeUS
 
@@ -3196,9 +3512,6 @@ render element model =
 
         LastAddressFearsPersecution ->
             let
-                a =
-                    model.state.addresses
-
                 last =
                     a.lastAddressFearsPersecution
             in
@@ -3209,9 +3522,6 @@ render element model =
 
         PastAddresses ->
             let
-                a =
-                    model.state.addresses
-
                 input =
                     a.pastAddressEntry
 
@@ -3396,11 +3706,8 @@ render element model =
 
         WhyApplyingEntry ->
             let
-                a =
-                    model.state.application
-
                 reasons =
-                    a.whyApplying
+                    app.whyApplying
 
                 raceChecked =
                     List.member RACE reasons
@@ -3421,7 +3728,7 @@ render element model =
                     List.member TORTURE_CONVENTION reasons
 
                 updateFunction =
-                    \r -> SetApplicationData { a | whyApplying = r }
+                    \r -> SetApplicationData { app | whyApplying = r }
             in
             nextBackWrap model
                 [ prompt model [] "why-applying-prompt"
@@ -3441,20 +3748,41 @@ render element model =
                 ]
 
         ExperiencedHarm ->
-            let
-                a =
-                    model.state.application
+            applicationAnswer model "experienced-harm-entry" app.experiencedHarm (\r -> SetApplicationData { app | experiencedHarm = r })
 
+        FearHarm ->
+            applicationAnswer model "fear-harm-entry" app.fearHarm (\r -> SetApplicationData { app | fearHarm = r })
+
+        ArrestedInOtherCountry ->
+            applicationAnswer model "arrested-in-other-country-entry" app.arrestedInOtherCountry (\r -> SetApplicationData { app | arrestedInOtherCountry = r })
+
+        AssociatedWithOrganizations ->
+            applicationAnswer model "associated-with-organizations-entry" app.associatedWithOrganizations (\r -> SetApplicationData { app | associatedWithOrganizations = r })
+
+        ContinueToParticipate ->
+            applicationAnswer model "continue-to-participate-entry" app.continueToParticipate (\r -> SetApplicationData { app | continueToParticipate = r })
+
+        AfraidOfTorture ->
+            applicationAnswer model "afraid-of-torture-entry" app.afraidOfTorture (\r -> SetApplicationData { app | afraidOfTorture = r })
+
+        PreviouslyAppliedForAsylum ->
+            applicationAnswer model "previously-applied-entry" app.previouslyAppliedForAsylum (\r -> SetApplicationData { app | previouslyAppliedForAsylum = r })
+
+        OtherCountryApplications ->
+            let
                 h =
-                    a.experiencedHarm
+                    app.otherCountryApplications
 
                 updateFunction =
-                    \r -> SetApplicationData { a | experiencedHarm = { h | explanation = r } }
+                    \r -> SetApplicationData { app | otherCountryApplications = r }
+
+                needsExplanation =
+                    (h.travelThroughOtherCountry == Just YES || h.applyOtherCountry == Just YES) && h.travelThroughOtherCountry /= Nothing && h.applyOtherCountry /= Nothing
 
                 explanationEntry =
-                    if h.yesNo == Just YES then
-                        [ prompt model [] "explain-below"
-                        , largeTextInput h.explanation (i18n model "explain-here") [] updateFunction
+                    if needsExplanation then
+                        [ prompt model [] "list-other-country-applications"
+                        , largeTextInput h.explanation (i18n model "explain-here") [] (\r -> updateFunction { h | explanation = r })
                         ]
 
                     else
@@ -3462,10 +3790,68 @@ render element model =
             in
             nextBackWrap model
                 (List.concat
-                    [ unwrappedCheckbox model "experienced-harm-entry" h.yesNo YES NO (\r -> SetApplicationData { a | experiencedHarm = { h | yesNo = r } })
+                    [ unwrappedCheckbox model "travel-through-entry" h.travelThroughOtherCountry YES NO (\r -> updateFunction { h | travelThroughOtherCountry = r })
+                    , unwrappedCheckbox model "apply-other-country-entry" h.applyOtherCountry YES NO (\r -> updateFunction { h | applyOtherCountry = r })
                     , explanationEntry
                     ]
                 )
+
+        CausedHarm ->
+            applicationAnswer model "caused-harm-entry" app.causedHarm (\r -> SetApplicationData { app | causedHarm = r })
+
+        ReturnCountry ->
+            applicationAnswer model "return-country-entry" app.returnCountry (\r -> SetApplicationData { app | returnCountry = r })
+
+        ApplyAfterOneYear ->
+            applicationAnswer model "apply-after-one-year-entry" app.applyAfterOneYear (\r -> SetApplicationData { app | applyAfterOneYear = r })
+
+        CrimeInUS ->
+            applicationAnswer model "crime-in-us-entry" app.crimeInUS (\r -> SetApplicationData { app | crimeInUS = r })
+
+        RelativePrepare ->
+            let
+                h =
+                    app.relativeHelpPrepare
+
+                fone =
+                    h.firstRelative
+
+                ftwo =
+                    h.secondRelative
+
+                updateFunction =
+                    \r -> SetApplicationData { app | relativeHelpPrepare = r }
+
+                needsExplanation =
+                    h.didRelativeHelp == Just YES
+
+                relativeEntry =
+                    if needsExplanation then
+                        [ div [ css [ displayFlex, flexDirection column, alignItems center, justifyContent center ] ]
+                            [ prompt model [] "add-relative-entry"
+                            , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, justifyContent center ] ]
+                                [ labeledTextInput model "first-relative" (i18n model "full-name") fone.name (\r -> updateFunction { h | firstRelative = { fone | name = r } })
+                                , textInput fone.relationship (i18n model "relationship") [] (\r -> updateFunction { h | firstRelative = { fone | relationship = r } })
+                                ]
+                            , div [ css [ displayFlex, flexDirection row, alignItems flexEnd, justifyContent center ] ]
+                                [ labeledTextInput model "second-relative" (i18n model "full-name") ftwo.name (\r -> updateFunction { h | secondRelative = { ftwo | name = r } })
+                                , textInput ftwo.relationship (i18n model "relationship") [] (\r -> updateFunction { h | secondRelative = { ftwo | relationship = r } })
+                                ]
+                            ]
+                        ]
+
+                    else
+                        [ div [] [] ]
+            in
+            nextBackWrap model
+                (List.concat
+                    [ unwrappedCheckbox model "relative-prepare-entry" h.didRelativeHelp YES NO (\r -> updateFunction { h | didRelativeHelp = r })
+                    , relativeEntry
+                    ]
+                )
+
+        SubmitForm ->
+            centerWrap [ backButton model, submitButton model ]
 
 
 
@@ -3578,6 +3964,26 @@ yearList currentYear =
 
 
 -- Generic views
+
+
+applicationAnswer : Model -> String -> ApplicationAnswer -> (ApplicationAnswer -> Msg) -> Html Msg
+applicationAnswer model promptId h updateFunction =
+    let
+        explanationEntry =
+            if h.yesNo == Just YES then
+                [ prompt model [] "explain-below"
+                , largeTextInput h.explanation (i18n model "explain-here") [] (\r -> updateFunction { h | explanation = r })
+                ]
+
+            else
+                [ div [] [] ]
+    in
+    nextBackWrap model
+        (List.concat
+            [ unwrappedCheckbox model promptId h.yesNo YES NO (\r -> updateFunction { h | yesNo = r })
+            , explanationEntry
+            ]
+        )
 
 
 familyEntry : Model -> FamilyEntry -> String -> String -> String -> (FamilyEntry -> Msg) -> List (Html Msg)
@@ -3768,8 +4174,8 @@ unwrappedCheckbox model promptId value trueValue falseValue updateFunction =
 dateSelector : Model -> String -> (String -> Msg) -> String -> (String -> Msg) -> String -> (String -> Msg) -> Html Msg
 dateSelector model dayValue dayInput monthValue monthInput yearValue yearInput =
     div [ css [ displayFlex, flexDirection row, justifyContent center ] ]
-        [ div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-            [ div [ css [ defaultMargin ] ] [ text (i18n model "month") ]
+        [ div [ css [ displayFlex, flexDirection column ] ]
+            [ div [ css [ textAlign center ] ] [ text (i18n model "month") ]
             , select
                 [ onInput monthInput
                 , css
@@ -3778,8 +4184,8 @@ dateSelector model dayValue dayInput monthValue monthInput yearValue yearInput =
                 ]
                 (List.map (\r -> option [ Html.Styled.Attributes.selected (r == monthValue) ] [ text r ]) monthList)
             ]
-        , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-            [ div [ css [ defaultMargin ] ] [ text (i18n model "day") ]
+        , div [ css [ displayFlex, flexDirection column ] ]
+            [ div [ css [ textAlign center ] ] [ text (i18n model "day") ]
             , select
                 [ onInput dayInput
                 , css
@@ -3788,8 +4194,8 @@ dateSelector model dayValue dayInput monthValue monthInput yearValue yearInput =
                 ]
                 (List.map (\r -> option [ Html.Styled.Attributes.selected (r == dayValue) ] [ text r ]) dayList)
             ]
-        , div [ css [ displayFlex, flexDirection column, defaultMargin ] ]
-            [ div [ css [ defaultMargin ] ] [ text (i18n model "year") ]
+        , div [ css [ displayFlex, flexDirection column ] ]
+            [ div [ css [ textAlign center ] ] [ text (i18n model "year") ]
             , select
                 [ onInput yearInput
                 , css
@@ -3815,6 +4221,11 @@ backButton model =
     button [ css [ activeButtonStyles ], onClick Back ] [ text (i18n model "back") ]
 
 
+submitButton : Model -> Html Msg
+submitButton model =
+    button [ css [ activeButtonStyles ], onClick StartDownload ] [ text (i18n model "submit") ]
+
+
 nextButton : Model -> Html Msg
 nextButton model =
     if validate model then
@@ -3833,7 +4244,7 @@ nextButton model =
 
 centerWrap : List (Html Msg) -> Html Msg
 centerWrap list =
-    div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center ] ]
+    div [ css [ property "grid-column" "2", displayFlex, flexDirection column, alignItems center, justifyContent center, maxHeight (pc 100) ] ]
         [ div
             [ css [ displayFlex, flexDirection column, backgroundColor accent, justifyContent center, alignItems center, padding (px 10) ] ]
             list
@@ -3853,10 +4264,10 @@ singleTextEntry model promptTextId value updateFunction =
         ]
 
 
-labeledTextInput : Model -> String -> String -> (String -> Msg) -> Html Msg
-labeledTextInput model labelId value updateFunction =
+labeledTextInput : Model -> String -> String -> String -> (String -> Msg) -> Html Msg
+labeledTextInput model labelId placeholder value updateFunction =
     div [ css [ displayFlex, flexDirection column ] ]
-        [ div [ css [ marginLeft (px 10) ] ] [ text (i18n model labelId) ], textInput value "" [] updateFunction ]
+        [ div [ css [ marginLeft (px 10) ] ] [ text (i18n model labelId) ], textInput value placeholder [] updateFunction ]
 
 
 prompt : Model -> List Style -> String -> Html Msg
@@ -3913,7 +4324,7 @@ largeTextInput value placeholder additionalStyles updateFunction =
     textarea
         [ css [ inputStyles, Css.batch additionalStyles ]
         , Html.Styled.Attributes.rows 20
-        , Html.Styled.Attributes.cols 60
+        , Html.Styled.Attributes.cols 80
         , Html.Styled.Attributes.value value
         , Html.Styled.Attributes.placeholder placeholder
         , onInput updateFunction
@@ -4014,7 +4425,7 @@ removeList model currentList listNameId printFunction removeFunction =
 
 progressView : Model -> Html Msg
 progressView model =
-    div [ css [ property "grid-column" "1", displayFlex, flexDirection column, alignItems top, margin (Css.em 3) ] ]
+    div [ css [ property "grid-column" "1", displayFlex, flexDirection column, alignItems top ] ]
         (List.append
             [ h2 [ css [ textAlign center ] ] [ text (i18n model "progress") ] ]
             (getProgressList model)
@@ -4134,6 +4545,9 @@ sectionToDescription title model =
 
         ApplicationInfo ->
             i18n model "application-info"
+
+        SubmitSection ->
+            i18n model "submit"
 
 
 formElementToDescription : FormEntryElement -> Model -> String
@@ -4370,6 +4784,45 @@ formElementToDescription element model =
         ExperiencedHarm ->
             i18n model "experienced-harm"
 
+        FearHarm ->
+            i18n model "fear-harm"
+
+        ArrestedInOtherCountry ->
+            i18n model "arrested-in-other-country"
+
+        AssociatedWithOrganizations ->
+            i18n model "associated-with-organizations"
+
+        ContinueToParticipate ->
+            i18n model "continue-to-participate"
+
+        AfraidOfTorture ->
+            i18n model "afraid-of-torture"
+
+        PreviouslyAppliedForAsylum ->
+            i18n model "previously-applied"
+
+        OtherCountryApplications ->
+            i18n model "other-country-applications"
+
+        CausedHarm ->
+            i18n model "caused-harm"
+
+        ReturnCountry ->
+            i18n model "return-country"
+
+        ApplyAfterOneYear ->
+            i18n model "apply-after-one-year"
+
+        CrimeInUS ->
+            i18n model "crime-in-us"
+
+        RelativePrepare ->
+            i18n model "relative-help-prepare"
+
+        SubmitForm ->
+            i18n model "download"
+
 
 
 -- Help view
@@ -4377,7 +4830,7 @@ formElementToDescription element model =
 
 helpView : Model -> Html Msg
 helpView model =
-    div [ css [ property "grid-column" "3", displayFlex, flexDirection column, alignItems top, margin (Css.em 3) ] ]
+    div [ css [ property "grid-column" "3", displayFlex, flexDirection column, alignItems top ] ]
         [ h2 [ css [ textAlign center ] ] [ text (i18n model "help") ]
         , text (i18n model "help-description")
         ]

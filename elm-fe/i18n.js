@@ -634,6 +634,102 @@ var translations = {
 	},
 	"experienced-harm-entry": {
 		"en": "Have you, your family, or close friends or colleagues ever experienced harm or mistreatment or threats in the past by anyone?"
+	},
+	"fear-harm": {
+		"en": "Fear Harm"
+	},
+	"arrested-in-other-country": {
+		"en": "Arrested In Other Country"
+	},
+	"associated-with-organizations": {
+		"en": "Associated With Organizations"
+	},
+	"continue-to-participate": {
+		"en": "Continue To Participate"
+	},
+	"afraid-of-torture": {
+		"en": "Afraid Of Torture"
+	},
+	"previously-applied": {
+		"en": "Previously Applied"
+	},
+	"other-country-applications": {
+		"en": "Other Country Applications"
+	},
+	"caused-harm": {
+		"en": "Caused Harm"
+	},
+	"return-country": {
+		"en": "Returned To Country"
+	},
+	"apply-after-one-year": {
+		"en": "Applied After One Year"
+	},
+	"crime-in-us": {
+		"en": "Crime In US"
+	},
+	"relative-help-prepare": {
+		"en": "Relative Help Prepare"
+	},
+	"fear-harm-entry": {
+		"en": "Do you fear harm or mistreatment if you return to your home country?"
+	},
+	"arrested-in-other-country-entry": {
+		"en": "Have you or your family members ever been accused, charged, arrested, detained, interrogated, convicted and sentenced, or imprisoned in any country other than the United States (including for an immigration law violation)?"
+	},
+	"associated-with-organizations-entry": {
+		"en": "Have you or your family members ever belonged to or been associated with any organizations or groups in your home country, such as, but not limited to, a political party, student group, labor union, religious organization, military or paramilitary group, civil patrol, guerrilla organization, ethnic group, human rights group, or the press or media?"
+	},
+	"continue-to-participate-entry": {
+		"en": "Do you or your family members continue to participate in any way in these organizations or groups?"
+	},
+	"afraid-of-torture-entry": {
+		"en": "Are you afraid of being subjected to torture in your home country or any other country to which you may be returned?"
+	},
+	"previously-applied-entry": {
+		"en": "Have you, your spouse, your child(ren), your parents or your siblings ever applied to the U.S. Government for refugee status, asylum, or withholding of removal?"
+	},
+	"caused-harm-entry": {
+		"en": "Have you, your spouse or your child(ren) ever ordered, incited, assisted or otherwise participated in causing harm or suffering to any person because of his or her race, religion, nationality, membership in a particular social group or belief in a particular political opinion?"
+	},
+	"return-country-entry": {
+		"en": "After you left the country where you were harmed or fear harm, did you return to that country?"
+	},
+	"apply-after-one-year-entry": {
+		"en": "Are you filing this application more than 1 year after your last arrival in the United States?"
+	},
+	"crime-in-us-entry": {
+		"en": "Have you or any member of your family included in the application ever committed any crime and/or been arrested, charged, convicted, or sentenced for any crimes in the United States (including for an immigration law violation)?"
+	},
+	"relative-prepare-entry": {
+		"en": "Did your spouse, parent, or child(ren) assist you in completing this application?"
+	},
+	"travel-through-entry": {
+		"en": "After leaving the country from which you are claiming asylum, did you or your spouse or child(ren) who are now in the United States travel through or reside in any other country before entering the United States?"
+	},
+	"apply-other-country-entry": {
+		"en": "Have you, your spouse, your child(ren), or other family members, such as your parents or siblings, ever applied for or received any lawful status in any country other than the one from which you are now claiming asylum?"
+	},
+	"list-other-country-applications": {
+		"en": "Please provide for each person the following: the name of each country and the length of stay, the person's status while there, the reasons for leaving, whether or not the person is entitled to return for lawful residence purposes, and whether the person applied for refugee status or for asylum while there, and if not, why he or she did not do so."
+	},
+	"add-relative-entry": {
+		"en": "Please list up to two relatives who helped you prepare this application, including their full name and relationship to you."
+	},
+	"relationship": {
+		"en": "Relationship"
+	},
+	"first-relative": {
+		"en": "First Relative"
+	},
+	"second-relative": {
+		"en": "Second Relative"
+	},
+	"submit": {
+		"en": "Submit"
+	},
+	"download": {
+		"en": "Download"
 	}
 
 }
