@@ -733,9 +733,6 @@ var translations = {
 	},
 	"download": {
 		"en": "Download"
-	},
-	"submit-prompt": {
-		"en": "Please submit below to download a completed copy of your I589 application."
 	}
 
 }

@@ -256,7 +256,7 @@ class Page_1(Page):
         if us_entry_2:
             fields.append(
                 Field(
-                    entry_2_date,
+                    us_entry_2.date,
                     (72,
                      182),
                     10,
@@ -265,7 +265,7 @@ class Page_1(Page):
                     "19"))
             fields.append(
                 Field(
-                    entry_2_place,
+                    us_entry_2.place,
                     (180,
                      182),
                     10,
@@ -274,7 +274,7 @@ class Page_1(Page):
                     "19"))
             fields.append(
                 Field(
-                    entry_2_status,
+                    us_entry_2.status,
                     (325,
                      182),
                     10,
@@ -284,7 +284,7 @@ class Page_1(Page):
         if us_entry_3:
             fields.append(
                 Field(
-                    entry_3_date,
+                    us_entry_3.date,
                     (72,
                      164),
                     10,
@@ -293,7 +293,7 @@ class Page_1(Page):
                     "19"))
             fields.append(
                 Field(
-                    entry_3_place,
+                    us_entry_3.place,
                     (180,
                      164),
                     10,
@@ -302,7 +302,7 @@ class Page_1(Page):
                     "19"))
             fields.append(
                 Field(
-                    entry_3_status,
+                    us_entry_3.status,
                     (325,
                      164),
                     10,

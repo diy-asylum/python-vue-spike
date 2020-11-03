@@ -7,7 +7,7 @@ min="main.js"
 
 elm make --optimize --output=$js src/Main.elm
 
-uglifyjs $js --compress "pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe" | uglifyjs --mangle --output=$min
+uglifyjs $js --compress "pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe" | uglifyjs --mangle --output $min
 
 echo "Initial size: $(cat $js | wc -c) bytes  ($js)"
 echo "Minified size:$(cat $min | wc -c) bytes  ($min)"
@@ -18,6 +18,7 @@ mkdir public
 mkdir public/src
 cp index.html public 
 cp style.css public
-cp -r src/assets public/src
+##cp -r src/assets public/src
 cp main.js public
-cp favicon.ico public
+cp i18n.js public
+##cp favicon.ico public

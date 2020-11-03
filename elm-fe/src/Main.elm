@@ -94,62 +94,239 @@ formStateToUserData state =
         p =
             state.personal
 
+        s =
+            state.spouse
+
+        a =
+            state.addresses
+
+        f =
+            state.family
+
+        app =
+            state.application
+
+        mailingAddress =
+            if p.homeMailingSame == Just True then
+                p.homeAddress
+
+            else
+                p.mailingAddress
+
+        passportNumber =
+            if p.hasPassport == Just True then
+                p.travelDocNumber
+
+            else
+                ""
+
+        travelDocNumber =
+            if p.hasPassport == Just True then
+                ""
+
+            else
+                p.travelDocNumber
+
         applicantInfo =
             { lastName = p.lastName
             , firstName = p.firstName
             , middleName = p.middleName
             , aliases = p.aliases
-            , usResidence = mailingAddressMock
-            , usMailingAddress = mailingAddressMock
-            , gender = MALE
-            , maritalStatus = MARRIED
-            , dateOfBirth = "01/01/2020"
-            , cityOfBirth = "Kansas City"
-            , countryOfBirth = "China"
-            , presentNationality = "Chinese"
-            , nationalityAtBirth = "US"
-            , raceEthnicOrTribalGroup = "White"
-            , religion = "Christian"
-            , nativeLanguage = "Chinese"
-            , fluentInEnglish = True
-            , otherLanguages = [ "English" ]
-            , alsoApplyingConventionAgainstTorture = True
-            , alienRegistrationNumber = "12345"
-            , socialSecurityNumber = "98245"
-            , uscisAccountNumber = "432525"
-            , immigrationCourtHistory = NOT_NOW_BUT_IN_THE_PAST
-            , countryWhoLastIssuedPassport = "USA"
-            , passportNumber = "1234"
-            , travelDocumentNumber = "32122453521"
-            , travelDocumentExpirationDate = "03/04/05"
+            , usResidence = p.homeAddress
+            , usMailingAddress = mailingAddress
+            , gender = Maybe.withDefault MALE p.gender
+            , maritalStatus = Maybe.withDefault SINGLE p.maritalStatus
+            , dateOfBirth = String.concat [ p.monthOfBirth, "/", p.dayOfBirth, "/", p.yearOfBirth ]
+            , cityOfBirth = p.cityOfBirth
+            , countryOfBirth = p.countryOfBirth
+            , presentNationality = p.presentNationality
+            , nationalityAtBirth = p.nationalityAtBirth
+            , raceEthnicOrTribalGroup = p.raceEthnicOrTribalGroup
+            , religion = p.religion
+            , nativeLanguage = p.nativeLanguage
+            , fluentInEnglish = p.fluentInEnglish == Just True
+            , otherLanguages = p.otherLanguages
+            , alsoApplyingConventionAgainstTorture = List.member TORTURE_CONVENTION app.whyApplying
+            , alienRegistrationNumber = p.alienRegistrationNumber
+            , socialSecurityNumber = p.socialSecurityNumber
+            , uscisAccountNumber = p.uscisAccountNumber
+            , immigrationCourtHistory = Maybe.withDefault NEVER p.immigrationCourtHistory
+            , countryWhoLastIssuedPassport = p.travelDocCountry
+            , passportNumber = passportNumber
+            , travelDocumentNumber = travelDocNumber
+            , travelDocumentExpirationDate = String.concat [ p.travelDocExpirationMonth, "/", p.travelDocExpirationDay, "/", p.travelDocExpirationYear ]
+            }
+
+        usTravelHistory =
+            { travelEvents = formatTravel p.mostRecentEntry :: List.map formatTravel p.otherEntries
+            , lastLeftHomeCountry = String.concat [ p.lastLeftHomeCountryMonth, "/", p.lastLeftHomeCountryDay, "/", p.lastLeftHomeCountryYear ]
+            , i94Number = p.i94Number
+            , dateStatusExpires = String.concat [ p.entryExpirationMonth, "/", p.entryExpirationDay, "/", p.entryExpirationYear ]
+            }
+
+        spouseInfo =
+            { lastName = s.lastName
+            , firstName = s.firstName
+            , middleName = s.middleName
+            , aliases = s.aliases
+            , dateOfBirth = String.concat [ s.monthOfBirth, "/", s.dayOfBirth, "/", s.yearOfBirth ]
+            , alienRegistrationNumber = s.alienRegistrationNumber
+            , socialSecurityNumber = s.socialSecurityNumber
+            , passportNumber = s.travelDocNumber
+            , dateOfMarriage = String.concat [ s.marriageMonth, "/", s.marriageDay, "/", s.marriageYear ]
+            , placeOfMarriage = s.placeOfMarriage
+            , cityOfBirth = s.cityOfBirth
+            , countryOfBirth = s.countryOfBirth
+            , nationality = s.nationality
+            , raceEthnicOrTribalGroup = s.raceEthnicityOrTribalGroup
+            , gender = Maybe.withDefault MALE s.gender
+            , inUS = Maybe.withDefault False s.inUS
+            , locationInUS = s.currentLocation
+            , placeOfLastEntry = s.lastEntryPlace
+            , dateOfLastEntry = String.concat [ s.lastEntryMonth, "/", s.lastEntryDay, "/", s.lastEntryYear ]
+            , i94Number = s.i94Number
+            , immigrationStatusWhenLastAdmitted = s.statusOnLastAdmission
+            , currentImmigrationStatus = s.currentStatus
+            , statusExpirationDate = String.concat [ s.statusExpirationMonth, "/", s.statusExpirationDay, "/", s.statusExpirationYear ]
+            , isInImmigrationCourt = Maybe.withDefault False s.inImmigrationCourt
+            , previousArrivalDate = String.concat [ s.previousEntryMonth, "/", s.previousEntryDay, "/", s.previousEntryYear ]
+            , includeInApplication = Maybe.withDefault False s.includedInApplication
             }
     in
     { applicantInfo = applicantInfo
-    , usTravelHistory = usTravelHistoryMock
-    , isMarried = True
-    , spouseInfo = spouseInfoMock
-    , childInfo = [ childInfoMock ]
-    , lastAddressBeforeUS = addressWithDatesMock
-    , lastAddressPersecuted = addressWithDatesMock
-    , residencesInLastFiveYears = [ addressWithDatesMock ]
-    , educationInfo = [ schoolInfoMock ]
-    , employmentInfo = [ employmentInfoMock ]
-    , motherInfo = relativeInfoMock
-    , fatherInfo = relativeInfoMock
-    , siblingInfo = [ relativeInfoMock ]
-    , whyApplying = [ RACE, RELIGION ]
-    , experiencedHarm = questionWithExplanationMock
-    , fearsHarm = questionWithExplanationMock
-    , arrestedInOtherCountry = questionWithExplanationMock
-    , organizationInfo = organizationInfoMock
-    , afraidOfTorture = questionWithExplanationMock
-    , relativeAppliedForAsylum = questionWithExplanationMock
-    , otherCountryApplications = otherCountryApplicationsMock
-    , causedHarm = questionWithExplanationMock
-    , returnCountry = questionWithExplanationMock
-    , applyAfterOneYear = questionWithExplanationMock
-    , crimeInUS = questionWithExplanationMock
-    , relativeHelpPrepare = relativeHelpPrepareMock
+    , usTravelHistory = usTravelHistory
+    , isMarried = p.maritalStatus == Just MARRIED
+    , spouseInfo = spouseInfo
+    , childInfo = List.map formatChildInfo state.children
+    , lastAddressBeforeUS = formatAddressWithDates a.lastAddressBeforeUS
+    , lastAddressPersecuted = formatAddressWithDates a.lastAddressFearsPersecution
+    , residencesInLastFiveYears = List.map formatAddressWithDates a.pastAddresses
+    , educationInfo = List.map formatSchoolInfo state.education.schools
+    , employmentInfo = List.map formatEmploymentInfo state.employment.employment
+    , motherInfo = formatRelativeInfo f.mother
+    , fatherInfo = formatRelativeInfo f.father
+    , siblingInfo = List.map formatRelativeInfo f.siblings
+    , whyApplying = app.whyApplying
+    , experiencedHarm = formatExplanation app.experiencedHarm
+    , fearsHarm = formatExplanation app.fearHarm
+    , arrestedInOtherCountry = formatExplanation app.arrestedInOtherCountry
+    , organizationInfo = formatOrganizationInfo app.associatedWithOrganizations app.continueToParticipate
+    , afraidOfTorture = formatExplanation app.afraidOfTorture
+    , relativeAppliedForAsylum = formatExplanation app.previouslyAppliedForAsylum
+    , otherCountryApplications = formatOtherApplications app.otherCountryApplications
+    , causedHarm = formatExplanation app.causedHarm
+    , returnCountry = formatExplanation app.returnCountry
+    , applyAfterOneYear = formatExplanation app.applyAfterOneYear
+    , crimeInUS = formatExplanation app.crimeInUS
+    , relativeHelpPrepare = formatRelativeHelp app.relativeHelpPrepare
+    }
+
+
+formatEmploymentInfo : EmploymentEntry -> EmploymentInfo
+formatEmploymentInfo e =
+    { employerName = e.name
+    , applicantOccupation = e.occupation
+    , employerAddress = e.address
+    , fromDate = String.concat [ e.fromMonth, "/", e.fromYear ]
+    , toDate = String.concat [ e.toMonth, "/", e.toYear ]
+    }
+
+
+formatSchoolInfo : SchoolData -> SchoolInfo
+formatSchoolInfo s =
+    { schoolName = s.name
+    , typeOfSchool = s.schoolType
+    , address = s.address
+    , fromDate = String.concat [ s.fromMonth, "/", s.fromYear ]
+    , toDate = String.concat [ s.toMonth, "/", s.toYear ]
+    }
+
+
+formatOrganizationInfo : ApplicationAnswer -> ApplicationAnswer -> OrganizationInfo
+formatOrganizationInfo associatedWithOrganizations continueToParticipate =
+    { associatedWithOrganizations = formatExplanation associatedWithOrganizations
+    , continueToParticipate = formatExplanation continueToParticipate
+    }
+
+
+formatRelativeInfo : FamilyEntry -> RelativeInfo
+formatRelativeInfo f =
+    { fullName = f.name
+    , cityOrTownOfBirth = f.cityOfBirth
+    , countryOfBirth = f.countryOfBirth
+    , currentLocation = f.location
+    , isDeceased = Maybe.withDefault True f.isDeceased
+    }
+
+
+formatAddressWithDates : GranularAddressWithDates -> AddressWithDates
+formatAddressWithDates a =
+    { streetName = a.streetName
+    , streetNumber = a.streetNumber
+    , cityOrTown = a.cityOrTown
+    , departmentProvinceOrState = a.departmentProvinceOrState
+    , country = a.country
+    , fromDate = String.concat [ a.fromMonth, "/", a.fromYear ]
+    , toDate = String.concat [ a.toMonth, "/", a.toYear ]
+    }
+
+
+formatOtherApplications : OtherApplications -> OtherCountryApplications
+formatOtherApplications o =
+    { travelThroughOtherCountry = Maybe.withDefault NO o.travelThroughOtherCountry
+    , applyOtherCountry = Maybe.withDefault NO o.applyOtherCountry
+    , explanation = o.explanation
+    }
+
+
+formatRelativeHelp : RelativeHelp -> RelativeHelpPrepare
+formatRelativeHelp r =
+    { didRelativeHelp = Maybe.withDefault NO r.didRelativeHelp
+    , firstRelative = r.firstRelative
+    , secondRelative = r.secondRelative
+    }
+
+
+formatExplanation : ApplicationAnswer -> QuestionWithExplanation
+formatExplanation a =
+    { yesNoAnswer = Maybe.withDefault YES a.yesNo
+    , explanation = a.explanation
+    }
+
+
+formatChildInfo : ChildData -> ChildInfo
+formatChildInfo c =
+    { lastName = c.lastName
+    , firstName = c.firstName
+    , middleName = c.middleName
+    , dateOfBirth = String.concat [ c.monthOfBirth, "/", c.dayOfBirth, "/", c.yearOfBirth ]
+    , alienRegistrationNumber = c.alienRegistrationNumber
+    , socialSecurityNumber = c.socialSecurityNumber
+    , passportNumber = c.travelDocNumber
+    , maritalStatus = Maybe.withDefault SINGLE c.maritalStatus
+    , cityOfBirth = c.cityOfBirth
+    , countryOfBirth = c.countryOfBirth
+    , nationality = c.nationality
+    , raceEthnicOrTribalGroup = c.raceEthnicityOrTribalGroup
+    , gender = Maybe.withDefault MALE c.gender
+    , inUS = Maybe.withDefault False c.inUS
+    , location = c.currentLocation
+    , placeOfLastEntry = c.lastEntryPlace
+    , dateOfLastEntry = String.concat [ c.lastEntryMonth, "/", c.lastEntryDay, "/", c.lastEntryYear ]
+    , i94Number = c.i94Number
+    , immigrationStatusWhenLastAdmitted = c.statusOnLastAdmission
+    , currentImmigrationStatus = c.currentStatus
+    , statusExpirationDate = String.concat [ c.statusExpirationMonth, "/", c.statusExpirationDay, "/", c.statusExpirationYear ]
+    , isInImmigrationCourt = Maybe.withDefault False c.inImmigrationCourt
+    , includeInApplication = Maybe.withDefault False c.includedInApplication
+    }
+
+
+formatTravel : ExpandableTravelEvent -> USTravelEvent
+formatTravel e =
+    { place = e.place
+    , status = e.status
+    , date = String.concat [ e.month, "/", e.day, "/", e.year ]
     }
 
 
@@ -592,6 +769,7 @@ defaultFamilyData =
 
 type alias FamilyEntry =
     { name : String
+    , cityOfBirth : String
     , countryOfBirth : String
     , isDeceased : Maybe Bool
     , location : String
@@ -601,6 +779,7 @@ type alias FamilyEntry =
 defaultFamilyEntry : FamilyEntry
 defaultFamilyEntry =
     { name = ""
+    , cityOfBirth = ""
     , countryOfBirth = ""
     , isDeceased = Nothing
     , location = ""
@@ -854,7 +1033,7 @@ init flags url key =
             else
                 "en"
     in
-    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) Nothing defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict True, now )
+    ( Model key url page (pageToTitle page) (Element.classifyDevice flags) Nothing defaultFormState Eligibility CurrentlyInUS [ CurrentlyInUS ] lang languageDict False, now )
 
 
 now : Cmd Msg
@@ -2492,7 +2671,7 @@ validate model =
                 in
                 case maybeChild of
                     Just child ->
-                        child.currentStatus /= ""
+                        child.currentStatus /= "" && child.statusExpirationDay /= "" && child.statusExpirationMonth /= "" && child.statusExpirationYear /= ""
 
                     _ ->
                         True
@@ -3851,7 +4030,7 @@ render element model =
                 )
 
         SubmitForm ->
-            centerWrap [ backButton model, submitButton model ]
+            centerWrap [ backButton model, prompt model [] "submit-prompt", submitButton model ]
 
 
 
@@ -3872,13 +4051,13 @@ printFamilyEntry : FamilyEntry -> String
 printFamilyEntry e =
     case e.isDeceased of
         Just True ->
-            String.concat [ e.name, ", Born in ", e.countryOfBirth, ", Deceased" ]
+            String.concat [ e.name, ", Born in ", e.cityOfBirth, ", ", e.countryOfBirth, ", Deceased" ]
 
         Just False ->
-            String.concat [ e.name, ", Born in ", e.countryOfBirth, ", Currently located in ", e.location ]
+            String.concat [ e.name, ", Born in ", e.cityOfBirth, ", ", e.countryOfBirth, ", Currently located in ", e.location ]
 
         _ ->
-            String.concat [ e.name, ", Born in ", e.countryOfBirth ]
+            String.concat [ e.name, ", Born in ", e.cityOfBirth, ", ", e.countryOfBirth ]
 
 
 printAddressWithDates : GranularAddressWithDates -> String
@@ -4002,6 +4181,7 @@ familyEntry model m entryPrompt deceasedPrompt locationPrompt updateFunction =
         [ [ prompt model [] entryPrompt
           , div [ css [ displayFlex, flexDirection row, alignItems center, justifyContent center ] ]
                 [ textInput m.name (i18n model "full-name") [] (\r -> updateFunction { m | name = r })
+                , textInput m.cityOfBirth (i18n model "city-of-birth") [] (\r -> updateFunction { m | cityOfBirth = r })
                 , textInput m.countryOfBirth (i18n model "country-of-birth") [] (\r -> updateFunction { m | countryOfBirth = r })
                 ]
           ]
@@ -5007,10 +5187,14 @@ parseBytes response =
 
 downloadFilledForm : UserData -> Cmd Msg
 downloadFilledForm data =
-    Http.post
-        { url = "http://localhost:12345/fill-i589"
+    Http.request
+        { method = "POST"
+        , headers = []
+        , url = "https://backend.diyasylum.com/fill-i589"
         , body = Http.jsonBody (encode data)
         , expect = Http.expectBytesResponse FinishDownload parseBytes
+        , timeout = Just 120000
+        , tracker = Nothing
         }
 
 
